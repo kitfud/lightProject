@@ -1,24 +1,30 @@
-import logo from './logo.svg';
+
 import './App.css';
+import AdminMinting from './components/AdminMinting';
+import Home from './components/Home';
+
 
 function App() {
+
+let hello = "hello world"
+
+console.log(hello + "bing bong ")
+
+let food = "hamburger"
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+
+    <>
+ <h2>
+ {hello}
+ </h2>
+
+<Home data = {hello} data2 = {food}/>
+<AdminMinting/>
+
+
+    </>
+
   );
 }
 
