@@ -10,7 +10,8 @@ function App() {
 
   console.log(hello + "bing bong bang boom heeey")
 
-  let food = "hamburger"
+
+let food = "toasted hamburger bunz "
 
   return (
 
