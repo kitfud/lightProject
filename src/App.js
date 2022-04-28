@@ -10,7 +10,7 @@ let hello = "hello world"
 
 console.log(hello + "bing bong bang boom")
 
-let food = "hamburger"
+let food = "toasted hamburger bunz "
 
   return (
 
