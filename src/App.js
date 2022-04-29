@@ -29,7 +29,7 @@ function App() {
   return (
 
     <>
-
+    <ThemeProvider theme={theme}>
    <Header/>
     <Card sx={{height:'100vh',backgroundColor:'#5357bf'}}>
     <Routes>
@@ -40,7 +40,7 @@ function App() {
     </Routes>
     </Card>
     <Footer/>
-    {console.log('Hello')}
+
 
       </ThemeProvider>
 
