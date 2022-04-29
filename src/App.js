@@ -43,7 +43,7 @@ function App() {
     </Routes>
     </Card>
     <Footer/>
-
+    {console.log('Hello')}
 
    </ThemeProvider>
 
