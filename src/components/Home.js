@@ -1,10 +1,10 @@
 import React from 'react'
 
-const Home = ({data2,data}) => {
+const Home = () => {
   return (
       <>
        <div>Home </div>
-       <h1>{data + data2}</h1>
+       <h1></h1>
     
        <input></input>
        <button>Hello</button>
