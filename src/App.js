@@ -34,15 +34,15 @@ function App() {
    <ThemeProvider theme={theme}>
 
    <Header/>
-    <Card sx={{height:'50vh',backgroundColor:'#5357bf'}}>
+    <Card sx={{height:'100vh',backgroundColor:'#5357bf'}}>
     <Routes>
-   <Route path='/' element ={<Home/>}/>
-   <Route path='/home' element ={<Home/>}/>
-   <Route path='/shop' element ={<Shop/>}/>
-   <Route path ='/admin' element = {<AdminMinting/>}/>     
-  </Routes>
+    <Route path='/' element ={<Home/>}/>
+    <Route path='/home' element ={<Home/>}/>
+    <Route path='/shop' element ={<Shop/>}/>
+    <Route path ='/admin' element = {<AdminMinting/>}/>     
+    </Routes>
     </Card>
-  <Footer/>
+    <Footer/>
 
 
    </ThemeProvider>

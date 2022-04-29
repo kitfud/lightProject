@@ -4,10 +4,10 @@ import {
     Toolbar,
     Typography,
     Container,
-    IconButton
+    IconButton,
   } from '@mui/material'
 
-const Footer = () => {
+  const Footer = () => {
   return (
     <AppBar position="static" color="primary" >
     <Container maxWidth="md">
