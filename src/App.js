@@ -2,26 +2,51 @@
 import './App.css';
 import AdminMinting from './components/AdminMinting';
 import Home from './components/Home';
+import {Routes, Route} from 'react-router-dom'
+import Shop from './components/Shop';
+import Header from './components/Header';
+import Footer from './components/Footer';
+
+import {createTheme, ThemeProvider, Card, Container, CardContent} from '@mui/material'
+
+
+let theme = createTheme({
+  palette: {
+    primary: {
+      main: '#BFBB53',
+    },
+    secondary: {
+      main: '#5357bf',
+    }
+  }
+})
+
 
 
 function App() {
 
-  let hello = "hello world"
 
-  console.log(hello + "bing bong bang boom heeey")
-
-
-let food = "toasted hamburger bunz "
 
   return (
 
     <>
-      <h2>
-        {hello}
-      </h2>
+   
+   <ThemeProvider theme={theme}>
 
-      <Home data={hello} data2={food} />
-      <AdminMinting />
+   <Header/>
+    <Card sx={{height:'50vh',backgroundColor:'#5357bf'}}>
+    <Routes>
+   <Route path='/' element ={<Home/>}/>
+   <Route path='/home' element ={<Home/>}/>
+   <Route path='/shop' element ={<Shop/>}/>
+   <Route path ='/admin' element = {<AdminMinting/>}/>     
+  </Routes>
+    </Card>
+  <Footer/>
+
+
+   </ThemeProvider>
+
 
 
     </>
