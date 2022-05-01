@@ -1,13 +1,12 @@
 
-import './App.css';
 import AdminMinting from './components/AdminMinting';
 import Home from './components/Home';
-import {Routes, Route} from 'react-router-dom'
+import { Routes, Route } from 'react-router-dom'
 import Shop from './components/Shop';
 import Header from './components/Header';
 import Footer from './components/Footer';
 
-import {createTheme, ThemeProvider, Card, Container, CardContent} from '@mui/material'
+import { createTheme, ThemeProvider, Card, Container, CardContent } from '@mui/material'
 
 
 let theme = createTheme({
@@ -30,9 +29,7 @@ function App() {
   return (
 
     <>
-   
-   <ThemeProvider theme={theme}>
-
+    <ThemeProvider theme={theme}>
    <Header/>
     <Card sx={{height:'100vh',backgroundColor:'#EAEAEA'}}>
     <Routes>
@@ -45,7 +42,7 @@ function App() {
     <Footer/>
 
 
-   </ThemeProvider>
+      </ThemeProvider>
 
 
 
