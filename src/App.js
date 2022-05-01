@@ -13,10 +13,10 @@ import {createTheme, ThemeProvider, Card, Container, CardContent} from '@mui/mat
 let theme = createTheme({
   palette: {
     primary: {
-      main: '#BFBB53',
+      main: '#6b6b6b',
     },
     secondary: {
-      main: '#5357bf',
+      main: '#EAEAEA',
     }
   }
 })

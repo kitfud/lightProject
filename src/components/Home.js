@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 import {
   Box,
   Button,
@@ -22,7 +22,11 @@ const Home = () => {
           </Button>
         </Box>
       </>
-   
+          /*
+          -Need to create onClick for button that generates and places QR code
+          -Can use any random image as a placeholder
+            -Do formatting for the image, replace image with QR code later
+          */
   )
 }
 
