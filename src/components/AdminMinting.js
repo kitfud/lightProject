@@ -1,6 +1,8 @@
-import React from 'react'
+import React,{useContext,useState,useEffect} from 'react'
 import { Card, CardActions, CardContent, CardMedia, Button, Typography, TextField, Box, Grid } from '@mui/material'
 import { makeStyles } from "@material-ui/core/styles";
+import { ContractContext } from '../App';
+import { ethers, Signer } from 'ethers'
 
 const useStyles = makeStyles({
   card: {
@@ -30,6 +32,33 @@ const styles = {
 
 const AdminMinting = () => {
   const classes = useStyles()
+
+  //below is some example code to show you how to use useContext to get contract info into component
+  const contractinfo = useContext(ContractContext)
+  console.log(contractinfo.abi_LightFactory)
+
+  const [provider, setProvider] = useState(null)
+  const [signer, setSigner] = useState(null)
+  const [contract, setContract] = useState(null)
+
+  const updateEthers = async () => {
+    
+    let tempProvider = await new ethers.providers.Web3Provider(window.ethereum);
+    setProvider(tempProvider);
+
+    let tempSigner = await tempProvider.getSigner();
+    setSigner(tempSigner);
+
+    //insert correct contract deployment address- currently set to null
+    let tempContract = await new ethers.Contract(contractinfo.address, contractinfo.abi_LightFactory, tempSigner);
+    setContract(tempContract);
+}
+
+useEffect(()=>{
+
+    updateEthers()
+},[])
+
 
   return (
     <>
