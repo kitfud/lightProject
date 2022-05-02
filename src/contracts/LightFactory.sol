@@ -9,8 +9,6 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "./LightGenerator.sol";
 
 // TO DO: change checkIfTokenHolder to a mapping with boolean?
-// TO DO: change the onlyTokenOwner modifier
-// TO DO: change to onlyOwner to Ownable
 // TO DO: change to several owner - whitelist?
 // TO DO: implement VRFV2 for NFTs rarity?
 // TO DO:
