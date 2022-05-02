@@ -28,7 +28,7 @@ let theme = createTheme({
 function App() {
 
   const contract = {
-    address: null,
+    address: '0x89A86DDF445e04944a3B66Af6456B8979A584b74',
     abi_LightFactory: LightFactory,
     abi_LightGenerator: LightGenerator
   }
