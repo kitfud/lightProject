@@ -5,7 +5,6 @@ import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
 import "./LightFactory.sol";
 
 // TO DO: decide if the products will only be local or a contract
-// TO DO: add the pricefeed and a way to pay more than the receive function.
 
 contract LightGenerator {
 
@@ -75,7 +74,7 @@ contract LightGenerator {
     function getETHUSDConversionRate() public view returns(uint256) {
         (,int256 price,,,) = ETHUSDPriceFeed.latestRoundData();
         uint256 factor = 18 - ETHUSDPriceFeed.decimals();
-        return uint256(price)* 10**factor; 
+        return uint256(price)* 10**factor;
     }
 
     function changeProductPrice(uint256 _id, uint256 _priceUSD) external onlyOwner {
