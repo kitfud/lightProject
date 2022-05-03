@@ -1,8 +1,9 @@
-import React from 'react'
-import { AppBar, Toolbar, CssBaseline, Typography, IconButton, Grid, Avatar } from '@mui/material'
+import React, { useContext, useEffect } from 'react'
+import { AppBar, IconButton, Grid, Avatar, Button, Box, Item } from '@mui/material'
 import { Link } from "react-router-dom"
-
 import { makeStyles } from '@mui/styles'
+import { WalletContext } from "../App"
+import { getWeb3 } from "../utils"
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -25,27 +26,47 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = () => {
-
+const Header = ({ setUserAddress, userAddress }) => {
+  const wallet = useContext(WalletContext)
   const classes = useStyles()
+
+  const connectWallet = async () => {
+    const wallet = await getWeb3()
+    setUserAddress(wallet.provider.provider.selectedAddress)
+  }
+
+  useEffect(() => {
+
+  }, [userAddress])
 
   return (
     <AppBar position="static">
-      <Grid style={{ justifyContent: "flex-start", alignItems: "center" }}>
-        <IconButton color="inherit">
-          <Avatar src={require("../img/minilogo.png")} />
-        </IconButton>
-        <Link to='home' className={classes.link}>
-          Home
-        </Link>
-        <Link to='admin' className={classes.link} >
-          Admin
-        </Link>
-        <Link to='shop' className={classes.link}>
-          Store
-        </Link>
+      <Grid container>
+        <Grid item xs={3} md={3} lg={6}>
+          <IconButton color="inherit">
+            <Avatar src={require("../img/minilogo.png")} />
+          </IconButton>
+
+          <Link to='home' className={classes.link}>
+            Home
+          </Link>
+
+          <Link to='admin' className={classes.link} >
+            Admin
+          </Link>
+
+          <Link to='shop' className={classes.link}>
+            Store
+          </Link>
+
+        </Grid>
+        <Grid container justifyContent="center" alignItems="flex-end" direction="column" paddingRight="5px">
+          <Button onClick={connectWallet} variant="contained">
+            {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
+          </Button>
+        </Grid>
       </Grid>
-    </AppBar>
+    </AppBar >
   )
 }
 
