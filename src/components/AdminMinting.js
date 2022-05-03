@@ -3,6 +3,7 @@ import { Card, CardActions, CardContent, CardMedia, Button, Typography, TextFiel
 import { makeStyles } from "@material-ui/core/styles";
 import { ContractContext } from '../App';
 import { ethers, Signer } from 'ethers'
+import { getFactoryContract } from "../utils"
 
 const useStyles = makeStyles({
   card: {
@@ -30,34 +31,53 @@ const styles = {
   }
 };
 
-const AdminMinting = () => {
+const AdminMinting = ({ wallet }) => {
   const classes = useStyles()
 
   //below is some example code to show you how to use useContext to get contract info into component
-  const contractinfo = useContext(ContractContext)
+  let contract = useContext(ContractContext)
+  const [nftPrice, setNFTPrice] = useState(undefined)
   // console.log(contractinfo.abi_LightFactory)
 
   const [provider, setProvider] = useState(null)
   const [signer, setSigner] = useState(null)
-  const [contract, setContract] = useState(null)
+  // const [contract, setContract] = useState(null)
 
-  const updateEthers = async () => {
+  const mintNFT = async (nftPrice) => {
+    // const NFTPrice = await contract.getNFTPriceInETH()
+    // console.log(NFTPrice)
+    let tx = await contract.mintGenerator({ "value": nftPrice })
+    console.log(tx)
+  }
 
-    let tempProvider = await new ethers.providers.Web3Provider(window.ethereum);
-    setProvider(tempProvider);
+  const getNFTPrice = async () => {
+    // console.log(wallet.signer)
+    // contract.signer = wallet.signer
+    console.log(wallet.signer)
+    contract = getFactoryContract(wallet.signer)
+    const nft_price = await contract.getNFTPriceInETH()
+    const nft_price_for_real = ethers.utils.formatEther(nft_price)
+    setNFTPrice(nft_price_for_real)
 
-    let tempSigner = await tempProvider.getSigner();
-    setSigner(tempSigner);
-
-    //insert correct contract deployment address- currently set to null
-    let tempContract = await new ethers.Contract(contractinfo.address, contractinfo.abi_LightFactory, tempSigner);
-    setContract(tempContract);
   }
 
   useEffect(() => {
-    console.log(contractinfo.userAddress)
-    updateEthers()
-  }, [])
+    // console.log(contract)
+
+    if (wallet) {
+      // console.log(wallet.signer)
+      getNFTPrice()
+      console.log(contract)
+    }
+  }, [wallet])
+
+  useEffect(() => {
+    if (nftPrice) {
+      console.log(nftPrice)
+    }
+  }, [nftPrice])
+
+  console.log(contract)
 
 
   return (
@@ -77,10 +97,10 @@ const AdminMinting = () => {
               Mint your NFT and set up the price.
             </Typography>
             <Typography variant="h1" color="text.secondary">
-              $9.99
+              ETH {nftPrice}
             </Typography>
             <Box mr={2} ml={2}>
-              <Button color='warning' size="large" variant='contained' onClick={() => console.log("NFT Minted")} >Mint NFT</Button>
+              <Button color='warning' size="large" variant='contained' onClick={mintNFT} >Mint NFT</Button>
             </Box>
           </Card>
         </Box>

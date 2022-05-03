@@ -11,10 +11,10 @@ import { createContext, useEffect, useState } from "react";
 import LightFactory from './ABIs/LightFactory.json'
 import LightGenerator from './ABIs/LightGenerator.json'
 import { getWeb3, getFactoryContract } from "./utils"
+import { DEPLOYMENT_ADDRESS } from "./ABIs/deployment_address"
 
 
 export const ContractContext = createContext(undefined);
-export const WalletContext = createContext();
 
 let theme = createTheme({
   palette: {
@@ -31,16 +31,12 @@ let theme = createTheme({
 
 function App() {
   const [userAddress, setUserAddress] = useState(undefined)
+  const [wallet, setWallet] = useState(undefined)
 
-  const contract = {
-    address: LightFactory.address,
-    abi_LightFactory: LightFactory.abi,
-    abi_LightGenerator: LightGenerator.abi,
-    userAddress: userAddress
-  }
+  const contract = getFactoryContract()
 
   useEffect(() => {
-    console.log("User just changed")
+    // console.log(contract)
   }, [userAddress])
 
   return (
@@ -48,13 +44,13 @@ function App() {
     <>
       <ContractContext.Provider value={contract}>
         <ThemeProvider theme={theme}>
-          <Header setUserAddress={setUserAddress} userAddress={userAddress} />
+          <Header setUserAddress={setUserAddress} userAddress={userAddress} setWallet={setWallet} />
           <Card sx={{ height: '100vh', backgroundColor: '#EAEAEA' }}>
             <Routes>
-              <Route path='/' element={<Home />} />
-              <Route path='/home' element={<Home />} />
+              <Route path='/' element={<Home wallet={wallet} />} />
+              <Route path='/home' element={<Home wallet={wallet} />} />
               <Route path='/shop' element={<Shop />} />
-              <Route path='/admin' element={<AdminMinting />} />
+              <Route path='/admin' element={<AdminMinting wallet={wallet} />} />
             </Routes>
           </Card>
           <Footer />

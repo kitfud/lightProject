@@ -1,8 +1,7 @@
-import React, { useContext, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { AppBar, IconButton, Grid, Avatar, Button, Box, Item } from '@mui/material'
 import { Link } from "react-router-dom"
 import { makeStyles } from '@mui/styles'
-import { WalletContext } from "../App"
 import { getWeb3 } from "../utils"
 
 const useStyles = makeStyles((theme) => ({
@@ -26,13 +25,13 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const Header = ({ setUserAddress, userAddress }) => {
-  const wallet = useContext(WalletContext)
+const Header = ({ setUserAddress, userAddress, setWallet }) => {
   const classes = useStyles()
 
   const connectWallet = async () => {
     const wallet = await getWeb3()
     setUserAddress(wallet.provider.provider.selectedAddress)
+    setWallet(wallet)
   }
 
   useEffect(() => {

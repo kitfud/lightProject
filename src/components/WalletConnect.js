@@ -1,9 +1,9 @@
-import React, { useState, useEffect,useContext,createContext } from 'react';
-import {  Button, CircularProgress, Box,  Typography, Card, CardContent} from "@mui/material"
+import React, { useState, useEffect, useContext, createContext } from 'react';
+import { Button, CircularProgress, Box, Typography, Card, CardContent } from "@mui/material"
 import { ethers } from 'ethers'
 import { ContractContext } from '../../App';
 
-export const WalletContext = createContext();
+
 
 const WalletConnect = ({
     defaultAccount,
@@ -27,40 +27,34 @@ const WalletConnect = ({
     const abi = contractinfo.abi_LightGenerator
     const address = contractinfo.address
 
-    
     const connectWalletHandler = () => {
         if (window.ethereum && window.ethereum.isMetaMask) {
             console.log("CONNECTING TO WALLET")
             window.ethereum.request({ method: 'eth_requestAccounts' })
                 .then(result => {
-    
                     accountChangedHandler(result[0]);
                     setConnButtonText('Wallet Connected');
                     setConnectButtonColor("success")
-    
-    
-    
                 })
                 .catch(error => {
                     setErrorMessage(error.message);
-    
                 });
-    
+
         } else {
             console.log('Need to install MetaMask');
             setErrorMessage('Please install MetaMask browser extension to interact');
         }
     }
-    
+
     const accountChangedHandler = (newAccount) => {
         if (!accountchanging) {
             setAccountChanging(true)
             setDefaultAccount(checkAccountType(newAccount));
             updateEthers();
         }
-    
+
     }
-    
+
     const checkAccountType = (newAccount) => {
         if (Array.isArray(newAccount)) {
             return newAccount[0].toString()
@@ -69,17 +63,17 @@ const WalletConnect = ({
             return newAccount
         }
     }
-    
+
     const updateEthers = async () => {
         let tempProvider = await new ethers.providers.Web3Provider(window.ethereum);
         setProvider(tempProvider);
-    
+
         let tempSigner = await tempProvider.getSigner();
         setSigner(tempSigner);
-    
+
         let tempContract = await new ethers.Contract(address, abi, tempSigner);
         setContract(tempContract);
-    
+
     }
 
     const chainChangedHandler = () => {
@@ -101,7 +95,7 @@ const WalletConnect = ({
 
         getWalletBalance(provider)
 
-    }, [provider,walletBalance])
+    }, [provider, walletBalance])
 
     useEffect(() => {
         if (accountchanging === false) {
@@ -118,27 +112,27 @@ const WalletConnect = ({
 
 
 
-  return (
-      <>
-     
-    <Box>
-    <Button onClick={connectWalletHandler} color={connectButtonColor} variant="contained" sx={{ margin: 2 }}>{connButtonText}</Button>
-    </Box>
+    return (
+        <>
 
-    {
+            <Box>
+                <Button onClick={connectWalletHandler} color={connectButtonColor} variant="contained" sx={{ margin: 2 }}>{connButtonText}</Button>
+            </Box>
+
+            {
                 defaultAccount ? (
 
                     <>
-                        
+
                         <Card variant="outlined" sx={{ display: 'inline-block', backgroundColor: "lightgreen" }}>
                             <CardContent>
                                 <Typography variant="h3" sx={{ fontSize: 15 }}>Address: {defaultAccount}</Typography>
                                 <Typography variant="h3" sx={{ fontSize: 15 }}>Wallet Balance: {walletBalance}</Typography>
-                      
+
                             </CardContent>
                         </Card>
-                        
-                       
+
+
 
                     </>
 
@@ -149,12 +143,12 @@ const WalletConnect = ({
                         </Typography>
                     )
             }
-           
 
-      </>
-   
-    
-  )
+
+        </>
+
+
+    )
 }
 
 export default WalletConnect
