@@ -6,11 +6,15 @@ import Shop from './components/Shop';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { createTheme, ThemeProvider, Card, Container, CardContent } from '@mui/material'
-import { createContext } from "react";
-import LightFactory from './ABIs/abi_LightFactory.json'
-import LightGenerator from './ABIs/abi_LightGenerator.json'
 
-export const ContractContext = createContext();
+import { createContext, useEffect, useState } from "react";
+import LightFactory from './ABIs/LightFactory.json'
+import LightGenerator from './ABIs/LightGenerator.json'
+import { getWeb3, getFactoryContract } from "./utils"
+
+
+export const ContractContext = createContext(undefined);
+export const WalletContext = createContext();
 
 let theme = createTheme({
   palette: {
@@ -26,20 +30,28 @@ let theme = createTheme({
 
 
 function App() {
+  const [userAddress, setUserAddress] = useState(undefined)
 
   const contract = {
-    address: '0x89A86DDF445e04944a3B66Af6456B8979A584b74',
-    abi_LightFactory: LightFactory,
-    abi_LightGenerator: LightGenerator
+    address: LightFactory.address,
+    abi_LightFactory: LightFactory.abi,
+    abi_LightGenerator: LightGenerator.abi,
+    userAddress: userAddress
   }
+
+  useEffect(() => {
+    console.log("User just changed")
+  }, [userAddress])
 
   return (
 
     <>
       <ContractContext.Provider value={contract}>
+
         <ThemeProvider theme={theme}>
           <Header />
           <Card sx={{ height: '100vh', backgroundColor: '#EAEAEA' }}>
+
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/home' element={<Home />} />
