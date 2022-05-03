@@ -2,20 +2,19 @@ import React,{useEffect, useState} from 'react'
 import { SketchPicker } from 'react-color';
 
 const LightPicker = () => {
-  const [projectColor, setProjectColor] = useState("#F9A8D4");
+  const [projectColor, setProjectColor] = useState("#FFFFFF");
 
   const handleChangeComplete = (color) =>{
-    setProjectColor(JSON.stringify(color.rgb))
+    setProjectColor(color.hex)
   }
 
   useEffect(()=>{
-  console.log(projectColor)
+  console.log(JSON.stringify(projectColor))
   },[projectColor])
 
 return (
   <div className="p-4">
     <SketchPicker
-      colors={projectColor}
       color={projectColor}
       onChangeComplete={(c) => handleChangeComplete(c)}
     />

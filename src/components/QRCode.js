@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import pic from '../img/Sample_QR_code.png'
+import pic from '../img/Sample_QR_Code.jpg'
 import {
     Box,
     Button,

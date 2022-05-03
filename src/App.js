@@ -6,7 +6,7 @@ import Shop from './components/Shop';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { createTheme, ThemeProvider, Card, Container, CardContent } from '@mui/material'
-import {createContext } from "react";
+import { createContext } from "react";
 import LightFactory from './ABIs/abi_LightFactory.json'
 import LightGenerator from './ABIs/abi_LightGenerator.json'
 
@@ -15,10 +15,10 @@ export const ContractContext = createContext();
 let theme = createTheme({
   palette: {
     primary: {
-      main: '#BFBB53',
+      main: '#696969',
     },
     secondary: {
-      main: '#5357bf',
+      main: '#EAEAEA',
     }
   }
 })
@@ -36,21 +36,21 @@ function App() {
   return (
 
     <>
-    <ContractContext.Provider value={contract}>
-    <ThemeProvider theme={theme}>
-   <Header/>
-    <Card sx={{height:'100vh',backgroundColor:'#5357bf'}}>
-    <Routes>
-    <Route path='/' element ={<Home/>}/>
-    <Route path='/home' element ={<Home/>}/>
-    <Route path='/shop' element ={<Shop/>}/>
-    <Route path ='/admin' element = {<AdminMinting/>}/>     
-    </Routes>
-    </Card>
-    <Footer/>
-    </ThemeProvider>
-    </ContractContext.Provider>
- 
+      <ContractContext.Provider value={contract}>
+        <ThemeProvider theme={theme}>
+          <Header />
+          <Card sx={{ height: '100vh', backgroundColor: '#EAEAEA' }}>
+            <Routes>
+              <Route path='/' element={<Home />} />
+              <Route path='/home' element={<Home />} />
+              <Route path='/shop' element={<Shop />} />
+              <Route path='/admin' element={<AdminMinting />} />
+            </Routes>
+          </Card>
+          <Footer />
+        </ThemeProvider>
+      </ContractContext.Provider>
+
 
 
 
