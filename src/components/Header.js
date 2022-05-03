@@ -39,7 +39,6 @@ const useStyles = makeStyles((theme) => ({
 
 
 const pages = ['Home', 'Admin', 'Shop'];
-// const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 
 const Header = ({ setUserAddress, userAddress }) => {
@@ -135,75 +134,17 @@ const Header = ({ setUserAddress, userAddress }) => {
               <Link to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page}
               </Link>
-              // <Button
-              //   key={page}
-              //   onClick={handleCloseNavMenu}
-              //   sx={{ my: 2, color: 'white', display: 'block' }}
-              // >
-              //   {page}
-              // </Button>
             ))}
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {/* <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            </Menu> */}
+    
             <Button onClick={connectWallet} variant="contained">
             {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
           </Button>
           </Box>
         </Toolbar>
         </Container>
-      {/* <Grid container>
-        <Grid item xs={3} md={3} lg={6}>
-          <IconButton color="inherit">
-            <Avatar src={require("../img/minilogo.png")} />
-          </IconButton>
-
-          <Link to='home' className={classes.link}>
-            Home
-          </Link>
-
-          <Link to='admin' className={classes.link} >
-            Admin
-          </Link>
-
-          <Link to='shop' className={classes.link}>
-            Store
-          </Link>
-
-        </Grid>
-        <Grid container justifyContent="center" alignItems="flex-end" direction="column" paddingRight="5px">
-          <Button onClick={connectWallet} variant="contained">
-            {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
-          </Button>
-        </Grid>
-      </Grid> */}
     </AppBar >
   )
 }
