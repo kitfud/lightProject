@@ -2,7 +2,7 @@ import React,{useEffect, useState} from 'react'
 import { SketchPicker } from 'react-color';
 
 const LightPicker = () => {
-  const [projectColor, setProjectColor] = useState("#F9A8D4");
+  const [projectColor, setProjectColor] = useState("#FFFFFF");
 
   const handleChangeComplete = (color) =>{
     setProjectColor(color.hex)
@@ -20,6 +20,7 @@ return (
     />
     <div>
       {projectColor}
+
     </div>
   </div>
 )
