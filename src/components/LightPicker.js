@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React,{useEffect, useState} from 'react'
 import { SketchPicker } from 'react-color';
 
 const LightPicker = () => {
@@ -9,7 +9,7 @@ const LightPicker = () => {
   }
 
   useEffect(()=>{
-  console.log(JSON.stringify(projectColor))
+  console.log(projectColor)
   },[projectColor])
 
 return (
@@ -22,7 +22,8 @@ return (
       {projectColor}
 
     </div>
-  )
+  </div>
+)
 }
 
 export default LightPicker
