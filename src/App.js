@@ -47,11 +47,9 @@ function App() {
 
     <>
       <ContractContext.Provider value={contract}>
-
         <ThemeProvider theme={theme}>
-          <Header />
+          <Header setUserAddress={setUserAddress} userAddress={userAddress} />
           <Card sx={{ height: '100vh', backgroundColor: '#EAEAEA' }}>
-
             <Routes>
               <Route path='/' element={<Home />} />
               <Route path='/home' element={<Home />} />
@@ -62,10 +60,6 @@ function App() {
           <Footer />
         </ThemeProvider>
       </ContractContext.Provider>
-
-
-
-
     </>
 
   );
