@@ -37,12 +37,9 @@ const QRCode = () => {
         <Modal
           open={ open }
           onClose={ handleClose }
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description">
+          aria-labelledby="QRCode"
+          aria-describedby="Shows the QR code in a modal.">
           <Box>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              <center>Text in a modal</center>
-            </Typography>
             <center><img src={ pic} height="200" width="200" margintop="300px"/></center>
           </Box>
         </Modal>
