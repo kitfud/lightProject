@@ -25,21 +25,18 @@ const Home = ({ wallet }) => {
   }, [wallet])
 
   return (
-    <>
-      <Box textAlign='center'>
-        <h1>Crypto Lights</h1>
-        <center>
-          <LightPicker />
-        </center>
-        <br />
-        <br />
-
-        <center>
-          <QRCode />
-        </center>
-      </Box>
-    </>
-  )
-}
+      <>
+          <Box textAlign='center'>
+            <h1>Crypto Lights</h1>
+            <center>
+              <LightPicker/>
+            </center>
+            <br/>
+            <br/>
+            <QRCode/>
+          </Box>
+      </>
+    )
+  }
 
 export default Home

@@ -10,11 +10,26 @@ import {
     Grid,
     Modal
   } from '@mui/material'
+import { makeStyles } from "@mui/styles"
 import { elementAcceptingRef } from '@mui/utils'
+import QrCode2Icon from '@mui/icons-material/QrCode2';
+import { ThemeContext } from '@emotion/react'
+
+
+const useStyles = makeStyles({
+ 
+  qRPic: {
+    position: "fixed",
+    top: "50%",
+    left: "50%",
+    marginLeft: "-125px",
+    marginTop: "-125px"
+  }
+})
 
 
 const QRCode = () => {
-
+  const classes = useStyles()
   const howToQR = "Select a color, then click the button below."
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -23,30 +38,26 @@ const QRCode = () => {
   return (
 
     <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 3 }}>
-      <div>
-        {howToQR}
+      <Box>
+        { howToQR }
         <br/><br/>
-        <Button
-          className="qRButton" 
-          size="large"
-          variant='contained'
-          id="buttonQR"
+        <Button 
+          variant="contained"
+          size="large" 
+          endIcon={<QrCode2Icon />}
           onClick={ handleOpen }>
-            Get New QR Code
+            Get QR
         </Button>
         <Modal
           open={ open }
           onClose={ handleClose }
-          aria-labelledby="modal-modal-title"
-          aria-describedby="modal-modal-description">
-          <Box>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              <center>Text in a modal</center>
-            </Typography>
-            <center><img src={ pic} height="200" width="200" margintop="300px"/></center>
+          aria-labelledby="QRCode"
+          aria-describedby="Shows the QR code in a modal.">
+          <Box className={ classes.qRPic }>
+            <img src={ pic } height="250" width="250"/>
           </Box>
         </Modal>
-      </div>
+      </Box>
     </Grid>
   )
 }
