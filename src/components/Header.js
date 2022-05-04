@@ -1,17 +1,7 @@
 
-import React, { useContext, useEffect,useState } from 'react'
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+import React, { useEffect, useState } from 'react'
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, MenuItem } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
 import { Link } from "react-router-dom"
 import { makeStyles } from '@mui/styles'
 import { getWeb3, getFactoryContract } from "../utils"
@@ -42,12 +32,11 @@ const pages = ['Home', 'Admin', 'Shop'];
 
 
 const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, contract }) => {
-  const wallet = useContext(WalletContext)
   const classes = useStyles()
-  const [wrongNetwork, setWrongNetwork] = useState(false)  
+  const [wrongNetwork, setWrongNetwork] = useState(false)
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-  
+
   if (window.ethereum) {
     window.ethereum.on('chainChanged', function (networkId) {
       connectWallet()
@@ -109,9 +98,9 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
   }, [wallet])
 
   return (
-    
+
     <AppBar position="static">
-        <Container maxWidth="xl">
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
             variant="h6"
@@ -119,7 +108,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
-             <Avatar src={require("../img/minilogo.png")} />
+            <Avatar src={require("../img/minilogo.png")} />
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -175,17 +164,17 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-    
+
             {wallet && wrongNetwork ? (
-            <Button onClick={connectWallet} variant="contained" color="error">
-              Wrong network
-            </Button>) :
-            (<Button onClick={connectWallet} variant="contained">
-              {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
-            </Button>)}
+              <Button onClick={connectWallet} variant="contained" color="error">
+                Wrong network
+              </Button>) :
+              (<Button onClick={connectWallet} variant="contained">
+                {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
+              </Button>)}
           </Box>
         </Toolbar>
-        </Container>
+      </Container>
     </AppBar >
   )
 }

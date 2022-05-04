@@ -6,11 +6,8 @@ import Shop from './components/Shop';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import { createTheme, ThemeProvider, Card, Container, CardContent } from '@mui/material'
-
-import { createContext, useEffect, useState } from "react";
-import LightFactory from './ABIs/LightFactory.json'
-import LightGenerator from './ABIs/LightGenerator.json'
-import { getWeb3, getFactoryContract } from "./utils"
+import { useEffect, useState } from "react";
+import { getFactoryContract } from "./utils"
 import { DEPLOYMENT_ADDRESS } from "./ABIs/deployment_address"
 
 let theme = createTheme({
