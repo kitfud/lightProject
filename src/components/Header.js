@@ -37,6 +37,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
   const [wrongNetwork, setWrongNetwork] = useState(false)
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
+  const [buttonColor, setButtonColor] = useState("warning")
 
   if (window.ethereum) {
     window.ethereum.on('chainChanged', function (networkId) {
@@ -90,9 +91,11 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
       const chainId_hex = wallet.provider.provider.chainId
       const chainId = parseInt(chainId_hex, 16)
       const contract_chaindIds = LightFactoryInfo.networkId
+      setButtonColor("success")
       if (contract_chaindIds.includes(chainId)) {
         setWrongNetwork(false)
       } else {
+        
         setWrongNetwork(true)
       }
     }
@@ -141,6 +144,8 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
                 display: { xs: 'block', md: 'none' },
               }}
             >
+
+                
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
@@ -167,10 +172,14 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           <Box sx={{ flexGrow: 0 }}>
 
             {wallet && wrongNetwork ? (
-              <Button onClick={connectWallet} variant="contained" color="error">
+              <Button onClick={connectWallet} variant="contained" color={buttonColor}>
                 Wrong network
               </Button>) :
+<<<<<<< HEAD
               (<Button color={typeof userAddress !== "undefined" ? "success" : "warning"} onClick={connectWallet} variant="contained">
+=======
+              (<Button color={buttonColor} onClick={connectWallet} variant="contained">
+>>>>>>> a78abc9 (commiting local changes before master pull)
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
               </Button>)}
           </Box>
