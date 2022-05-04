@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Card, Button, Typography, Box, Grid, CircularProgress } from '@mui/material'
 import { ethers } from 'ethers'
 
-const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
+const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) => {
   const [nftPrice, setNFTPrice] = useState(undefined)
 
   const mintNFT = async () => {
@@ -20,6 +20,20 @@ const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
     setLoading(false)
   }
 
+  const checkIfTokenOwner = async () => {
+    // console.log(userAddress)
+    // console.log(contract)
+    let isOwner = await contract.checkIfTokenHolder(userAddress)
+    // console.log(isOwner)
+    console.log(isOwner)
+    let tokensOwned
+    if (isOwner) {
+      // tokensOwned = await contract.addressToTokenID(userAddress)
+      tokensOwned = await contract.addressToTokenID(userAddress)
+      console.log(tokensOwned)
+    }
+  }
+
   const getNFTPrice = async () => {
     try {
       const nft_price_BN = await contract.getNFTPriceInETH()
@@ -34,6 +48,9 @@ const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
   useEffect(() => {
     if (contract) {
       getNFTPrice()
+    }
+    if (wallet && contract) {
+      checkIfTokenOwner()
     }
   }, [wallet, contract])
 
