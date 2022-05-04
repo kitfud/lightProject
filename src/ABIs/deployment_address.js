@@ -1,1 +1,5 @@
+<<<<<<< HEAD
+export const DEPLOYMENT_ADDRESS = "0xFbe17B7D5759e1D8611E53cfFc75a5827f44A0fe"
+=======
 export const DEPLOYMENT_ADDRESS = "0xFbe17B7D5759e1D8611E53cfFc75a5827f44A0fe" 
+>>>>>>> master

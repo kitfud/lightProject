@@ -87,7 +87,11 @@ contract LightFactory is ERC721URIStorage, Ownable {
     function addressToTokenID(address toSearch) public view returns(uint256 [] memory){
          uint256 [] memory values = new uint256[](tokenCount);
          uint256 j;
+<<<<<<< HEAD
+         for (uint i=1 ; i<tokenCount ; i++){
+=======
          for (uint i=1; i<tokenCount ; i++){
+>>>>>>> master
             if(checkTokenOwnerById(i)== toSearch){
                 values[j]=i;
                 j++;
