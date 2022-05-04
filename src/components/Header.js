@@ -1,20 +1,11 @@
-import React, { useContext, useEffect } from 'react'
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import Typography from '@mui/material/Typography';
-import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
-import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
-import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
-import MenuItem from '@mui/material/MenuItem';
+
+import React, { useEffect, useState } from 'react'
+import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, MenuItem } from '@mui/material'
+import MenuIcon from '@mui/icons-material/Menu'
 import { Link } from "react-router-dom"
 import { makeStyles } from '@mui/styles'
-import { WalletContext } from "../App"
-import { getWeb3 } from "../utils"
+import { getWeb3, getFactoryContract } from "../utils"
+import LightFactoryInfo from "../ABIs/LightFactory.json"
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -37,15 +28,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-
 const pages = ['Home', 'Admin', 'Shop'];
 
 
-const Header = ({ setUserAddress, userAddress }) => {
-  const wallet = useContext(WalletContext)
+const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, contract }) => {
   const classes = useStyles()
-  const [anchorElNav, setAnchorElNav] = React.useState(null);
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
+  const [wrongNetwork, setWrongNetwork] = useState(false)
+  const [anchorElNav, setAnchorElNav] = useState(null);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+
+  if (window.ethereum) {
+    window.ethereum.on('chainChanged', function (networkId) {
+      connectWallet()
+    });
+  }
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -63,18 +59,48 @@ const Header = ({ setUserAddress, userAddress }) => {
   };
 
   const connectWallet = async () => {
-    const wallet = await getWeb3()
-    setUserAddress(wallet.provider.provider.selectedAddress)
+    if (!wallet) {
+      const wallet = await getWeb3()
+      let new_contract
+      if (contract) {
+        new_contract = contract.connect(wallet.signer)
+      } else {
+        new_contract = getFactoryContract(wallet.signer)
+      }
+      await setUserAddress(wallet.provider.provider.selectedAddress)
+      await setWallet(wallet)
+      await setContract(new_contract)
+    } else if (wallet && wrongNetwork) {
+      const contract_chaindId = LightFactoryInfo.networkId[0]
+      await wallet.provider.provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: "0x" + Number(contract_chaindId).toString(16) }],
+      })
+    } else {
+      await setUserAddress(undefined)
+      await setWallet(undefined)
+      const new_contract = getFactoryContract()
+      await setContract(new_contract)
+    }
   }
 
   useEffect(() => {
-
-  }, [userAddress])
+    if (wallet) {
+      const chainId_hex = wallet.provider.provider.chainId
+      const chainId = parseInt(chainId_hex, 16)
+      const contract_chaindIds = LightFactoryInfo.networkId
+      if (contract_chaindIds.includes(chainId)) {
+        setWrongNetwork(false)
+      } else {
+        setWrongNetwork(true)
+      }
+    }
+  }, [wallet])
 
   return (
-    
+
     <AppBar position="static">
-        <Container maxWidth="xl">
+      <Container maxWidth="xl">
         <Toolbar disableGutters>
           <Typography
             variant="h6"
@@ -82,7 +108,7 @@ const Header = ({ setUserAddress, userAddress }) => {
             component="div"
             sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
           >
-             <Avatar src={require("../img/minilogo.png")} />
+            <Avatar src={require("../img/minilogo.png")} />
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
@@ -138,13 +164,17 @@ const Header = ({ setUserAddress, userAddress }) => {
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-    
-            <Button onClick={connectWallet} variant="contained">
-            {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
-          </Button>
+
+            {wallet && wrongNetwork ? (
+              <Button onClick={connectWallet} variant="contained" color="error">
+                Wrong network
+              </Button>) :
+              (<Button onClick={connectWallet} variant="contained">
+                {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
+              </Button>)}
           </Box>
         </Toolbar>
-        </Container>
+      </Container>
     </AppBar >
   )
 }

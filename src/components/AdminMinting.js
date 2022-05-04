@@ -1,64 +1,41 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { Card, CardActions, CardContent, CardMedia, Button, Typography, TextField, Box, Grid } from '@mui/material'
-import { makeStyles } from "@material-ui/core/styles";
-import { ContractContext } from '../App';
-import { ethers, Signer } from 'ethers'
+import React, { useState, useEffect } from 'react'
+import { Card, Button, Typography, Box, Grid, CircularProgress } from '@mui/material'
+import { ethers } from 'ethers'
 
-const useStyles = makeStyles({
-  card: {
-    width: "75vh",
-    height: "80vh",
-    alignItems: "center"
-  },
-  cardMedia: {
-    // height: '100%',
-    // width: '100%'
-    width: "60vh",
-    height: "60vh",
-  },
-  Media: {
-    height: '100%',
-    width: '100%'
+const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
+  const [nftPrice, setNFTPrice] = useState(undefined)
+
+  const mintNFT = async () => {
+    setLoading(true)
+    try {
+      let tx = await contract.mintGenerator({ "value": ethers.utils.parseEther(nftPrice) })
+      await tx.wait(1)
+    } catch (error) {
+      if (error.code === 4001) {
+        console.log("Transaction cancelled")
+      } else {
+        console.log("An error occurred")
+      }
+    }
+    setLoading(false)
   }
-})
 
-const styles = {
-  media: {
-    // height: 0,
-    // paddingTop: '56.25%', // 16:9,
-    // marginTop: '30'
-  }
-};
-
-const AdminMinting = () => {
-  const classes = useStyles()
-
-  //below is some example code to show you how to use useContext to get contract info into component
-  const contractinfo = useContext(ContractContext)
-  // console.log(contractinfo.abi_LightFactory)
-
-  const [provider, setProvider] = useState(null)
-  const [signer, setSigner] = useState(null)
-  const [contract, setContract] = useState(null)
-
-  const updateEthers = async () => {
-
-    let tempProvider = await new ethers.providers.Web3Provider(window.ethereum);
-    setProvider(tempProvider);
-
-    let tempSigner = await tempProvider.getSigner();
-    setSigner(tempSigner);
-
-    //insert correct contract deployment address- currently set to null
-    let tempContract = await new ethers.Contract(contractinfo.address, contractinfo.abi_LightFactory, tempSigner);
-    setContract(tempContract);
+  const getNFTPrice = async () => {
+    try {
+      const nft_price_BN = await contract.getNFTPriceInETH()
+      const nft_price = ethers.utils.formatEther(nft_price_BN)
+      setNFTPrice(nft_price)
+    } catch (error) {
+      console.log(error)
+      // setNFTPrice(undefined)
+    }
   }
 
   useEffect(() => {
-    console.log(contractinfo.userAddress)
-    updateEthers()
-  }, [])
-
+    if (contract) {
+      getNFTPrice()
+    }
+  }, [wallet, contract])
 
   return (
     <>
@@ -67,20 +44,23 @@ const AdminMinting = () => {
           <img src={require('../img/Candy_Lamp.png')} />
         </Card>
         <Box style={{ display: "flex", justifyContent: 'center' }}>
-          {/* <div style={{ display: 'flex', justifyContent: 'center' }}> */}
-
           <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3 }}>
             <Typography gutterBottom variant="h5" component="div">
               NFT Minting
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Mint your NFT and set up the price.
+              Mint your NFT here!
             </Typography>
             <Typography variant="h1" color="text.secondary">
-              $9.99
+              {nftPrice ? ("ETH " + nftPrice) : ("--")}
             </Typography>
             <Box mr={2} ml={2}>
-              <Button color='warning' size="large" variant='contained' onClick={() => console.log("NFT Minted")} >Mint NFT</Button>
+              {wallet ? (
+                <Button color='warning' size="large" variant='contained' onClick={mintNFT} disabled={loading} >{loading ? (
+                  <CircularProgress />) : ("Mint NFT")} </Button>
+              ) : (
+                <Button color='warning' size="large" variant='contained' disabled >Connect wallet</Button>
+              )}
             </Box>
           </Card>
         </Box>
