@@ -15,7 +15,7 @@ const Shop = () => {
   }
 
   let user = myName();
-  console.log(user);
+  // console.log(user);
 
   const MyAnimal = () => {
     return (
@@ -31,11 +31,11 @@ const Shop = () => {
     return <div>Apple Pie</div>;
   };
 
-  1 === "1" ? console.log("true") : console.log("false");
+  // 1 === "1" ? console.log("true") : console.log("false");
 
   return (
     <>
-    {/* <div>Hello World</div> */}
+      {/* <div>Hello World</div> */}
       <div>{`my number is ${num}`}</div>
       <button onClick={changeNum}>Change Num</button>
       {num % 2 === 0 ? <MyAnimal /> : <MyDinner />}

@@ -157,7 +157,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Link to={page} onClick={handleCloseNavMenu} className={classes.link}>
+              <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page}
               </Link>
             ))}
