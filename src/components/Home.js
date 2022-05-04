@@ -10,10 +10,8 @@ import {
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QRCode from './QRCode';
-import { ContractContext } from "../App"
 
 const Home = ({ wallet }) => {
-  const contract = useContext(ContractContext)
 
   useEffect(() => {
     const init = async () => {
