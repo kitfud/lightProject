@@ -39,7 +39,7 @@ function App() {
     <>
       <ThemeProvider theme={theme}>
         <Header setUserAddress={setUserAddress} userAddress={userAddress} setWallet={setWallet} setContract={setContract} wallet={wallet} contract={contract} />
-        <Card sx={{ height: '100vh', backgroundColor: '#EAEAEA' }}>
+        <Card sx={{ height: '110vh', backgroundColor: '#EAEAEA' }}>
           <Routes>
             <Route path='/' element={<Home wallet={wallet} contract={contract} />} />
             <Route path='/home' element={<Home wallet={wallet} contract={contract} />} />

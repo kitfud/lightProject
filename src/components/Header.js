@@ -158,7 +158,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Link to={page} onClick={handleCloseNavMenu} className={classes.link}>
+              <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page}
               </Link>
             ))}
@@ -170,7 +170,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
               <Button onClick={connectWallet} variant="contained" color="error">
                 Wrong network
               </Button>) :
-              (<Button onClick={connectWallet} variant="contained">
+              (<Button color={typeof userAddress !== "undefined" ? "success" : "warning"} onClick={connectWallet} variant="contained">
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
               </Button>)}
           </Box>
