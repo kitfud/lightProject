@@ -22,10 +22,7 @@ const Home = () => {
             </center>
             <br/>
             <br/>
-            
-            <center>
-              <QRCode/>
-            </center>
+            <QRCode/>
           </Box>
       </>
     )
