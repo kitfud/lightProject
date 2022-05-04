@@ -142,7 +142,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
             >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography  textAlign="center">{page}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -157,7 +157,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Link to={page} onClick={handleCloseNavMenu} className={classes.link}>
+              <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page}
               </Link>
             ))}
