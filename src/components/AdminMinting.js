@@ -1,23 +1,56 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Button, Typography, Box, Grid, CircularProgress } from '@mui/material'
+import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
 
-const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
+const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) => {
+
   const [nftPrice, setNFTPrice] = useState(undefined)
+  const [alerts, setAlerts] = useState([false])
+
+  const handleAlerts = (msg, severity) => {
+    setAlerts([true, msg, severity])
+  }
+
+  const handleCloseAlerts = (event, reason) => {
+    if (reason === 'clickaway') {
+      console.log("here", reason)
+      return
+    }
+
+    setAlerts([false])
+  };
 
   const mintNFT = async () => {
-    setLoading(true)
-    try {
-      let tx = await contract.mintGenerator({ "value": ethers.utils.parseEther(nftPrice) })
-      await tx.wait(1)
-    } catch (error) {
-      if (error.code === 4001) {
-        console.log("Transaction cancelled")
-      } else {
-        console.log("An error occurred")
+    if (!loading) {
+      setLoading(true)
+      try {
+        let tx = await contract.mintGenerator({ "value": ethers.utils.parseEther(nftPrice) })
+        await tx.wait(1)
+        handleAlerts("NFT minted!", "success")
+      } catch (error) {
+        if (error.code === 4001) {
+          handleAlerts("Transaction cancelled", "warning")
+        } else {
+          handleAlerts("An error occurred", "error")
+        }
       }
+      setLoading(false)
     }
-    setLoading(false)
+  }
+
+  const checkIfTokenOwner = async () => {
+    // console.log(userAddress)
+    // console.log(contract)
+    let isOwner = await contract.checkIfTokenHolder(userAddress)
+    // console.log(isOwner)
+    console.log(isOwner)
+    let tokensOwned
+    if (isOwner) {
+      // tokensOwned = await contract.addressToTokenID(userAddress)
+      tokensOwned = await contract.addressToTokenID(userAddress)
+      console.log(tokensOwned)
+    }
   }
 
   const getNFTPrice = async () => {
@@ -26,8 +59,7 @@ const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
       const nft_price = ethers.utils.formatEther(nft_price_BN)
       setNFTPrice(nft_price)
     } catch (error) {
-      console.log(error)
-      // setNFTPrice(undefined)
+      setNFTPrice(undefined)
     }
   }
 
@@ -35,7 +67,16 @@ const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
     if (contract) {
       getNFTPrice()
     }
+    if (wallet && contract) {
+      checkIfTokenOwner()
+    }
   }, [wallet, contract])
+
+  useEffect(() => {
+    if (alerts[0]) {
+      setTimeout(handleCloseAlerts, 3000)
+    }
+  }, [alerts])
 
   return (
     <>
@@ -56,15 +97,21 @@ const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
             </Typography>
             <Box mr={2} ml={2}>
               {wallet ? (
-                <Button color='warning' size="large" variant='contained' onClick={mintNFT} disabled={loading} >{loading ? (
-                  <CircularProgress />) : ("Mint NFT")} </Button>
+                <Button color='warning' size="large" variant='contained' onClick={mintNFT} >{loading ? (
+                  <CircularProgress color="inherit" />) : ("Mint NFT")} </Button>
               ) : (
-                <Button color='warning' size="large" variant='contained' disabled >Connect wallet</Button>
+                <Button color='error' size="large" variant='contained' >Connect wallet</Button>
               )}
             </Box>
           </Card>
         </Box>
       </Grid>
+      <Snackbar TransitionComponent={Slide} onClick={handleCloseAlerts} autoHideDuration={6000} open={alerts[0]}>
+        <Alert onClick={handleCloseAlerts} elevation={6} variant="filled" severity={alerts[2]} sx={{ width: '100%' }}>
+          {alerts[1]} <IconButton size="small" aria-label="close" color="inherit" onClick={handleCloseAlerts}>
+            <CloseIcon fontSize="small" />  </IconButton>
+        </Alert>
+      </Snackbar>
     </>
   );
 }

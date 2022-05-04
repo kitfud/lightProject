@@ -5,6 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import { Link } from "react-router-dom"
 import { makeStyles } from '@mui/styles'
 import { getWeb3, getFactoryContract } from "../utils"
+import { ethers } from "ethers"
 import LightFactoryInfo from "../ABIs/LightFactory.json"
 
 const useStyles = makeStyles((theme) => ({
@@ -67,7 +68,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
       } else {
         new_contract = getFactoryContract(wallet.signer)
       }
-      await setUserAddress(wallet.provider.provider.selectedAddress)
+      await setUserAddress(ethers.utils.getAddress(wallet.provider.provider.selectedAddress))
       await setWallet(wallet)
       await setContract(new_contract)
     } else if (wallet && wrongNetwork) {
@@ -157,7 +158,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
-              <Link to={page} onClick={handleCloseNavMenu} className={classes.link}>
+              <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page}
               </Link>
             ))}
@@ -169,7 +170,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
               <Button onClick={connectWallet} variant="contained" color="error">
                 Wrong network
               </Button>) :
-              (<Button onClick={connectWallet} variant="contained">
+              (<Button color={typeof userAddress !== "undefined" ? "success" : "warning"} onClick={connectWallet} variant="contained">
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
               </Button>)}
           </Box>
