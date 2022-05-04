@@ -3,11 +3,8 @@ import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconBu
 import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
 
-// const Alert = React.forwardRef(function Alert(props, ref) {
-//   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-// });
+const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) => {
 
-const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
   const [nftPrice, setNFTPrice] = useState(undefined)
   const [alerts, setAlerts] = useState([false])
 
@@ -42,6 +39,20 @@ const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
     }
   }
 
+  const checkIfTokenOwner = async () => {
+    // console.log(userAddress)
+    // console.log(contract)
+    let isOwner = await contract.checkIfTokenHolder(userAddress)
+    // console.log(isOwner)
+    console.log(isOwner)
+    let tokensOwned
+    if (isOwner) {
+      // tokensOwned = await contract.addressToTokenID(userAddress)
+      tokensOwned = await contract.addressToTokenID(userAddress)
+      console.log(tokensOwned)
+    }
+  }
+
   const getNFTPrice = async () => {
     try {
       const nft_price_BN = await contract.getNFTPriceInETH()
@@ -55,6 +66,9 @@ const AdminMinting = ({ wallet, contract, loading, setLoading }) => {
   useEffect(() => {
     if (contract) {
       getNFTPrice()
+    }
+    if (wallet && contract) {
+      checkIfTokenOwner()
     }
   }, [wallet, contract])
 

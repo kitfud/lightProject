@@ -9,9 +9,10 @@ import {
   Grid
 } from '@mui/material';
 import LightPicker from './LightPicker';
-import QRCode from './QRCode';
+import QR_Code from './QR_Code';
 
-const Home = ({ wallet }) => {
+const Home = ({ wallet, contract }) => {
+  
 
   useEffect(() => {
     const init = async () => {
@@ -22,7 +23,7 @@ const Home = ({ wallet }) => {
       // }
     }
     init()
-  }, [wallet])
+  }, [wallet, contract])
 
   return (
       <>
@@ -33,7 +34,7 @@ const Home = ({ wallet }) => {
             </center>
             <br/>
             <br/>
-            <QRCode/>
+            <QR_Code wallet={wallet} contract={contract}/>
           </Box>
       </>
     )

@@ -5,6 +5,7 @@ import MenuIcon from '@mui/icons-material/Menu'
 import { Link } from "react-router-dom"
 import { makeStyles } from '@mui/styles'
 import { getWeb3, getFactoryContract } from "../utils"
+import { ethers } from "ethers"
 import LightFactoryInfo from "../ABIs/LightFactory.json"
 
 const useStyles = makeStyles((theme) => ({
@@ -67,7 +68,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
       } else {
         new_contract = getFactoryContract(wallet.signer)
       }
-      await setUserAddress(wallet.provider.provider.selectedAddress)
+      await setUserAddress(ethers.utils.getAddress(wallet.provider.provider.selectedAddress))
       await setWallet(wallet)
       await setContract(new_contract)
     } else if (wallet && wrongNetwork) {

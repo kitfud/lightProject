@@ -41,10 +41,10 @@ function App() {
         <Header setUserAddress={setUserAddress} userAddress={userAddress} setWallet={setWallet} setContract={setContract} wallet={wallet} contract={contract} />
         <Card sx={{ height: '110vh', backgroundColor: '#EAEAEA' }}>
           <Routes>
-            <Route path='/' element={<Home wallet={wallet} />} />
-            <Route path='/home' element={<Home wallet={wallet} />} />
+            <Route path='/' element={<Home wallet={wallet} contract={contract} />} />
+            <Route path='/home' element={<Home wallet={wallet} contract={contract} />} />
             <Route path='/shop' element={<Shop />} />
-            <Route path='/admin' element={<AdminMinting wallet={wallet} contract={contract} loading={loading} setLoading={setLoading} />} />
+            <Route path='/admin' element={<AdminMinting wallet={wallet} contract={contract} loading={loading} setLoading={setLoading} userAddress={userAddress} />} />
           </Routes>
         </Card>
         <Footer />
