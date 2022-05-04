@@ -55,7 +55,6 @@ const tiers = [
   },
 ];
 
-
 function PricingContent() {
   return (
     <React.Fragment>
@@ -154,6 +153,7 @@ function PricingContent() {
         </Grid>
       </Container>
     </React.Fragment>
+
   );
 }
 
