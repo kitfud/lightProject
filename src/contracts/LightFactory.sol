@@ -52,8 +52,9 @@ contract LightFactory is ERC721URIStorage, Ownable {
         return uint256(price)* 10**factor;
     }
 
-    function mintGenerator() public payable {
+    function mintGenerator(string memory _name) public payable {
         require(msg.value >= getNFTPriceInETH(),"Not Enough Eth to purchase NFT.");
+        // Change this to manage multiple addresses
         (bool sent,) = owner().call{value:msg.value}("");
         require(sent, "Failed to purchase NFT. Send Eth to buy.");
 
@@ -63,6 +64,7 @@ contract LightFactory is ERC721URIStorage, Ownable {
         LightGenerator generator = new LightGenerator(
             this,
             tokenCount,
+            _name,
             priceFeedAddress
         );
         tokenIDToGenerator[tokenCount] = generator;
@@ -85,10 +87,12 @@ contract LightFactory is ERC721URIStorage, Ownable {
 
     // check if a boolean mapping could work
     function addressToTokenID(address toSearch) public view returns(uint256 [] memory){
-         uint256 [] memory values = new uint256[](0);
+         uint256 [] memory values;
+         uint256 j;
          for (uint i=0 ; i<tokenCount ; i++){
-            if(checkTokenOwnerById(i)== toSearch){
-                values.push(i);
+            if(checkTokenOwnerById(i) == toSearch){
+                values[j] = i;
+                j++;
             }
         }
         return values;

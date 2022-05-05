@@ -11,6 +11,7 @@ contract LightGenerator {
     LightFactory public factory;
     uint256 public tokenId;
     uint256 public productCount;
+    string  public generatorName;
     // add a product object
     struct Product {
         uint256 id;
@@ -37,16 +38,21 @@ contract LightGenerator {
     event Deposit(address indexed payee, uint256 value, uint256 time, uint256 currentContractBalance);
     event Withdraw(uint256 time, uint256 amount, address indexed owner);
 
-    constructor (LightFactory _factory, uint256 id, address _priceFeedAddress) payable {
+    constructor (LightFactory _factory, uint256 id, string memory _name, address _priceFeedAddress) payable {
         // ethusd price feed address on rinkeby : 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         factory = _factory;
         tokenId = id;
+        generatorName = _name;
     }
 
     modifier onlyOwner {
-        require(msg.sender == factory.ownerOf(tokenId), "function is only for owner");
+        require(msg.sender == factory.ownerOf(tokenId), "Restricted to token owner");
         _;
+    }
+
+    function changeName(string memory _newName) external onlyOwner {
+        generatorName = _newName;
     }
 
     function getBalance() public view onlyOwner returns(uint256 balance){
@@ -119,6 +125,14 @@ contract LightGenerator {
             delete nameToProduct[prodName];
         }
         productCount = 0;
+    }
+
+    function getAllAvailableProducts() public view returns(Product[] memory){
+        Product[] memory productList;
+        for (uint i=0 ; i<productCount ; i++){
+            productList[i] = idToProduct[i];
+        }
+        return productList;
     }
 
     receive() external payable{
