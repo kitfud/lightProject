@@ -127,13 +127,13 @@ contract LightGenerator {
         productCount = 0;
     }
 
-    function getAllAvailableProducts() public view returns(Product[] memory){
-        Product[] memory productList;
-        for (uint i=0 ; i<productCount ; i++){
-            productList[i] = idToProduct[i];
-        }
-        return productList;
-    }
+    // function getAllAvailableProducts() public view returns(bool[] memory){
+    //     bool[] memory productList;
+    //     for (uint i=0 ; i<productCount ; i++){
+    //         productList[i] = idToProduct[i];
+    //     }
+    //     return productList;
+    // }
 
     receive() external payable{
         emit Deposit(msg.sender, msg.value,block.timestamp, address(this).balance);
