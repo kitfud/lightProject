@@ -27,7 +27,6 @@ contract LightFactory is ERC721URIStorage, Ownable {
     mapping(uint256 => LightGenerator) public tokenIDToGenerator;
     // mapping(address => bool) public addressOwnsToken; // could be useful
 
-
     constructor(address _priceFeedAddress) ERC721('Light Maker', 'VIBE') {
         // ethusd price feed address on rinkeby : 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         priceFeedAddress = _priceFeedAddress;
@@ -86,13 +85,11 @@ contract LightFactory is ERC721URIStorage, Ownable {
     }
 
     // check if a boolean mapping could work
-    function addressToTokenID(address toSearch) public view returns(uint256 [] memory){
-         uint256 [] memory values;
-         uint256 j;
+    function addressToTokenID(address toSearch) public view returns(bool[] memory){
+         bool[] memory values = new bool[](tokenCount);
          for (uint i=0 ; i<tokenCount ; i++){
             if(checkTokenOwnerById(i) == toSearch){
-                values[j] = i;
-                j++;
+                values[i] = true;
             }
         }
         return values;
