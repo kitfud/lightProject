@@ -75,7 +75,7 @@ contract LightFactory is ERC721URIStorage, Ownable {
 
 
     function checkIfTokenHolder(address toSearch) public view returns(bool) {
-        for (uint i = 1; i<=tokenCount;i++){
+        for (uint i=0 ; i<tokenCount ; i++){
             if(checkTokenOwnerById(i)== toSearch){
                 return true;
             }
@@ -86,8 +86,8 @@ contract LightFactory is ERC721URIStorage, Ownable {
     // check if a boolean mapping could work
     function addressToTokenID(address toSearch) public view returns(uint256 [] memory){
          uint256 [] memory values = new uint256[](tokenCount);
-         uint256 j; 
-         for (uint i=1 ; i<tokenCount ; i++){
+         uint256 j;
+         for (uint i=0 ; i<tokenCount ; i++){
             if(checkTokenOwnerById(i)== toSearch){
                 values[j]=i;
                 j++;
