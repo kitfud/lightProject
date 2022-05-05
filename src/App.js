@@ -21,8 +21,6 @@ let theme = createTheme({
   }
 })
 
-
-
 function App() {
   const [userAddress, setUserAddress] = useState(undefined)
   const [wallet, setWallet] = useState(undefined)
@@ -35,7 +33,6 @@ function App() {
   }, [])
 
   return (
-
     <>
       <ThemeProvider theme={theme}>
         <Header setUserAddress={setUserAddress} userAddress={userAddress} setWallet={setWallet} setContract={setContract} wallet={wallet} contract={contract} />
@@ -50,7 +47,6 @@ function App() {
         <Footer />
       </ThemeProvider>
     </>
-
   );
 }
 

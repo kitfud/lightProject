@@ -31,18 +31,14 @@ const useStyles = makeStyles((theme) => ({
 
 const pages = ['Home', 'Admin', 'Shop'];
 
+let first = true
+
 
 const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, contract }) => {
   const classes = useStyles()
   const [wrongNetwork, setWrongNetwork] = useState(false)
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
-
-  if (window.ethereum) {
-    window.ethereum.on('chainChanged', function (networkId) {
-      connectWallet()
-    });
-  }
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -84,6 +80,19 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
       await setContract(new_contract)
     }
   }
+
+  useEffect(() => {
+    if (window.ethereum && first) {
+      window.ethereum.on('chainChanged', function () {
+        connectWallet()
+      });
+      window.ethereum.on('accountsChanged', function () {
+        connectWallet()
+        connectWallet()
+      });
+      first = false
+    }
+  }, [])
 
   useEffect(() => {
     if (wallet) {
