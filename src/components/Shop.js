@@ -19,8 +19,6 @@ import img_arduino from '../img/arduino_uno_200.jpg';
 import img_led from '../img/led_strip200.jpg';
 import img_raspberry from '../img/raspberry_pi_zero_200.jpg';
 
-
-
 const tiers = [
   {
     title: 'Arduino Uno',
@@ -56,8 +54,20 @@ const tiers = [
 ];
 
 function PricingContent() {
-  return (
-    <React.Fragment>
+
+    const [num, setNum] = React.useState(0);
+
+    const changeNum = () => {
+      let number = num;
+      number++;
+      setNum(number);
+      console.log(num)
+      console.log('Soon this will get you to the store...')
+    };
+
+
+    return (
+      <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
       {/* Hero unit */}
@@ -130,7 +140,7 @@ function PricingContent() {
                   </ul>
                 </CardContent>
                 <CardActions>
-                  <Button fullWidth variant={tier.buttonVariant}>
+                  <Button fullWidth variant={tier.buttonVariant} onClick={changeNum}>
                     {tier.buttonText}
                   </Button>
                 </CardActions>
@@ -155,6 +165,7 @@ function PricingContent() {
     </React.Fragment>
 
   );
+  console.log(num)
 }
 
 export default function Pricing() {
