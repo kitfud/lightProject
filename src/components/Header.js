@@ -34,7 +34,7 @@ const pages = ['Home', 'Admin', 'Shop'];
 
 const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, contract }) => {
   const classes = useStyles()
-  const [wrongNetwork, setWrongNetwork] = useState(false)
+  const [wrongNetwork, setWrongNetwork] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [anchorElUser, setAnchorElUser] = useState(null);
 
