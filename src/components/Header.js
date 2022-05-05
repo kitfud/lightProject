@@ -7,6 +7,7 @@ import { makeStyles } from '@mui/styles'
 import { getWeb3, getFactoryContract } from "../utils"
 import { ethers } from "ethers"
 import LightFactoryInfo from "../ABIs/LightFactory.json"
+import DarkAndLightMode from './DarkAndLightMode'
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -111,7 +112,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           >
             <Avatar src={require("../img/minilogo.png")} />
           </Typography>
-
+          
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -156,12 +157,17 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           >
             LOGO
           </Typography>
+         
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page}
               </Link>
             ))}
+          </Box>
+
+          <Box sx={{ flexGrow: 1 }}>
+            <DarkAndLightMode />
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
