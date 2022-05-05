@@ -1,5 +1,5 @@
 import React,{useState,useEffect} from 'react'
-import {  Button, Box,  Typography, Card, Grid} from "@mui/material"
+import {  Button, Box, Typography, Card, Grid} from "@mui/material"
 import {connect} from "simple-web-serial";
 
 const HardwareConnect = ({colorData}) => {
@@ -15,7 +15,7 @@ const HardwareConnect = ({colorData}) => {
       }
 
       useEffect(()=>{
-        console.log("COLOR DATA: "+ colorData)
+        console.log("COLOR DATA: "+ JSON.stringify(colorData))
       
         if(colorData !== null && connectionStatus === true && connection !== null){
         console.log("COLOR SELECTION + PAYMENT MADE! MACHINE TRIGGERED")
