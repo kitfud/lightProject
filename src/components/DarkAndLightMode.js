@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import {
     Experimental_CssVarsProvider as CssVarsProvider,
-    useColorScheme,
-  } from '@mui/material/styles';
+    useColorScheme, experimental_extendTheme
+  } from '@mui/material/styles'
 import {
     Box,
     Button,
@@ -13,11 +13,35 @@ import {
     Grid,
     Modal
   } from '@mui/material'
-  import LightModeIcon from '@mui/icons-material/LightMode';
-  import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode'
+import DarkModeIcon from '@mui/icons-material/DarkMode'
+import { createTheme, ThemeProvider } from '@mui/material/styles'
+import { Theme as MuiTheme } from '@mui/material/styles'
+
+const theme = createTheme({
+    colorSchemes: {
+      light: {
+        palette: {
+          primary: "teal",
+          secondary: "deepOrange",
+        }
+      },
+      dark: {
+        palette: {
+          primary: "cyan",
+          secondary: "orange",
+        }
+      }
+    }
+  })
+
+/*
+  Couldn't figure out how to change the website colors based on light and dark mode. The only colors that change atm are the side bar, and LightPicker box colors.
+*/
 
   const ModeSwitcher = () => {
-    const { mode, setMode } = useColorScheme('light')
+    const { mode, setMode } = useColorScheme("light")
+    const { theme, setTheme } = createTheme()
     const [mounted, setMounted] = React.useState(false)
   
     React.useEffect(() => {
@@ -31,26 +55,28 @@ import {
     }
   
     return (
-      <Button
-        variant="contained"
-        onClick={() => {
-          if (mode === 'light') {
-            setMode('dark')
-          } else {
-            setMode('light')
-          }
-        }
-    }
-      >
-        {mode === 'light' ? <DarkModeIcon /> : <LightModeIcon />}
-        
-      </Button>
+        <Button
+            sx={{ color: "white" }}
+            onClick={() => {
+                if (mode === 'light') {
+                    setMode("dark")
+                    setTheme()
+                } else {
+                    setMode("light")
+                    setTheme("light")
+                }
+            }
+            }
+        >
+        {mode === "light" ? <DarkModeIcon sx={{ color: "white"}}/> : <LightModeIcon sx={{ color: "white"}}/>}
+    
+        </Button>
     );
   };
 
 const DarkAndLightMode = () => {
   return (
-    <CssVarsProvider>   
+    <CssVarsProvider theme= { theme }>   
         <ModeSwitcher/>
     </CssVarsProvider>
   )
