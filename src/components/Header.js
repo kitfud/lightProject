@@ -175,11 +175,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
               <Button onClick={connectWallet} variant="contained" color={buttonColor}>
                 Wrong network
               </Button>) :
-<<<<<<< HEAD
-              (<Button color={typeof userAddress !== "undefined" ? "success" : "warning"} onClick={connectWallet} variant="contained">
-=======
               (<Button color={buttonColor} onClick={connectWallet} variant="contained">
->>>>>>> a78abc9 (commiting local changes before master pull)
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
               </Button>)}
           </Box>

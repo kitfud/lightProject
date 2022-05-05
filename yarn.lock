@@ -5214,13 +5214,6 @@
   "resolved" "https://registry.npmjs.org/fs.realpath/-/fs.realpath-1.0.0.tgz"
   "version" "1.0.0"
 
-<<<<<<< HEAD
-"function-bind@^1.1.1":
-  "integrity" "sha512-yIovAzMX49sF8Yl58fSCWJ5svSLuaibPxXQJFLmBObTuCr0Mf1KiPopGM9NiFjiYBCbfaa2Fh6breQ6ANVTI0A=="
-  "resolved" "https://registry.npmjs.org/function-bind/-/function-bind-1.1.1.tgz"
-  "version" "1.1.1"
-
-=======
 "fsevents@^2.3.2", "fsevents@~2.3.2":
   "integrity" "sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA=="
   "resolved" "https://registry.npmjs.org/fsevents/-/fsevents-2.3.2.tgz"
@@ -5231,7 +5224,6 @@
   "resolved" "https://registry.npmjs.org/function-bind/-/function-bind-1.1.1.tgz"
   "version" "1.1.1"
 
->>>>>>> a78abc9 (commiting local changes before master pull)
 "functional-red-black-tree@^1.0.1":
   "integrity" "sha1-GwqzvVU7Kg1jmdKcDj6gslIHgyc="
   "resolved" "https://registry.npmjs.org/functional-red-black-tree/-/functional-red-black-tree-1.0.1.tgz"
@@ -8049,6 +8041,11 @@
   "resolved" "https://registry.npmjs.org/q/-/q-1.5.1.tgz"
   "version" "1.5.1"
 
+"qr.js@0.0.0":
+  "integrity" "sha1-ys6GOG9ZoNuAUPqQ2baw6IoeNk8="
+  "resolved" "https://registry.npmjs.org/qr.js/-/qr.js-0.0.0.tgz"
+  "version" "0.0.0"
+
 "qs@6.10.3":
   "integrity" "sha512-wr7M2E0OFRfIfJZjKGieI8lBKb7fRCH4Fv5KNPEs7gJ8jadvotdsS08PzOKR7opXhZ/Xkjtt3WF9g38drmyRqQ=="
   "resolved" "https://registry.npmjs.org/qs/-/qs-6.10.3.tgz"
@@ -8218,6 +8215,14 @@
   dependencies:
     "prop-types" "^15.5.6"
 
+"react-qr-code@^2.0.7":
+  "integrity" "sha512-NpknL80p7dWbLdHfBSIxQIqLCu3+kBlyzYD692rO0UnVwfCSziIxc1xn/p3JhPEv1RV1lRD8j0w+hR3L7tawTQ=="
+  "resolved" "https://registry.npmjs.org/react-qr-code/-/react-qr-code-2.0.7.tgz"
+  "version" "2.0.7"
+  dependencies:
+    "prop-types" "^15.7.2"
+    "qr.js" "0.0.0"
+
 "react-refresh@^0.11.0", "react-refresh@>=0.10.0 <1.0.0":
   "integrity" "sha512-F27qZr8uUqwhWZboondsPx8tnC3Ct3SxZA3V5WyEvujRyyNv0VYPhoBg1gZ8/MV5tubQp76Trw8lTv9hzRBa+A=="
   "resolved" "https://registry.npmjs.org/react-refresh/-/react-refresh-0.11.0.tgz"
@@ -8303,7 +8308,7 @@
     "loose-envify" "^1.4.0"
     "prop-types" "^15.6.2"
 
-"react@*", "react@^16.8.0 || ^17.0.0", "react@^17.0.0", "react@^17.0.0 || ^18.0.0", "react@^18.0.0", "react@^18.1.0", "react@>= 16", "react@>= 16.3.2", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0":
+"react@*", "react@^16.8.0 || ^17.0.0", "react@^16.x || ^17.x || ^18.x", "react@^17.0.0", "react@^17.0.0 || ^18.0.0", "react@^18.0.0", "react@^18.1.0", "react@>= 16", "react@>= 16.3.2", "react@>=16.6.0", "react@>=16.8", "react@>=16.8.0":
   "integrity" "sha512-4oL8ivCz5ZEPyclFQXaNksK3adutVS8l2xzZU0cqEFrE9Sb7fC0EFK5uEk74wIreL1DERyjvsU915j1pcT2uEQ=="
   "resolved" "https://registry.npmjs.org/react/-/react-18.1.0.tgz"
   "version" "18.1.0"
