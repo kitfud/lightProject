@@ -27,8 +27,22 @@ const Home = ({ wallet, contract }) => {
 
   return (
       <>
-          <Box textAlign='center'>
-            <h1>Crypto Lights</h1>
+         <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 3 }}>
+         <Card style={{ display: "flex", justifyContent: 'center', raised: true,width:'1250px', height:'175px'}}>
+                <img src={require('../img/YOUR-CO-LOGO-HERE.png')} />
+        </Card>
+        <Box style={{ display: "flex", justifyContent: 'center' }}>
+          <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3 }}>  
+            <Typography gutterBottom variant="h2" component="div">
+            Change the color first, then scan the QR code!
+            </Typography>
+
+            <Typography variant="body2" color="text.secondary">
+        
+            </Typography>
+            <Box textAlign='center'>
+            
+
             <center>
               <LightPicker/>
             </center>
@@ -36,6 +50,12 @@ const Home = ({ wallet, contract }) => {
             <br/>
             <QR_Code wallet={wallet} contract={contract}/>
           </Box>
+          </Card>
+        </Box>
+      </Grid>
+
+
+
       </>
     )
   }
