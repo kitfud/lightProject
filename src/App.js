@@ -10,14 +10,30 @@ import { useEffect, useState } from "react";
 import { getFactoryContract } from "./utils"
 import { DEPLOYMENT_ADDRESS } from "./ABIs/deployment_address"
 
-let theme = createTheme({
+let themeDayMode = createTheme({
+  
   palette: {
     primary: {
-      main: '#696969',
+      main: '#E7E708',
     },
     secondary: {
       main: '#EAEAEA',
     }
+
+  }
+})
+
+
+let themeNightMode = createTheme({
+  
+  palette: {
+    primary: {
+      main: '#000000',
+    },
+    secondary: {
+      main: '#EAEAEA',
+    }
+
   }
 })
 
@@ -26,16 +42,28 @@ function App() {
   const [wallet, setWallet] = useState(undefined)
   const [contract, setContract] = useState(undefined)
   const [loading, setLoading] = useState(false)
+  const [colorMode, setColorMode] = useState("day")
+
 
   useEffect(() => {
     const new_contract = getFactoryContract()
     setContract(new_contract)
   }, [])
 
+
   return (
     <>
-      <ThemeProvider theme={theme}>
-        <Header setUserAddress={setUserAddress} userAddress={userAddress} setWallet={setWallet} setContract={setContract} wallet={wallet} contract={contract} />
+      <ThemeProvider theme={colorMode === 'day'? themeDayMode : themeNightMode}>
+
+        <Header
+          setColorMode = {setColorMode} 
+          setUserAddress={setUserAddress} 
+          userAddress={userAddress} 
+          setWallet={setWallet} 
+          setContract={setContract} 
+          wallet={wallet} 
+          contract={contract} />
+
         <Card sx={{ height: '110vh', backgroundColor: '#EAEAEA' }}>
           <Routes>
             <Route path='/' element={<Home wallet={wallet} contract={contract} />} />

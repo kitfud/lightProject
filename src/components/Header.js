@@ -35,7 +35,16 @@ const pages = ['Home', 'Admin', 'Shop'];
 let first = true
 
 
-const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, contract }) => {
+const Header = ({
+    setColorMode, 
+    setUserAddress, 
+    userAddress, 
+    setWallet, 
+    setContract, 
+    wallet, 
+    contract }) => {
+
+
   const classes = useStyles()
   const [wrongNetwork, setWrongNetwork] = useState(false);
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -181,7 +190,7 @@ const Header = ({ setUserAddress, userAddress, setWallet, setContract, wallet, c
           </Box>
 
           <Box sx={{ flexGrow: 1 }}>
-            <DarkAndLightMode />
+            <DarkAndLightMode setColorMode={setColorMode} />
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
