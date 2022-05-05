@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide, CardMedia, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Checkbox, FormControlLabel } from '@mui/material'
+import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide, CardMedia, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Checkbox, FormControlLabel, Chip } from '@mui/material'
+import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
 
@@ -11,6 +12,7 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
   const [nftId, setNftId] = useState(undefined)
   const [productList, setProductList] = useState(undefined)
   const [useAutoName, setUseAutoName] = useState(true)
+  const [address, setAddress] = useState(undefined)
 
   const nftMintRef = useRef(undefined)
   const [size, setSize] = useState([100, 100])
@@ -75,9 +77,22 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
   }
 
   const getNFTProducts = async (event) => {
-    setNftId(event.target.value)
+
+    const new_nft_id = event.target.value
+    setNftId(new_nft_id)
+    const nft_address = await contract.getGeneratorContractAddressByToken(new_nft_id)
+    setAddress(nft_address)
     // const listOfProducts = await contract.getListOfProducts()
     // setProductList(listOfProducts)
+  }
+
+  const copyToClipboard = async () => {
+    // const text = evt.target.value
+    if ('clipboard' in navigator) {
+      return await navigator.clipboard.writeText(address);
+    } else {
+      return document.execCommand('copy', true, address);
+    }
   }
 
   useEffect(() => {
@@ -95,13 +110,6 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
     }
   }, [alerts])
 
-  useEffect(() => {
-    if (nftMintRef.current) {
-      let nftMintHeight = nftMintRef.current.offsetHeight;
-      let nftMintWidth = nftMintRef.current.offsetWidth;
-      setSize([nftMintWidth, nftMintHeight])
-    }
-  }, [nftMintRef])
 
   return (
     <>
@@ -158,6 +166,13 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
                     <MenuItem value={nft} key={nft}>{nft}</MenuItem>
                   ))}
                 </Select>
+                <FormControl sx={{ m: 1, minWidth: 300 }}>
+                  <Chip
+                    label={address ? address : "Address"}
+                    onClick={copyToClipboard}
+                    disabled={address ? false : true}
+                  />
+                </FormControl>
               </FormControl>
               <FormControl sx={{ m: 1, minWidth: 300 }}>
                 <InputLabel id="product-id">Product</InputLabel>
