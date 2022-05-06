@@ -20,18 +20,19 @@ const getWeb3 = async () => {
     }
 }
 
-const getFactoryContract = (signer = undefined) => {
+const getFactoryContract = async (signer = undefined) => {
     if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const factoryAddress = DEPLOYMENT_ADDRESS
         const factoryABI = LightFactory
         let factoryContract
         if (signer) {
-            factoryContract = new ethers.Contract(factoryAddress, factoryABI, signer)
+            factoryContract = await new ethers.Contract(factoryAddress, factoryABI, signer)
         } else {
-            factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider)
+            factoryContract = await new ethers.Contract(factoryAddress, factoryABI, provider)
         }
         return factoryContract
+        
     } else {
         return undefined
     }
