@@ -97,7 +97,7 @@ const Header = ({
       window.ethereum.on('chainChanged', function () {
         connectWallet()
       });
-      window.ethereum.on('accountsChanged', function () {
+      window.ethereum.on('accountsChanged', async function () {
         connectWallet()
         connectWallet()
       });
