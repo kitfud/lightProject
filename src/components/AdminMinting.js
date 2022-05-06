@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide, CardMedia, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Checkbox, FormControlLabel, Chip } from '@mui/material'
+import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide, CardMedia, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Checkbox, FormControlLabel, Chip, Tooltip } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
@@ -82,6 +82,15 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
         }
       }
       setNftList(new_tokensOwned_arr)
+      if (new_tokensOwned_arr.length === 1) {
+        setNftId(new_tokensOwned_arr[0])
+
+        const nft_address = await contract.tokenIDToGenerator(new_tokensOwned_arr[0])
+        setGeneratorAddress(nft_address)
+
+        const gen_contract = getGeneratorContract(nft_address, wallet.signer)
+        setGeneratorContract(gen_contract)
+      }
     }
   }
 
@@ -96,11 +105,18 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
   }
 
   const getNFTInfo = async (event = undefined) => {
+    let nft_id = undefined
+    if (typeof event !== "undefined") {
+      nft_id = event.target.value
+      setNftId(nft_id)
+    }
 
-    const nft_id = event.target.value
-    setNftId(nft_id)
-
-    const nft_address = await contract.tokenIDToGenerator(nft_id)
+    let nft_address
+    if (typeof nft_id !== "undefined") {
+      nft_address = await contract.tokenIDToGenerator(nft_id)
+    } else {
+      nft_address = await contract.tokenIDToGenerator(nftId)
+    }
     setGeneratorAddress(nft_address)
 
     const gen_contract = getGeneratorContract(nft_address, wallet.signer)
@@ -112,7 +128,7 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
       const products_num = await generatorContract.productCount()
       let listOfProducts = []
       for (let ii = 0; ii < products_num; ii++) {
-        const product = await generatorContract.products(ii)
+        const product = await generatorContract.idToProduct(ii)
         const product_obj = {
           id: parseInt(product.id, 16),
           name: product.name,
@@ -121,6 +137,9 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
         listOfProducts.push(product_obj)
       }
       setProductList(listOfProducts)
+      if (listOfProducts.length === 1) {
+        setProductId(listOfProducts[0].id)
+      }
     }
   }
 
@@ -176,6 +195,17 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
     }
   }
 
+  const resetAllFields = () => {
+    setGeneratorContract(undefined)
+    setGeneratorAddress(undefined)
+    setProductList([])
+    setProductId(undefined)
+    setProdCurrentPrice(undefined)
+    setNftList([])
+    setNftId(undefined)
+    setProductNewPrice(undefined)
+  }
+
   useEffect(() => {
     if (typeof productId !== "undefined") {
       for (let ii = 0; ii < productList.length; ii++) {
@@ -188,25 +218,34 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
   }, [productId])
 
   useEffect(() => {
-    if (generatorContract) {
-      updateProducts()
+    if (wallet && contract) {
+      checkIfTokenOwner()
+    }
+    if (!wallet) {
+      resetAllFields()
+    }
+  }, [wallet, loading])
+
+  useEffect(() => {
+    if (wallet && contract) {
+      checkIfTokenOwner()
     }
     if (contract) {
       getNFTPrice()
     }
-    if (wallet && contract) {
-      checkIfTokenOwner()
+  }, [contract])
+
+  useEffect(() => {
+    if (generatorContract) {
+      updateProducts()
     }
-  }, [wallet, contract, loading, generatorContract])
+  }, [generatorContract, loading])
 
   useEffect(() => {
     if (alerts[0]) {
       setTimeout(handleCloseAlerts, 3000)
     }
   }, [alerts])
-
-
-
 
   return (
     <>
@@ -264,11 +303,13 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
                   ))}
                 </Select>
                 <FormControl sx={{ m: 1, minWidth: 300 }}>
-                  <Chip
-                    label={generatorAddress ? generatorAddress : "Address"}
-                    onClick={copyToClipboard}
-                    disabled={generatorAddress ? false : true}
-                  />
+                  <Tooltip title="copy to clipboard">
+                    <Chip
+                      label={generatorAddress ? generatorAddress : "Address"}
+                      onClick={copyToClipboard}
+                      disabled={generatorAddress ? false : true}
+                    />
+                  </Tooltip>
                 </FormControl>
               </FormControl>
               <FormControl sx={{ m: 1, minWidth: 300 }}>
