@@ -11,8 +11,11 @@ import {
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 
-const Home = ({ wallet, contract }) => {
-  
+const Home = ({ wallet, contract, selectGeneratorAddress }) => {
+
+  useEffect(() => {
+    console.log(selectGeneratorAddress)
+  }, [])
 
   useEffect(() => {
     const init = async () => {

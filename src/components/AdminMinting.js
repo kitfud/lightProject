@@ -4,7 +4,7 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 
-const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) => {
+const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress, setSelectGeneratorAddress }) => {
 
   const [nftPrice, setNFTPrice] = useState(undefined)
   const [alerts, setAlerts] = useState([false])
@@ -205,6 +205,15 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
     setNftId(undefined)
     setProductNewPrice(undefined)
   }
+
+  useEffect(() => {
+    if (generatorAddress !== undefined) {
+      console.log("setting generator address")
+      console.log(generatorAddress + " in AdminMinting component")
+
+      setGeneratorAddress(generatorAddress)
+    }
+  }, [generatorAddress])
 
   useEffect(() => {
     if (typeof productId !== "undefined") {
