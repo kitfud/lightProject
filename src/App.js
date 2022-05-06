@@ -5,13 +5,12 @@ import { Routes, Route } from 'react-router-dom'
 import Shop from './components/Shop';
 import Header from './components/Header';
 import Footer from './components/Footer';
-import { createTheme, ThemeProvider, Card, Container, CardContent } from '@mui/material'
+import { createTheme, ThemeProvider, Card } from '@mui/material'
 import { useEffect, useState } from "react";
 import { getFactoryContract } from "./utils"
-import { DEPLOYMENT_ADDRESS } from "./ABIs/deployment_address"
 
 let themeDayMode = createTheme({
-  
+
   palette: {
     primary: {
       main: '#E7E708',
@@ -25,7 +24,7 @@ let themeDayMode = createTheme({
 
 
 let themeNightMode = createTheme({
-  
+
   palette: {
     primary: {
       main: '#000000',
@@ -53,15 +52,15 @@ function App() {
 
   return (
     <>
-      <ThemeProvider theme={colorMode === 'day'? themeDayMode : themeNightMode}>
+      <ThemeProvider theme={colorMode === 'day' ? themeDayMode : themeNightMode}>
 
         <Header
-          setColorMode = {setColorMode} 
-          setUserAddress={setUserAddress} 
-          userAddress={userAddress} 
-          setWallet={setWallet} 
-          setContract={setContract} 
-          wallet={wallet} 
+          setColorMode={setColorMode}
+          setUserAddress={setUserAddress}
+          userAddress={userAddress}
+          setWallet={setWallet}
+          setContract={setContract}
+          wallet={wallet}
           contract={contract} />
 
         <Card sx={{ height: '110vh', backgroundColor: '#EAEAEA' }}>
