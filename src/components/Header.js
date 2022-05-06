@@ -6,8 +6,8 @@ import { Link } from "react-router-dom"
 import { makeStyles } from '@mui/styles'
 import { getWeb3, getFactoryContract } from "../utils"
 import { ethers } from "ethers"
-import LightFactoryInfo from "../ABIs/LightFactory.json"
 import DarkAndLightMode from './DarkAndLightMode'
+import { CHAIN_ID } from "../ABIs/deployment_address.js"
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -36,13 +36,13 @@ let first = true
 
 
 const Header = ({
-    setColorMode, 
-    setUserAddress, 
-    userAddress, 
-    setWallet, 
-    setContract, 
-    wallet, 
-    contract }) => {
+  setColorMode,
+  setUserAddress,
+  userAddress,
+  setWallet,
+  setContract,
+  wallet,
+  contract }) => {
 
 
   const classes = useStyles()
@@ -79,10 +79,10 @@ const Header = ({
       await setWallet(wallet)
       await setContract(new_contract)
     } else if (wallet && wrongNetwork) {
-      const contract_chaindId = LightFactoryInfo.networkId[0]
+      const contract_chainId = CHAIN_ID
       await wallet.provider.provider.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: "0x" + Number(contract_chaindId).toString(16) }],
+        params: [{ chainId: "0x" + Number(contract_chainId).toString(16) }],
       })
     } else {
       await setUserAddress(undefined)
@@ -109,12 +109,12 @@ const Header = ({
     if (wallet) {
       const chainId_hex = wallet.provider.provider.chainId
       const chainId = parseInt(chainId_hex, 16)
-      const contract_chaindIds = LightFactoryInfo.networkId
+      const contract_chainIds = CHAIN_ID
       setButtonColor("success")
-      if (contract_chaindIds.includes(chainId)) {
+      if (contract_chainIds == chainId) {
         setWrongNetwork(false)
       } else {
-        
+
         setWrongNetwork(true)
       }
     }
@@ -133,7 +133,7 @@ const Header = ({
           >
             <Avatar src={require("../img/minilogo.png")} />
           </Typography>
-          
+
           <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
             <IconButton
               size="large"
@@ -164,7 +164,7 @@ const Header = ({
               }}
             >
 
-                
+
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
@@ -180,7 +180,7 @@ const Header = ({
           >
             LOGO
           </Typography>
-         
+
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
