@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide, CardMedia, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Checkbox, FormControlLabel, Chip } from '@mui/material'
-import ContentCopyIcon from '@mui/icons-material/ContentCopy';
 import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
+import { getGeneratorContract } from "../utils"
 
 const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) => {
 
@@ -12,10 +12,18 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
   const [nftId, setNftId] = useState(undefined)
   const [productList, setProductList] = useState(undefined)
   const [useAutoName, setUseAutoName] = useState(true)
-  const [address, setAddress] = useState(undefined)
+  const [nftNameInput, setNftNameInput] = useState("")
 
   const nftMintRef = useRef(undefined)
   const [size, setSize] = useState([100, 100])
+
+  // Generator
+  const [generatorContract, setGeneratorContract] = useState(undefined)
+  const [generatorAddress, setGeneratorAddress] = useState(undefined)
+
+  // New product name
+  const [newProductName, setNewProductName] = useState(undefined)
+  const [newProductPrice, setNewProducPrice] = useState(undefined)
 
   const handleAlerts = (msg, severity) => {
     setAlerts([true, msg, severity])
@@ -33,8 +41,17 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
   const mintNFT = async () => {
     if (!loading) {
       setLoading(true)
+      let nftName
+      if (useAutoName) {
+        const inital = Math.floor(Math.random() * userAddress.length)
+        const final = Math.floor(Math.random() * userAddress.length)
+        nftName = "Candy Lamps " + userAddress.substr(0, 6) + userAddress.substr(inital, final)
+      } else {
+        nftName = nftNameInput
+      }
+
       try {
-        let tx = await contract.mintGenerator({ "value": ethers.utils.parseEther(nftPrice) })
+        let tx = await contract.mintGenerator(nftName, { "value": ethers.utils.parseEther(nftPrice) })
         await tx.wait(1)
         handleAlerts("NFT minted!", "success")
       } catch (error) {
@@ -57,10 +74,11 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
     let tokensOwned
     if (isOwner) {
       tokensOwned = await contract.addressToTokenID(userAddress)
-      // console.log(tokensOwned)
       let new_tokensOwned_arr = []
       for (let ii = 0; ii < tokensOwned.length; ii++) {
-        new_tokensOwned_arr[ii] = parseInt(tokensOwned[ii]._hex, 16)
+        if (tokensOwned[ii] === true) {
+          new_tokensOwned_arr.push(ii)
+        }
       }
       setNftList(new_tokensOwned_arr)
     }
@@ -76,39 +94,80 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
     }
   }
 
-  const getNFTProducts = async (event) => {
+  const getNFTProducts = async (event = undefined) => {
 
-    const new_nft_id = event.target.value
-    setNftId(new_nft_id)
-    const nft_address = await contract.getGeneratorContractAddressByToken(new_nft_id)
-    setAddress(nft_address)
-    // const listOfProducts = await contract.getListOfProducts()
-    // setProductList(listOfProducts)
+    const nft_id = event.target.value
+    setNftId(nft_id)
+
+    const nft_address = await contract.tokenIDToGenerator(nft_id)
+    setGeneratorAddress(nft_address)
+
+    const gen_contract = getGeneratorContract(nft_address, wallet.signer)
+    setGeneratorContract(gen_contract)
+
+    // await updateProducts()
+  }
+
+  const updateProducts = async () => {
+    if (generatorContract) {
+      const listOfProducts = await generatorContract.products()
+      console.log(listOfProducts)
+      setProductList(listOfProducts)
+    }
+  }
+
+  const getNFTName = (evt) => {
+    const name = evt.target.value
+    setNftNameInput(name)
+  }
+
+  const addNewProduct = async () => {
+    if (!loading) {
+      setLoading(true)
+      const tx = await generatorContract.addProduct(newProductName, ethers.utils.parseEther(newProductPrice))
+      await tx.wait(1)
+      setLoading(false)
+    }
+  }
+
+  const getNewProductName = (evt) => {
+    const new_name = evt.target.value
+    setNewProductName(new_name)
+  }
+
+  const getNewProductPrice = (evt) => {
+    const new_price = evt.target.value
+    setNewProducPrice(new_price)
   }
 
   const copyToClipboard = async () => {
     // const text = evt.target.value
     if ('clipboard' in navigator) {
-      return await navigator.clipboard.writeText(address);
+      return await navigator.clipboard.writeText(generatorAddress);
     } else {
-      return document.execCommand('copy', true, address);
+      return document.execCommand('copy', true, generatorAddress);
     }
   }
 
   useEffect(() => {
+    if (generatorContract) {
+      updateProducts()
+    }
     if (contract) {
       getNFTPrice()
     }
     if (wallet && contract) {
       checkIfTokenOwner()
     }
-  }, [wallet, contract])
+  }, [wallet, contract, loading, generatorContract])
 
   useEffect(() => {
     if (alerts[0]) {
       setTimeout(handleCloseAlerts, 3000)
     }
   }, [alerts])
+
+
 
 
   return (
@@ -133,7 +192,7 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
                 {nftPrice ? ("Price: ETH " + nftPrice) : ("Price: not available")}
               </Typography>
               <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <TextField id="outlined-basic" label="NFT Name" variant="outlined" disabled={useAutoName ? true : false} />
+                <TextField onChange={getNFTName} id="outlined-basic" label="NFT Name" variant="outlined" disabled={useAutoName ? true : false} />
                 <FormControlLabel control={<Checkbox checked={useAutoName} onChange={(evt) => setUseAutoName(evt.target.checked)} color="info" />} label="Use auto generated name" />
               </FormControl>
               <Box mr={2} ml={2}>
@@ -168,9 +227,9 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
                 </Select>
                 <FormControl sx={{ m: 1, minWidth: 300 }}>
                   <Chip
-                    label={address ? address : "Address"}
+                    label={generatorAddress ? generatorAddress : "Address"}
                     onClick={copyToClipboard}
-                    disabled={address ? false : true}
+                    disabled={generatorAddress ? false : true}
                   />
                 </FormControl>
               </FormControl>
@@ -213,7 +272,8 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
                     startAdornment: <InputAdornment position="start">ETH</InputAdornment>,
                   }}
                 />
-                <Button variant="contained" color="secondary">Set price</Button>
+                <Button variant="contained" color="secondary">{loading ? (
+                  <CircularProgress color="inherit" />) : ("Set price")}</Button>
               </FormControl>
               <FormControl sx={{ padding: 3 }}>
                 <TextField
@@ -221,9 +281,11 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
                   id="filled-required"
                   label="Name"
                   variant="filled"
+                  onChange={getNewProductName}
                 />
                 <TextField
                   required
+                  onChange={getNewProductPrice}
                   id="filled-number"
                   label="Price"
                   type="number"
@@ -235,7 +297,8 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
                     startAdornment: <InputAdornment position="start">ETH</InputAdornment>,
                   }}
                 />
-                <Button variant="contained" color="secondary">Add product</Button>
+                <Button variant="contained" color="secondary" onClick={addNewProduct}>{loading ? (
+                  <CircularProgress color="inherit" />) : ("Add product")}</Button>
               </FormControl>
             </Card>
           </Box>

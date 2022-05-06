@@ -1,5 +1,6 @@
 import { ethers } from "ethers"
 import LightFactory from './ABIs/LightFactory.json'
+import LightGenerator from './ABIs/LightGenerator.json'
 import { DEPLOYMENT_ADDRESS } from "./ABIs/deployment_address"
 
 const getWeb3 = async () => {
@@ -23,7 +24,7 @@ const getFactoryContract = (signer = undefined) => {
     if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const factoryAddress = DEPLOYMENT_ADDRESS
-        const factoryABI = LightFactory.abi
+        const factoryABI = LightFactory
         let factoryContract
         if (signer) {
             factoryContract = new ethers.Contract(factoryAddress, factoryABI, signer)
@@ -36,4 +37,20 @@ const getFactoryContract = (signer = undefined) => {
     }
 }
 
-export { getWeb3, getFactoryContract }
+const getGeneratorContract = (generatorAddress, signer = undefined) => {
+    if (window.ethereum) {
+        const provider = new ethers.providers.Web3Provider(window.ethereum)
+        const generatorABI = LightGenerator
+        let generatorContract
+        if (signer) {
+            generatorContract = new ethers.Contract(generatorAddress, generatorABI, signer)
+        } else {
+            generatorContract = new ethers.Contract(generatorAddress, generatorABI, provider)
+        }
+        return generatorContract
+    } else {
+        return undefined
+    }
+}
+
+export { getWeb3, getFactoryContract, getGeneratorContract }
