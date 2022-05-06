@@ -9,28 +9,28 @@ import { createTheme, ThemeProvider, Card } from '@mui/material'
 import { useEffect, useState } from "react";
 import { getFactoryContract } from "./utils"
 
-let themeDayMode = createTheme({
+let themeLightMode = createTheme({
 
   palette: {
     primary: {
-      main: '#E7E708',
+      main: '#696969',
     },
     secondary: {
-      main: '#EAEAEA',
+      main: '#EDEDED',
     }
 
   }
 })
 
 
-let themeNightMode = createTheme({
+let themeDarkMode = createTheme({
 
   palette: {
     primary: {
-      main: '#000000',
+      main: '#7B7B7B',
     },
     secondary: {
-      main: '#EAEAEA',
+      main: '#353535',
     }
 
   }
@@ -41,7 +41,7 @@ function App() {
   const [wallet, setWallet] = useState(undefined)
   const [contract, setContract] = useState(undefined)
   const [loading, setLoading] = useState(false)
-  const [colorMode, setColorMode] = useState("day")
+  const [colorMode, setColorMode] = useState("light")
 
 
   useEffect(() => {
@@ -52,7 +52,7 @@ function App() {
 
   return (
     <>
-      <ThemeProvider theme={colorMode === 'day' ? themeDayMode : themeNightMode}>
+      <ThemeProvider theme={colorMode === "light" ? themeLightMode : themeDarkMode}>
 
         <Header
           setColorMode={setColorMode}
@@ -63,7 +63,7 @@ function App() {
           wallet={wallet}
           contract={contract} />
 
-        <Card sx={{ height: '110vh', backgroundColor: '#EAEAEA' }}>
+        <Card sx={{ height: '110vh', bgcolor: "secondary.main" }}>
           <Routes>
             <Route path='/' element={<Home wallet={wallet} contract={contract} />} />
             <Route path='/home' element={<Home wallet={wallet} contract={contract} />} />

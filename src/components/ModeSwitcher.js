@@ -29,11 +29,11 @@ const ModeSwitcher = ({setColorMode}) => {
             onClick={() => {
                 if (mode === 'light') {
                     setMode("dark")
-                    setColorMode("night")
+                    setColorMode("dark")
                    
                 } else {
                     setMode("light")
-                    setColorMode("day")
+                    setColorMode("light")
                 }
             }
             }
