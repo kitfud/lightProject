@@ -11,10 +11,11 @@ import {
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 
-const Home = ({ wallet, contract, selectGeneratorAddress }) => {
+const Home = ({ wallet, contract, selectGeneratorAddress, selectedProduct, selectProductPrice }) => {
 
+  
   useEffect(() => {
-    console.log(selectGeneratorAddress)
+    console.log(selectProductPrice)
   }, [])
 
   useEffect(() => {
