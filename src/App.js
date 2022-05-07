@@ -43,12 +43,16 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("light")
   const [selectGeneratorAddress, setSelectGeneratorAddress] = useState(undefined)
+  const [selectedProduct, setSelectedProduct] = useState("clowny")
+  const [selectProductPrice, setSelectProductPrice] = useState(undefined)
+
+
 
 
   useEffect(() => {
-    console.log("In app js component " + selectGeneratorAddress )
+    console.log("In app js component " + selectProductPrice )
     
-  }, [])
+  }, [selectProductPrice])
 
   useEffect(() => {
     const new_contract = getFactoryContract()
@@ -77,6 +81,8 @@ function App() {
                 wallet={wallet}
                 contract={contract}
                 selectGeneratorAddress={selectGeneratorAddress}
+                selectedProduct={selectedProduct}
+                selectProductPrice={selectProductPrice}
               />} />
             <Route path='/shop' element={<Shop />} />
             <Route path='/admin' element={
@@ -87,6 +93,8 @@ function App() {
                 setLoading={setLoading}
                 userAddress={userAddress}
                 setSelectGeneratorAddress={setSelectGeneratorAddress}
+                setSelectedProduct={setSelectedProduct}
+                setSelectProductPrice={setSelectProductPrice}
             
             />} />
           </Routes>

@@ -4,7 +4,16 @@ import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 
-const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress, setSelectGeneratorAddress }) => {
+const AdminMinting = ({ 
+    wallet,
+    contract,
+    loading,
+    setLoading,
+    userAddress,
+    setSelectGeneratorAddress,
+    setSelectedProduct,
+    setSelectProductPrice
+  }) => {
 
   const [nftPrice, setNFTPrice] = useState(undefined)
   const [alerts, setAlerts] = useState([false])
@@ -139,6 +148,9 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress, setS
       setProductList(listOfProducts)
       if (listOfProducts.length === 1) {
         setProductId(listOfProducts[0].id)
+        if (listOfProducts[0].id !== undefined) {
+          setSelectedProduct(listOfProducts[0].id)
+        }
       }
     }
   }
@@ -207,19 +219,24 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress, setS
   }
 
   useEffect(() => {
-    if (generatorAddress !== undefined) {
-      console.log("setting generator address")
-      console.log(generatorAddress + " in AdminMinting component")
+    if(productId !== undefined) {
+      setProductId(productId)
+    }
+  }, [productId])
 
-      setGeneratorAddress(generatorAddress)
+  useEffect(() => {
+    if (generatorAddress !== undefined) {
+      setSelectGeneratorAddress(generatorAddress)
     }
   }, [generatorAddress])
 
   useEffect(() => {
-    if (typeof productId !== "undefined") {
+    if (productId !== undefined) {
+      setSelectedProduct(productId)
       for (let ii = 0; ii < productList.length; ii++) {
         if (productList[ii].id == productId) {
           setProdCurrentPrice(productList[ii].priceETH)
+          setSelectProductPrice(productList[ii].priceETH)
           break
         }
       }
@@ -227,12 +244,15 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress, setS
   }, [productId])
 
   useEffect(() => {
-    if (wallet && contract) {
-      checkIfTokenOwner()
-    }
-    if (!wallet) {
-      resetAllFields()
-    }
+    if (!loading) {
+ 
+      if (wallet && contract) {
+        checkIfTokenOwner()
+      }
+      if (!wallet) {
+        resetAllFields()
+      }
+  }
   }, [wallet, loading])
 
   useEffect(() => {
@@ -328,7 +348,7 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress, setS
                   id="product-id"
                   label="Product"
                   onChange={handleProductList}
-                  value={typeof productId !== "undefined" ? productId : ""}
+                  value={productId !== undefined ? productId : ""}
                   disabled={productList ? false : true}
                 >
                   {productList.map(product => (
