@@ -42,7 +42,17 @@ function App() {
   const [contract, setContract] = useState(undefined)
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("light")
+  const [selectGeneratorAddress, setSelectGeneratorAddress] = useState(undefined)
+  const [selectedProduct, setSelectedProduct] = useState("clowny")
+  const [selectProductPrice, setSelectProductPrice] = useState(undefined)
 
+
+
+
+  useEffect(() => {
+    console.log("In app js component " + selectProductPrice )
+    
+  }, [selectProductPrice])
 
   useEffect(() => {
     const new_contract = getFactoryContract()
@@ -66,9 +76,27 @@ function App() {
         <Card sx={{ height: '110vh', bgcolor: "secondary.main" }}>
           <Routes>
             <Route path='/' element={<Home wallet={wallet} contract={contract} />} />
-            <Route path='/home' element={<Home wallet={wallet} contract={contract} />} />
+            <Route path='/home' element={
+              <Home
+                wallet={wallet}
+                contract={contract}
+                selectGeneratorAddress={selectGeneratorAddress}
+                selectedProduct={selectedProduct}
+                selectProductPrice={selectProductPrice}
+              />} />
             <Route path='/shop' element={<Shop />} />
-            <Route path='/admin' element={<AdminMinting wallet={wallet} contract={contract} loading={loading} setLoading={setLoading} userAddress={userAddress} />} />
+            <Route path='/admin' element={
+              <AdminMinting
+                wallet={wallet}
+                contract={contract}
+                loading={loading}
+                setLoading={setLoading}
+                userAddress={userAddress}
+                setSelectGeneratorAddress={setSelectGeneratorAddress}
+                setSelectedProduct={setSelectedProduct}
+                setSelectProductPrice={setSelectProductPrice}
+            
+            />} />
           </Routes>
         </Card>
         <Footer />

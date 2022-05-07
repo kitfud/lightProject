@@ -5,7 +5,16 @@ import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 import HardwareConnect from "./HardwareConnect"
 
-const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) => {
+const AdminMinting = ({ 
+    wallet,
+    contract,
+    loading,
+    setLoading,
+    userAddress,
+    setSelectGeneratorAddress,
+    setSelectedProduct,
+    setSelectProductPrice
+  }) => {
 
   const [nftPrice, setNFTPrice] = useState(undefined)
   const [alerts, setAlerts] = useState([false])
@@ -154,6 +163,9 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
       setProductList(listOfProducts)
       if (listOfProducts.length === 1) {
         setProductId(listOfProducts[0].id)
+        if (listOfProducts[0].id !== undefined) {
+          setSelectedProduct(listOfProducts[0].id)
+        }
       }
     }
   }
@@ -294,7 +306,20 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
   }
 
   useEffect(() => {
-    if (typeof productId !== "undefined") {
+    if(productId !== undefined) {
+      setProductId(productId)
+    }
+  }, [productId])
+
+  useEffect(() => {
+    if (generatorAddress !== undefined) {
+      setSelectGeneratorAddress(generatorAddress)
+    }
+  }, [generatorAddress])
+
+  useEffect(() => {
+    if (productId !== undefined) {
+      setSelectedProduct(productId)
       for (let ii = 0; ii < productList.length; ii++) {
         if (productList[ii].id == productId) {
           setProdCurrentPrice(productList[ii].priceUSD)
@@ -425,7 +450,7 @@ const AdminMinting = ({ wallet, contract, loading, setLoading, userAddress }) =>
                   id="product-id"
                   label="Product"
                   onChange={handleProductList}
-                  value={typeof productId !== "undefined" ? productId : ""}
+                  value={productId !== undefined ? productId : ""}
                   disabled={productList ? false : true}
                 >
                   {productList.map(product => (

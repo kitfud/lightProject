@@ -11,8 +11,12 @@ import {
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 
-const Home = ({ wallet, contract }) => {
+const Home = ({ wallet, contract, selectGeneratorAddress, selectedProduct, selectProductPrice }) => {
+
   
+  useEffect(() => {
+    console.log(selectProductPrice)
+  }, [])
 
   useEffect(() => {
     const init = async () => {
@@ -34,7 +38,12 @@ const Home = ({ wallet, contract }) => {
             </center>
             <br/>
             <br/>
-            <QR_Code wallet={wallet} contract={contract}/>
+            <QR_Code 
+              wallet={wallet}
+              contract={contract}
+              selectProductPrice={selectProductPrice}
+              selectGeneratorAddress={selectGeneratorAddress}  
+            />
           </Box>
       </>
     )
