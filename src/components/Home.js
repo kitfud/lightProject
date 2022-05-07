@@ -38,7 +38,12 @@ const Home = ({ wallet, contract, selectGeneratorAddress, selectedProduct, selec
             </center>
             <br/>
             <br/>
-            <QR_Code wallet={wallet} contract={contract}/>
+            <QR_Code 
+              wallet={wallet}
+              contract={contract}
+              selectProductPrice={selectProductPrice}
+              selectGeneratorAddress={selectGeneratorAddress}  
+            />
           </Box>
       </>
     )
