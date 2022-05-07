@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide, CardMedia, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Checkbox, FormControlLabel, Chip, Tooltip } from '@mui/material'
+import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide, CardMedia, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Checkbox, FormControlLabel, Chip, Tooltip, Container } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
+import HardwareConnect from "./HardwareConnect"
 
 const AdminMinting = ({ 
     wallet,
@@ -22,6 +23,9 @@ const AdminMinting = ({
   const nftMintRef = useRef(undefined)
   const [size, setSize] = useState([100, 100])
 
+  // Factory Info
+  const [ETHUSDConvertionRate, setETHUSDConvertionRate] = useState(undefined)
+
   // Generator Info
   const [generatorContract, setGeneratorContract] = useState(undefined)
   const [generatorAddress, setGeneratorAddress] = useState(undefined)
@@ -31,6 +35,7 @@ const AdminMinting = ({
   const [nftList, setNftList] = useState([])
   const [nftId, setNftId] = useState(undefined)
   const [productNewPrice, setProductNewPrice] = useState(undefined)
+  const [generatorBalance, setGeneratorBalance] = useState(undefined)
 
   // New product name
   const [newProductName, setNewProductName] = useState(undefined)
@@ -75,8 +80,11 @@ const AdminMinting = ({
           handleAlerts("An unknown error occurred", "error")
         }
       }
-      setLoading(false)
+    } else if (loading) {
+      handleAlerts("Loading... Cannot execute while loading", "warning")
     }
+
+    setLoading(false)
   }
 
   const checkIfTokenOwner = async () => {
@@ -99,15 +107,19 @@ const AdminMinting = ({
 
         const gen_contract = getGeneratorContract(nft_address, wallet.signer)
         setGeneratorContract(gen_contract)
+
+        const gen_balance = await gen_contract.getBalance()
+        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance)))
       }
     }
   }
 
   const getNFTPrice = async () => {
     try {
-      const nft_price_BN = await contract.getNFTPriceInETH()
+      await getETHUSDConvertionRate()
+      const nft_price_BN = await contract.currentNFTPriceInUSD()
       const nft_price = ethers.utils.formatEther(nft_price_BN)
-      setNFTPrice(nft_price)
+      setNFTPrice(parseFloat(nft_price).toFixed(2))
     } catch (error) {
       setNFTPrice(undefined)
     }
@@ -130,6 +142,9 @@ const AdminMinting = ({
 
     const gen_contract = getGeneratorContract(nft_address, wallet.signer)
     setGeneratorContract(gen_contract)
+
+    const gen_balance = await gen_contract.getBalance()
+    setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance)))
   }
 
   const updateProducts = async () => {
@@ -141,7 +156,7 @@ const AdminMinting = ({
         const product_obj = {
           id: parseInt(product.id, 16),
           name: product.name,
-          priceETH: parseFloat(ethers.utils.formatEther(product.priceUSD))
+          priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2)
         }
         listOfProducts.push(product_obj)
       }
@@ -162,20 +177,60 @@ const AdminMinting = ({
 
   const addNewProduct = async () => {
     if (!loading) {
-      setLoading(true)
-      const tx = await generatorContract.addProduct(newProductName, ethers.utils.parseEther(newProductPrice))
-      await tx.wait(1)
-      setLoading(false)
+      try {
+        setLoading(true)
+        const tx = await generatorContract.addProduct(newProductName, ethers.utils.parseEther(newProductPrice))
+        await tx.wait(1)
+        setNewProducPrice(undefined)
+        setNewProductName(undefined)
+      } catch (error) {
+        if (error.code === 4001) {
+          handleAlerts("Transaction cancelled", "warning")
+        } else if (error.code === "INSUFFICIENT_FUNDS") {
+          handleAlerts("Insufficient funds for gas * price + value", "warning")
+        } else if (error.code === -32602 || error.code === -32603) {
+          handleAlerts("Internal error", "error")
+        } else {
+          handleAlerts("An unknown error occurred", "error")
+        }
+      }
+    } else if (loading) {
+      handleAlerts("Loading... Cannot execute while loading", "warning")
     }
+    setLoading(false)
   }
 
   const setNewProductPrice = async () => {
     if (!loading) {
       setLoading(true)
-      const tx = await generatorContract.changeProductPrice(productId, ethers.utils.parseEther(productNewPrice))
-      await tx.wait(1)
-      setLoading(false)
+      try {
+        const tx = await generatorContract.changeProductPrice(productId, ethers.utils.parseEther(productNewPrice))
+        await tx.wait(1)
+        const product = await generatorContract.idToProduct(productId)
+        const new_product_list = productList
+        for (let ii = 0; ii < new_product_list.length; ii++) {
+          if (new_product_list[ii].id === productId) {
+            new_product_list[ii].priceUSD = productNewPrice
+            break
+          }
+        }
+        setProdCurrentPrice(productNewPrice)
+        setProductNewPrice(undefined)
+      } catch (error) {
+        if (error.code === 4001) {
+          handleAlerts("Transaction cancelled", "warning")
+        } else if (error.code === "INSUFFICIENT_FUNDS") {
+          handleAlerts("Insufficient funds for gas * price + value", "warning")
+        } else if (error.code === -32602 || error.code === -32603) {
+          handleAlerts("Internal error", "error")
+        } else {
+          handleAlerts("An unknown error occurred", "error")
+        }
+      }
+    } else if (loading) {
+      handleAlerts("Loading... Cannot execute while loading", "warning")
     }
+    setLoading(false)
   }
 
   const getNewProductName = (evt) => {
@@ -196,6 +251,38 @@ const AdminMinting = ({
   const handleProductChangePrice = (evt) => {
     const new_price = evt.target.value
     setProductNewPrice(new_price)
+  }
+
+  const getETHUSDConvertionRate = async () => {
+    const convertion_rate = await contract.getETHUSDConversionRate()
+    setETHUSDConvertionRate(ethers.utils.formatEther(convertion_rate))
+  }
+
+  const withdrawBalance = async () => {
+    try {
+      if (generatorBalance > 0 && !loading) {
+        setLoading(true)
+        const tx = await generatorContract.withdraw()
+        await tx.wait(1)
+        const gen_balance = await generatorContract.getBalance()
+        setGeneratorBalance(gen_balance)
+      } else if (generatorBalance <= 0) {
+        handleAlerts("Not enough balance", "warning")
+      } else if (loading) {
+        handleAlerts("Loading... Cannot execute while loading", "info")
+      }
+    } catch (error) {
+      if (error.code === 4001) {
+        handleAlerts("Transaction cancelled", "warning")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        handleAlerts("Insufficient funds for gas * price + value", "warning")
+      } else if (error.code === -32602 || error.code === -32603) {
+        handleAlerts("Internal error", "error")
+      } else {
+        handleAlerts("An unknown error occurred", "error")
+      }
+    }
+    setLoading(false)
   }
 
   const copyToClipboard = async () => {
@@ -235,8 +322,7 @@ const AdminMinting = ({
       setSelectedProduct(productId)
       for (let ii = 0; ii < productList.length; ii++) {
         if (productList[ii].id == productId) {
-          setProdCurrentPrice(productList[ii].priceETH)
-          setSelectProductPrice(productList[ii].priceETH)
+          setProdCurrentPrice(productList[ii].priceUSD)
           break
         }
       }
@@ -244,15 +330,13 @@ const AdminMinting = ({
   }, [productId])
 
   useEffect(() => {
-    if (!loading) {
- 
-      if (wallet && contract) {
-        checkIfTokenOwner()
-      }
-      if (!wallet) {
-        resetAllFields()
-      }
-  }
+    if (wallet && contract) {
+      checkIfTokenOwner()
+    }
+    if (!wallet) {
+      resetAllFields()
+    }
+    getETHUSDConvertionRate()
   }, [wallet, loading])
 
   useEffect(() => {
@@ -268,7 +352,7 @@ const AdminMinting = ({
     if (generatorContract) {
       updateProducts()
     }
-  }, [generatorContract, loading])
+  }, [generatorContract, loading, prodCurrentPrice])
 
   useEffect(() => {
     if (alerts[0]) {
@@ -279,9 +363,6 @@ const AdminMinting = ({
   return (
     <>
       <Grid container sx={{ alignItems: "center", display: "flex", drection: "column", marginTop: 3, justifyContent: "space-around" }} >
-        {/* <Card style={{ transform: "scale(0.5)", objectFit: 'cover', raised: true }}>
-          <img src={require('../img/Candy_Lamp.png')} alt="nft" />
-        </Card> */}
         <Grid >
           <Box style={{ display: "flex", justifyContent: 'center' }}>
             <Card ref={nftMintRef} sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3 }}>
@@ -295,7 +376,7 @@ const AdminMinting = ({
                 NFT Minting
               </Typography>
               <Typography variant="h6" color="text.secondary">
-                {nftPrice ? ("Price: ETH " + nftPrice) : ("Price: not available")}
+                {nftPrice ? (`Price: USD ${nftPrice} (ETH ${(nftPrice / ETHUSDConvertionRate).toFixed(6)})`) : ("Price: not available")}
               </Typography>
               <FormControl sx={{ m: 1, minWidth: 300 }}>
                 <TextField onChange={getNFTName} id="outlined-basic" label="NFT Name" variant="outlined" disabled={useAutoName ? true : false} />
@@ -315,7 +396,7 @@ const AdminMinting = ({
         <Grid>
           <Box style={{ display: "flex", justifyContent: 'center' }}>
             <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
-              <Typography gutterBottom variant="h3" component="div">
+              <Typography gutterBottom variant="h5" component="div">
                 Owned NFTs
               </Typography>
               <FormControl sx={{ m: 1, minWidth: 300 }}>
@@ -341,6 +422,27 @@ const AdminMinting = ({
                   </Tooltip>
                 </FormControl>
               </FormControl>
+              <HardwareConnect />
+              <FormControl sx={{ padding: 1, marginBottom: 1 }}>
+                <TextField
+                  disabled
+                  id="filled-number"
+                  label="Balance"
+                  type="number"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                  variant="filled"
+                  InputProps={{
+                    startAdornment: <InputAdornment position="start">USD</InputAdornment>,
+                    endAdornment: <InputAdornment position="end">{generatorBalance ? `(ETH ${(generatorBalance / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
+                  }}
+                  value={typeof generatorBalance !== "undefined" ? generatorBalance.toFixed(2) : ""}
+                  sx={{ maxWidth: 300 }}
+                />
+                <Button onClick={withdrawBalance} variant="contained" color="secondary">{loading ? (
+                  <CircularProgress color="inherit" />) : ("Withdraw")}</Button>
+              </FormControl>
               <FormControl sx={{ m: 1, minWidth: 300 }}>
                 <InputLabel id="product-id">Product</InputLabel>
                 <Select
@@ -356,20 +458,23 @@ const AdminMinting = ({
                   ))}
                 </Select>
               </FormControl>
-              <FormControl sx={{ padding: 3 }}>
+              <FormControl sx={{ padding: 1 }}>
                 <TextField
                   disabled
                   id="filled-required"
                   label="Current price"
                   variant="filled"
                   InputProps={{
-                    startAdornment: <InputAdornment position="start">ETH</InputAdornment>,
+                    startAdornment: <InputAdornment position="start">USD</InputAdornment>,
+                    endAdornment: <InputAdornment position="end">{prodCurrentPrice ? `(ETH ${(prodCurrentPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
                   }}
                   value={prodCurrentPrice ? prodCurrentPrice : ""}
+                  sx={{ maxWidth: 300 }}
                 />
               </FormControl>
-              <FormControl sx={{ padding: 3 }}>
+              <FormControl sx={{ padding: 1 }}>
                 <TextField
+                  required
                   id="filled-number"
                   label="Price"
                   type="number"
@@ -379,19 +484,23 @@ const AdminMinting = ({
                   onChange={handleProductChangePrice}
                   variant="filled"
                   InputProps={{
-                    startAdornment: <InputAdornment position="start">ETH</InputAdornment>,
+                    startAdornment: <InputAdornment position="start">USD</InputAdornment>,
+                    endAdornment: <InputAdornment position="end">{productNewPrice ? `(ETH ${(productNewPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
                   }}
+                  value={typeof productNewPrice !== "undefined" ? productNewPrice : ""}
+                  sx={{ maxWidth: 300 }}
                 />
                 <Button onClick={setNewProductPrice} variant="contained" color="secondary">{loading ? (
                   <CircularProgress color="inherit" />) : ("Set price")}</Button>
               </FormControl>
-              <FormControl sx={{ padding: 3 }}>
+              <FormControl sx={{ padding: 1 }}>
                 <TextField
                   required
                   id="filled-required"
                   label="Name"
                   variant="filled"
                   onChange={getNewProductName}
+                  value={typeof newProductName !== "undefined" ? newProductName : ""}
                 />
                 <TextField
                   required
@@ -402,10 +511,13 @@ const AdminMinting = ({
                   InputLabelProps={{
                     shrink: true,
                   }}
+                  value={typeof newProductPrice !== "undefined" ? newProductPrice : ""}
                   variant="filled"
                   InputProps={{
-                    startAdornment: <InputAdornment position="start">ETH</InputAdornment>,
+                    startAdornment: <InputAdornment position="start">USD</InputAdornment>,
+                    endAdornment: <InputAdornment position="end">{newProductPrice ? `(ETH ${(newProductPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
                   }}
+                  sx={{ maxWidth: 300 }}
                 />
                 <Button variant="contained" color="secondary" onClick={addNewProduct}>{loading ? (
                   <CircularProgress color="inherit" />) : ("Add product")}</Button>
