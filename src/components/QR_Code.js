@@ -28,7 +28,7 @@ const useStyles = makeStyles({
     left: "50%",
     marginLeft: "-125px",
     marginTop: "-125px"
-  }
+  },
 })
 
 const theme = createTheme({
@@ -42,7 +42,7 @@ const theme = createTheme({
 
 
 
-const QR_Code = ({ wallet, contract }) => {
+const QR_Code = ({ wallet, contract, selectProductPrice, selectGeneratorAddress }) => {
   const classes = useStyles()
   const howToQR = "Select a color, then click the button below."
   const [open, setOpen] = React.useState(false);
@@ -86,7 +86,17 @@ const QR_Code = ({ wallet, contract }) => {
             aria-describedby="Shows the QR code in a modal.">
             <Box className={ classes.qRPic }>
               <div style={{ background: 'white', padding: '16px' }}>
-                <QRCode value='hey' />
+                <QRCode value={selectGeneratorAddress} />
+                  <Typography>
+                    <Box>
+                      Price:  
+                      {selectProductPrice}
+                    </Box>
+                    <Box>
+                      Address:  
+                      {selectGeneratorAddress}
+                    </Box>
+                  </Typography>
                 {/* Select NFT and Token of address you selected */}
               </div>
             </Box>
