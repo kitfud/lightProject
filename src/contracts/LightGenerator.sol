@@ -1,18 +1,27 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
-import "./LightFactory.sol";
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "./ProductContract.sol";
+import "./ILightGenerator.sol";
 
 // TO DO: decide if the products will only be local or a contract
+// TO DO: change the factory contract call to an interface call and use only the needed functions.
+// MAYBE: The aggregator function could be removed and imported from an ILightFactory interface.. try
+//        Or if we opt for an NFT price in ETH, the aggregator won'y be needed in the factory contract.
+// TO DO: Think about te lottery logic and the NFT generation for each light bought.
 
-contract LightGenerator {
+contract LightGenerator is ILightGenerator {
 
-    LightFactory public factory;
-    uint256 public tokenId;
+    address public factoryAddress;
+    address payable owner;
+    uint256 immutable public tokenId;
     uint256 public productCount;
     string  public generatorName;
-    // add a product object
+    uint256 public selectedProductId;
+    bool public canSelectProduct;
+
     struct Product {
         uint256 id;
         string name;
@@ -20,10 +29,13 @@ contract LightGenerator {
     }
 
     AggregatorV3Interface internal ETHUSDPriceFeed;
-    Product[] public products; // products history, record of all products ever added until reinitialized
+    Product[] public productsCompleteHistory; // products history, record of all products ever added or modified until reinitialized
     mapping(uint256 => Product) public idToProduct; // keep in mind mappings cannot be deleted in solidity
     mapping(string => Product) public nameToProduct;
-    // mapping(uint256 => bool) public productAvailable;
+    mapping(uint256 => address) public idToProductContract;
+    ProductContract[] public productContracts;
+
+
     event ProductSold(
         uint256 indexed _id,
         address buyer,
@@ -38,16 +50,17 @@ contract LightGenerator {
     event Deposit(address indexed payee, uint256 value, uint256 time, uint256 currentContractBalance);
     event Withdraw(uint256 time, uint256 amount, address indexed owner);
 
-    constructor (LightFactory _factory, uint256 id, string memory _name, address _priceFeedAddress) payable {
+    constructor (address _factoryAddress, uint256 id, string memory _name, address _priceFeedAddress) payable {
         // ethusd price feed address on rinkeby : 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
-        factory = _factory;
+        factoryAddress = _factoryAddress; // create an interface - should lower the gas
         tokenId = id;
+        owner = payable(IERC721(factoryAddress).ownerOf(tokenId));
         generatorName = _name;
     }
 
     modifier onlyOwner {
-        require(msg.sender == factory.ownerOf(tokenId), "Restricted to token owner");
+        require(msg.sender == owner, "Restricted to token owner");
         _;
     }
 
@@ -55,18 +68,19 @@ contract LightGenerator {
         generatorName = _newName;
     }
 
+    // remove - gas reasons
     function getBalance() public view onlyOwner returns(uint256 balance){
         balance = address(this).balance;
     }
 
     function withdraw() public onlyOwner() {
         uint256 contractBalance = address(this).balance;
-        address owner = factory.ownerOf(tokenId);
         (bool sent,) = owner.call{value:address(this).balance}("");
-        require(sent,"Failed to Send Ether To Owner");
+        require(sent, 'Failed to Send Ether To Owner');
         emit Withdraw(block.timestamp, contractBalance, owner);
     }
 
+    // remove - gas reasons
     function getAddress() public view returns (address){
         return address(this);
     }
@@ -90,9 +104,20 @@ contract LightGenerator {
             currentProduct.name,
             _priceUSD
         );
-        products.push(modProduct);
+        productsCompleteHistory.push(modProduct);
         idToProduct[currentProduct.id] = modProduct;
         nameToProduct[currentProduct.name] = modProduct;
+        productContracts[_id].changePrice(_priceUSD);
+    }
+
+    // In case we want to create a product selector before payment
+    // - works together with the boolean canSelectProduct -
+    // should not work though because people could exhaust the account
+    // by changing the product selection wityhout buying
+    function selectProduct(uint256 _productId) external {
+        require(canSelectProduct, "An operation is already ongoin");
+        require(_productId < productCount, "Product not listed");
+        selectedProductId = _productId;
     }
 
     function buyProduct(uint256 productId) payable external {
@@ -108,21 +133,26 @@ contract LightGenerator {
 
     function addProduct(string memory _name, uint256 _price) public onlyOwner {
         Product memory newProduct = Product(productCount, _name, _price);
-        products.push(newProduct);
+        productsCompleteHistory.push(newProduct);
         idToProduct[productCount] = newProduct;
         nameToProduct[_name] = newProduct;
+        ProductContract newContract = new ProductContract(productCount, _name, _price, owner);
+        productContracts.push(newContract);
+        idToProductContract[productCount] = payable(newContract);
+
         emit ProductAdded(productCount, _name, block.timestamp);
         productCount++ ;
     }
 
     function reinitializeProductsHistory() public onlyOwner {
         // Will cost a lot of gas if the product list is large, careful
-        delete products;
+        delete productsCompleteHistory;
         for (uint256 i ; i<productCount ; i++) {
             Product memory prod = idToProduct[i];
             string memory prodName = prod.name;
             delete idToProduct[i];
             delete nameToProduct[prodName];
+            productContracts[i].destroy();
         }
         productCount = 0;
     }
@@ -135,6 +165,13 @@ contract LightGenerator {
     //     return productList;
     // }
 
+
+    // // metamask cannot handle function calls but MyCrypto can.
+    // fallback() external payable {
+    //     // we can try top implement a diff check, the closest to 0 and within +- 10Gwei is selected
+    //     buyProduct()
+    // }
+    // 2300 gas max
     receive() external payable{
         emit Deposit(msg.sender, msg.value,block.timestamp, address(this).balance);
     }

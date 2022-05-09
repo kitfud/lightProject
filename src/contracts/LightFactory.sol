@@ -1,7 +1,7 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
@@ -61,7 +61,7 @@ contract LightFactory is ERC721URIStorage, Ownable {
         _safeMint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, NFT_URI);
         LightGenerator generator = new LightGenerator(
-            this,
+            address(this),
             tokenCount,
             _name,
             priceFeedAddress
@@ -95,6 +95,7 @@ contract LightFactory is ERC721URIStorage, Ownable {
         return values;
     }
 
+    // remove for gas reasons
     function getGeneratorContractAddressByToken(uint256 tokenId) public view returns (address){
         return tokenIDToGenerator[tokenId].getAddress();
     }
