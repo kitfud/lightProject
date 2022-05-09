@@ -5,16 +5,16 @@ import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 import HardwareConnect from "./HardwareConnect"
 
-const AdminMinting = ({ 
-    wallet,
-    contract,
-    loading,
-    setLoading,
-    userAddress,
-    setSelectGeneratorAddress,
-    setSelectedProduct,
-    setSelectProductPrice
-  }) => {
+const AdminMinting = ({
+  wallet,
+  contract,
+  loading,
+  setLoading,
+  userAddress,
+  setSelectGeneratorAddress,
+  setSelectedProduct,
+  setSelectProductPrice
+}) => {
 
   const [nftPrice, setNFTPrice] = useState(undefined)
   const [alerts, setAlerts] = useState([false])
@@ -66,7 +66,7 @@ const AdminMinting = ({
       }
 
       try {
-        let tx = await contract.mintGenerator(nftName, { "value": ethers.utils.parseEther(nftPrice) })
+        let tx = await contract.mintGenerator(nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConvertionRate}`) })
         await tx.wait(1)
         handleAlerts("NFT minted!", "success")
       } catch (error) {
@@ -254,8 +254,10 @@ const AdminMinting = ({
   }
 
   const getETHUSDConvertionRate = async () => {
-    const convertion_rate = await contract.getETHUSDConversionRate()
-    setETHUSDConvertionRate(ethers.utils.formatEther(convertion_rate))
+    if (contract) {
+      const convertion_rate = await contract.getETHUSDConversionRate()
+      setETHUSDConvertionRate(ethers.utils.formatEther(convertion_rate))
+    }
   }
 
   const withdrawBalance = async () => {
@@ -306,7 +308,7 @@ const AdminMinting = ({
   }
 
   useEffect(() => {
-    if(productId !== undefined) {
+    if (productId !== undefined) {
       setProductId(productId)
     }
   }, [productId])
