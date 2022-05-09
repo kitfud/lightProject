@@ -16,7 +16,7 @@ import "./LightGenerator.sol";
 
 contract LightFactory is ERC721URIStorage, Ownable {
 
-    string public NFT_URI = "https://ipfs.io/ipfs/QmfQLegNGGaH6TuuU2HMSbkWVEJFSJKJL6qmbG4sCQdNGv?filename=Candy_Lamp.png";
+    string public NFT_URI = "REPLACE BY IMAGES UPLOADED ON IPFS";
 
     uint256 public currentNFTPriceInUSD;
     uint256 public tokenCount;
@@ -95,9 +95,9 @@ contract LightFactory is ERC721URIStorage, Ownable {
         return values;
     }
 
-    // remove for gas optimization
-    // function getGeneratorContractAddressByToken(uint256 tokenId) public view returns (address){
-    //     return tokenIDToGenerator[tokenId].getAddress();
-    // }
+    // remove for gas reasons
+    function getGeneratorContractAddressByToken(uint256 tokenId) public view returns (address){
+        return tokenIDToGenerator[tokenId].getAddress();
+    }
 
 }
