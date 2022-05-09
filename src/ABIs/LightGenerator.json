@@ -247,6 +247,32 @@
 	},
 	{
 		"inputs": [],
+		"name": "getAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "getETHUSDConversionRate",
 		"outputs": [
 			{
@@ -301,11 +327,6 @@
 				"internalType": "uint256",
 				"name": "priceUSD",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "contractAddress",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -354,11 +375,6 @@
 				"internalType": "uint256",
 				"name": "priceUSD",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "contractAddress",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",
@@ -420,11 +436,6 @@
 				"internalType": "uint256",
 				"name": "priceUSD",
 				"type": "uint256"
-			},
-			{
-				"internalType": "address",
-				"name": "contractAddress",
-				"type": "address"
 			}
 		],
 		"stateMutability": "view",
