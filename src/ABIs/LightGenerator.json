@@ -2,70 +2,8 @@
 	{
 		"inputs": [
 			{
-				"internalType": "string",
-				"name": "_name",
-				"type": "string"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_price",
-				"type": "uint256"
-			}
-		],
-		"name": "addProduct",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "productId",
-				"type": "uint256"
-			}
-		],
-		"name": "buyProduct",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "string",
-				"name": "_newName",
-				"type": "string"
-			}
-		],
-		"name": "changeName",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "_id",
-				"type": "uint256"
-			},
-			{
-				"internalType": "uint256",
-				"name": "_priceUSD",
-				"type": "uint256"
-			}
-		],
-		"name": "changeProductPrice",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "contract LightFactory",
-				"name": "_factory",
+				"internalType": "address",
+				"name": "_factoryAddress",
 				"type": "address"
 			},
 			{
@@ -117,13 +55,6 @@
 		],
 		"name": "Deposit",
 		"type": "event"
-	},
-	{
-		"inputs": [],
-		"name": "fund",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
 	},
 	{
 		"anonymous": false,
@@ -182,20 +113,6 @@
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "reinitializeProductsHistory",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "withdraw",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
 		"anonymous": false,
 		"inputs": [
 			{
@@ -221,20 +138,98 @@
 		"type": "event"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_name",
+				"type": "string"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_price",
+				"type": "uint256"
+			}
+		],
+		"name": "addProduct",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "productId",
+				"type": "uint256"
+			}
+		],
+		"name": "buyProduct",
+		"outputs": [],
 		"stateMutability": "payable",
-		"type": "receive"
+		"type": "function"
 	},
 	{
 		"inputs": [],
-		"name": "factory",
+		"name": "canSelectProduct",
 		"outputs": [
 			{
-				"internalType": "contract LightFactory",
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "string",
+				"name": "_newName",
+				"type": "string"
+			}
+		],
+		"name": "changeName",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_id",
+				"type": "uint256"
+			},
+			{
+				"internalType": "uint256",
+				"name": "_priceUSD",
+				"type": "uint256"
+			}
+		],
+		"name": "changeProductPrice",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "factoryAddress",
+		"outputs": [
+			{
+				"internalType": "address",
 				"name": "",
 				"type": "address"
 			}
 		],
 		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "fund",
+		"outputs": [],
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
@@ -340,6 +335,25 @@
 	{
 		"inputs": [
 			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "idToProductContract",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "string",
 				"name": "",
 				"type": "string"
@@ -367,6 +381,25 @@
 		"type": "function"
 	},
 	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "productContracts",
+		"outputs": [
+			{
+				"internalType": "contract ProductContract",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"inputs": [],
 		"name": "productCount",
 		"outputs": [
@@ -387,7 +420,7 @@
 				"type": "uint256"
 			}
 		],
-		"name": "products",
+		"name": "productsCompleteHistory",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -410,6 +443,39 @@
 	},
 	{
 		"inputs": [],
+		"name": "reinitializeProductsHistory",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_productId",
+				"type": "uint256"
+			}
+		],
+		"name": "selectProduct",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "selectedProductId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
 		"name": "tokenId",
 		"outputs": [
 			{
@@ -420,5 +486,16 @@
 		],
 		"stateMutability": "view",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "withdraw",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
 	}
 ]
