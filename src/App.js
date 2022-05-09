@@ -79,7 +79,7 @@ function App() {
           wallet={wallet}
           contract={contract} />
 
-        <Card sx={{ height: '110vh', bgcolor: "secondary.main" }}>
+        <Card sx={{ bgcolor: "secondary.main" }}>
           <Routes>
             <Route path='/' element={<Home wallet={wallet} contract={contract} />} />
             <Route path='/home' element={
