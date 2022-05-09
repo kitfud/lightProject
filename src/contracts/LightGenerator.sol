@@ -26,6 +26,7 @@ contract LightGenerator is ILightGenerator {
         uint256 id;
         string name;
         uint256 priceUSD;
+        address contractAddress;
     }
 
     AggregatorV3Interface internal ETHUSDPriceFeed;
@@ -69,9 +70,9 @@ contract LightGenerator is ILightGenerator {
     }
 
     // remove - gas reasons
-    function getBalance() public view onlyOwner returns(uint256 balance){
-        balance = address(this).balance;
-    }
+    // function getBalance() public view onlyOwner returns(uint256 balance){
+    //     balance = address(this).balance;
+    // }
 
     function withdraw() public onlyOwner() {
         uint256 contractBalance = address(this).balance;
@@ -81,9 +82,9 @@ contract LightGenerator is ILightGenerator {
     }
 
     // remove - gas reasons
-    function getAddress() public view returns (address){
-        return address(this);
-    }
+    // function getAddress() public view returns (address){
+    //     return address(this);
+    // }
 
     function getProductPriceInETH(uint256 productId) public view returns(uint256) {
         uint256 precision = 1 * 10**18;
@@ -102,7 +103,8 @@ contract LightGenerator is ILightGenerator {
         Product memory modProduct = Product(
             currentProduct.id,
             currentProduct.name,
-            _priceUSD
+            _priceUSD,
+            currentProduct.contractAddress
         );
         productsCompleteHistory.push(modProduct);
         idToProduct[currentProduct.id] = modProduct;
@@ -132,13 +134,14 @@ contract LightGenerator is ILightGenerator {
     }
 
     function addProduct(string memory _name, uint256 _price) public onlyOwner {
-        Product memory newProduct = Product(productCount, _name, _price);
-        productsCompleteHistory.push(newProduct);
-        idToProduct[productCount] = newProduct;
-        nameToProduct[_name] = newProduct;
         ProductContract newContract = new ProductContract(productCount, _name, _price, owner);
         productContracts.push(newContract);
         idToProductContract[productCount] = payable(newContract);
+
+        Product memory newProduct = Product(productCount, _name, _price, idToProductContract[productCount]);
+        productsCompleteHistory.push(newProduct);
+        idToProduct[productCount] = newProduct;
+        nameToProduct[_name] = newProduct;
 
         emit ProductAdded(productCount, _name, block.timestamp);
         productCount++ ;
