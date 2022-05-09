@@ -325,6 +325,7 @@ const AdminMinting = ({
       for (let ii = 0; ii < productList.length; ii++) {
         if (productList[ii].id == productId) {
           setProdCurrentPrice(productList[ii].priceUSD)
+          setSelectProductPrice(productList[ii].priceUSD)
           break
         }
       }
