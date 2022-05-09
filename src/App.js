@@ -13,12 +13,15 @@ let themeLightMode = createTheme({
 
   palette: {
     primary: {
-      main: '#696969',
+      main: '#9A9A9A',
     },
     secondary: {
-      main: '#EDEDED',
+      main: '#FFFFFF',
+    },
+    text: {
+      primary: '#000000',
+      secondary: '#4C4C4C',
     }
-
   }
 })
 
@@ -27,12 +30,15 @@ let themeDarkMode = createTheme({
 
   palette: {
     primary: {
-      main: '#7B7B7B',
+      main: '#4D4D4D',
     },
     secondary: {
-      main: '#353535',
+      main: '#212121',
+    },
+    text: {
+      primary: '#9A9A9A',
+      secondary: '#000000',
     }
-
   }
 })
 

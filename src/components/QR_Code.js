@@ -19,7 +19,6 @@ import QRCode from "react-qr-code";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
-
 const useStyles = makeStyles({
  
   qRPic: {
@@ -69,7 +68,7 @@ const QR_Code = ({ wallet, contract, selectProductPrice, selectGeneratorAddress 
     <ThemeProvider theme={theme}>
       <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 3 }}>
         <Box>
-          { howToQR }
+            { howToQR }
           <br/><br/>
           <Button 
             variant="contained"
