@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Card, Button, Typography, Box, Grid, CircularProgress, Snackbar, IconButton, Alert, Slide, CardMedia, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Checkbox, FormControlLabel, Chip, Tooltip, Container } from '@mui/material'
+import React, { useState, useEffect } from 'react'
+import { Card, Button, Typography, Box, Grid, CircularProgress, Tooltip, Snackbar, Chip, IconButton, Alert, Slide, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close';
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
-import HardwareConnect from "./HardwareConnect"
+import NFTMintCard from './NFTMintCard';
+import NFTOwnerCard from './NFTOwnerCard';
 
 const AdminMinting = ({
   wallet,
@@ -20,7 +21,6 @@ const AdminMinting = ({
   const [alerts, setAlerts] = useState([false])
   const [useAutoName, setUseAutoName] = useState(true)
   const [nftNameInput, setNftNameInput] = useState("")
-  const nftMintRef = useRef(undefined)
   const [size, setSize] = useState([100, 100])
 
   // Factory Info
@@ -95,21 +95,24 @@ const AdminMinting = ({
       let new_tokensOwned_arr = []
       for (let ii = 0; ii < tokensOwned.length; ii++) {
         if (tokensOwned[ii] === true) {
-          new_tokensOwned_arr.push(ii)
+          const generator_address = await contract.tokenIDToGenerator(ii)
+
+          const gen_contract = getGeneratorContract(generator_address, wallet.signer)
+          const gen_name = await gen_contract.generatorName()
+
+          new_tokensOwned_arr.push({ id: ii, address: generator_address, name: gen_name })
         }
       }
       setNftList(new_tokensOwned_arr)
       if (new_tokensOwned_arr.length === 1) {
-        setNftId(new_tokensOwned_arr[0])
+        setNftId(new_tokensOwned_arr[0].id)
+        setGeneratorAddress(new_tokensOwned_arr[0].address)
 
-        const nft_address = await contract.tokenIDToGenerator(new_tokensOwned_arr[0])
-        setGeneratorAddress(nft_address)
-
-        const gen_contract = getGeneratorContract(nft_address, wallet.signer)
+        const gen_contract = getGeneratorContract(new_tokensOwned_arr[0].address, wallet.signer)
         setGeneratorContract(gen_contract)
 
-        const gen_balance = await gen_contract.getBalance()
-        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance)))
+        const gen_balance = await wallet.provider.getBalance(gen_contract.address)
+        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConvertionRate)))
       }
     }
   }
@@ -126,25 +129,25 @@ const AdminMinting = ({
   }
 
   const getNFTInfo = async (event = undefined) => {
-    let nft_id = undefined
-    if (typeof event !== "undefined") {
-      nft_id = event.target.value
-      setNftId(nft_id)
-    }
-
-    let nft_address
-    if (typeof nft_id !== "undefined") {
-      nft_address = await contract.tokenIDToGenerator(nft_id)
+    let nft_id
+    if (typeof event === "undefined") {
+      nft_id = nftId
     } else {
-      nft_address = await contract.tokenIDToGenerator(nftId)
+      nft_id = event.target.value
     }
-    setGeneratorAddress(nft_address)
 
-    const gen_contract = getGeneratorContract(nft_address, wallet.signer)
-    setGeneratorContract(gen_contract)
+    for (let ii = 0; ii < nftList.length; ii++) {
+      if (nftList[ii].id === nft_id) {
+        const nft_address = nftList[ii].address
+        setGeneratorAddress(nft_address)
 
-    const gen_balance = await gen_contract.getBalance()
-    setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance)))
+        const gen_contract = getGeneratorContract(nft_address, wallet.signer)
+        setGeneratorContract(gen_contract)
+
+        const gen_balance = await wallet.provider.getBalance(gen_contract.address)
+        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConvertionRate)))
+      }
+    }
   }
 
   const updateProducts = async () => {
@@ -266,7 +269,7 @@ const AdminMinting = ({
         setLoading(true)
         const tx = await generatorContract.withdraw()
         await tx.wait(1)
-        const gen_balance = await generatorContract.getBalance()
+        const gen_balance = await wallet.provider.getBalance(generatorContract.address)
         setGeneratorBalance(gen_balance)
       } else if (generatorBalance <= 0) {
         handleAlerts("Not enough balance", "warning")
@@ -366,86 +369,14 @@ const AdminMinting = ({
   return (
     <>
       <Grid container sx={{ alignItems: "center", display: "flex", drection: "column", marginTop: 3, justifyContent: "space-around" }} >
-        <Grid >
-          <Box style={{ display: "flex", justifyContent: 'center' }}>
-            <Card ref={nftMintRef} sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3 }}>
-              <CardMedia component="img"
-                alt="nft"
-                style={{ transform: "scale(1)", objectFit: 'cover', raised: true }}
-                image={require('../img/Candy_Lamp.png')}
-                xs={8}>
-              </CardMedia>
-              <Typography gutterBottom variant="h5" component="div">
-                NFT Minting
-              </Typography>
-              <Typography variant="h6" color="text.secondary">
-                {nftPrice ? (`Price: USD ${nftPrice} (ETH ${(nftPrice / ETHUSDConvertionRate).toFixed(6)})`) : ("Price: not available")}
-              </Typography>
-              <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <TextField onChange={getNFTName} id="outlined-basic" label="NFT Name" variant="outlined" disabled={useAutoName ? true : false} />
-                <FormControlLabel control={<Checkbox checked={useAutoName} onChange={(evt) => setUseAutoName(evt.target.checked)} color="info" />} label="Use auto generated name" />
-              </FormControl>
-              <Box mr={2} ml={2}>
-                {wallet ? (
-                  <Button color='warning' size="large" variant='contained' onClick={mintNFT} >{loading ? (
-                    <CircularProgress color="inherit" />) : ("Mint NFT")} </Button>
-                ) : (
-                  <Button color='error' size="large" variant='contained' >Connect wallet</Button>
-                )}
-              </Box>
-            </Card>
-          </Box>
-        </Grid>
+        <NFTMintCard nftPrice={nftPrice} ETHUSDConvertionRate={ETHUSDConvertionRate} useAutoName={useAutoName} setUseAutoName={setUseAutoName} getNFTName={getNFTName} wallet={wallet} loading={loading} mintNFT={mintNFT} />
+        <NFTOwnerCard nftId={nftId} size={size} getNFTInfo={getNFTInfo} nftList={nftList} generatorAddress={generatorAddress} copyToClipboard={copyToClipboard} generatorBalance={generatorBalance} ETHUSDConvertionRate={ETHUSDConvertionRate} withdrawBalance={withdrawBalance} loading={loading} />
         <Grid>
           <Box style={{ display: "flex", justifyContent: 'center' }}>
             <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
               <Typography gutterBottom variant="h5" component="div">
-                Owned NFTs
+                NFT Products
               </Typography>
-              <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <InputLabel id="nft-id">NFT</InputLabel>
-                <Select
-                  labelId="nft-id"
-                  id="nft-id"
-                  label="NFT"
-                  value={typeof nftId !== "undefined" ? nftId : ""}
-                  onChange={getNFTInfo}
-                >
-                  {nftList.map(nft => (
-                    <MenuItem value={nft} key={nft}>{nft}</MenuItem>
-                  ))}
-                </Select>
-                <FormControl sx={{ m: 1, minWidth: 300 }}>
-                  <Tooltip title="copy to clipboard">
-                    <Chip
-                      label={generatorAddress ? generatorAddress : "Address"}
-                      onClick={copyToClipboard}
-                      disabled={generatorAddress ? false : true}
-                    />
-                  </Tooltip>
-                </FormControl>
-              </FormControl>
-              <HardwareConnect />
-              <FormControl sx={{ padding: 1, marginBottom: 1 }}>
-                <TextField
-                  disabled
-                  id="filled-number"
-                  label="Balance"
-                  type="number"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  variant="filled"
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                    endAdornment: <InputAdornment position="end">{generatorBalance ? `(ETH ${(generatorBalance / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
-                  }}
-                  value={typeof generatorBalance !== "undefined" ? generatorBalance.toFixed(2) : ""}
-                  sx={{ maxWidth: 300 }}
-                />
-                <Button onClick={withdrawBalance} variant="contained" color="secondary">{loading ? (
-                  <CircularProgress color="inherit" />) : ("Withdraw")}</Button>
-              </FormControl>
               <FormControl sx={{ m: 1, minWidth: 300 }}>
                 <InputLabel id="product-id">Product</InputLabel>
                 <Select
@@ -460,6 +391,15 @@ const AdminMinting = ({
                     <MenuItem value={product.id} key={product.id}>{product.id + " - " + product.name}</MenuItem>
                   ))}
                 </Select>
+              </FormControl>
+              <FormControl sx={{ m: 1, minWidth: 300 }}>
+                <Tooltip title="copy to clipboard">
+                  <Chip
+                    label={generatorAddress ? generatorAddress : "Address"}
+                    onClick={copyToClipboard}
+                    disabled={generatorAddress ? false : true}
+                  />
+                </Tooltip>
               </FormControl>
               <FormControl sx={{ padding: 1 }}>
                 <TextField
