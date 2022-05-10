@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 
 const NFTProductsCard = ({ size, handleProductList, productId, productList, copyToClipboard, prodCurrentPrice,
-    ETHUSDConvertionRate, handleProductChangePrice, setNewProductPrice, loading, handleNewProductName, newProductName,
+    ETHUSDConversionRate, handleProductChangePrice, setNewProductPrice, loading, handleNewProductName, newProductName,
     handleNewProductPrice, addNewProduct, productNewPrice, newProductPrice, productAddress }) => {
 
     return (
@@ -29,7 +29,12 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             disabled={productList ? false : true}
                         >
                             {productList.map(product => (
-                                <MenuItem value={product.id} key={product.id}>{product.id + " - " + product.name}</MenuItem>
+                                <MenuItem
+                                    value={product.id}
+                                    key={product.id}
+                                >
+                                    {product.id + " - " + product.name}
+                                </MenuItem>
                             ))}
                         </Select>
                     </FormControl>
@@ -50,10 +55,12 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             variant="filled"
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                                endAdornment: <InputAdornment
-                                    position="end">
-                                    {prodCurrentPrice ? `(ETH ${(prodCurrentPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
-                                </InputAdornment>
+                                endAdornment:
+                                    <InputAdornment
+                                        position="end"
+                                    >
+                                        {prodCurrentPrice ? `(ETH ${(prodCurrentPrice / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
+                                    </InputAdornment>
                             }}
                             value={prodCurrentPrice ? prodCurrentPrice : ""}
                             sx={{ maxWidth: 300 }}
@@ -74,7 +81,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                                 startAdornment: <InputAdornment position="start">USD</InputAdornment>,
                                 endAdornment: <InputAdornment
                                     position="end">
-                                    {productNewPrice ? `(ETH ${(productNewPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
+                                    {productNewPrice ? `(ETH ${(productNewPrice / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                 </InputAdornment>
                             }}
                             value={typeof productNewPrice !== "undefined" ? productNewPrice : ""}
@@ -111,7 +118,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                                 startAdornment: <InputAdornment position="start">USD</InputAdornment>,
                                 endAdornment: <InputAdornment
                                     position="end">
-                                    {newProductPrice ? `(ETH ${(newProductPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
+                                    {newProductPrice ? `(ETH ${(newProductPrice / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                 </InputAdornment>
                             }}
                             sx={{ maxWidth: 300 }}

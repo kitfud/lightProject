@@ -1,12 +1,16 @@
 import React from 'react'
-import { Card, Button, Typography, Box, Grid, CircularProgress, CardMedia, FormControl, TextField, Checkbox, FormControlLabel } from '@mui/material'
+import {
+    Card, Button, Typography, Box, Grid, CircularProgress,
+    CardMedia, FormControl, TextField, Checkbox, FormControlLabel
+} from '@mui/material'
 
-const NFTMintCard = ({ nftPrice, ETHUSDConvertionRate, useAutoName, setUseAutoName, handleNFTName, wallet, loading, mintNFT }) => {
+const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName,
+    setUseAutoName, handleNFTName, wallet, loading, mintNFT }) => {
 
     return (
         <Grid >
             <Box style={{ display: "flex", justifyContent: 'center' }}>
-                <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3 }}>
+                <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3 }}>
                     <CardMedia component="img"
                         alt="nft"
                         style={{ transform: "scale(1)", objectFit: 'cover', raised: true }}
@@ -17,7 +21,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConvertionRate, useAutoName, setUseAutoNa
                         NFT Minting
                     </Typography>
                     <Typography variant="h6" color="text.secondary">
-                        {nftPrice ? (`Price: USD ${nftPrice} (ETH ${(nftPrice / ETHUSDConvertionRate).toFixed(6)})`) : ("Price: not available")}
+                        {nftPrice ? (`Price: USD ${nftPrice} (ETH ${(nftPrice / ETHUSDConversionRate).toFixed(6)})`) : ("Price: not available")}
                     </Typography>
                     <FormControl sx={{ m: 1, minWidth: 300 }}>
                         <TextField onChange={handleNFTName}

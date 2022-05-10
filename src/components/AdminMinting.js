@@ -15,7 +15,8 @@ const AdminMinting = ({
   userAddress,
   setSelectGeneratorAddress,
   setSelectedProduct,
-  setSelectProductPrice
+  setSelectProductPrice,
+  setOwnedNFTs
 }) => {
 
   // General
@@ -24,7 +25,7 @@ const AdminMinting = ({
   const [size, setSize] = useState([100, 100])
 
   // Regarding Factory Contract
-  const [ETHUSDConvertionRate, setETHUSDConvertionRate] = useState(undefined)
+  const [ETHUSDConversionRate, setETHUSDConversionRate] = useState(undefined)
   const [nftPrice, setNFTPrice] = useState(undefined)
   const [nftNameInput, setNftNameInput] = useState("")
 
@@ -71,13 +72,15 @@ const AdminMinting = ({
         nftName = nftNameInput
       }
 
+      await getETHUSDConversionRate()
       try {
         let tx = await contract.mintGenerator(
-          nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConvertionRate}`) }
+          nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConversionRate}`) }
         )
         await tx.wait(1)
         handleAlerts("NFT minted!", "success")
       } catch (error) {
+        console.log(error)
         if (error.code === 4001) {
           handleAlerts("Transaction cancelled", "warning")
         } else if (error.code === "INSUFFICIENT_FUNDS") {
@@ -97,11 +100,12 @@ const AdminMinting = ({
 
   const getNFTPrice = async () => {
     try {
-      await getETHUSDConvertionRate()
+      await getETHUSDConversionRate()
       const nft_price_BN = await contract.currentNFTPriceInUSD()
       const nft_price = ethers.utils.formatEther(nft_price_BN)
       setNFTPrice(parseFloat(nft_price).toFixed(2))
     } catch (error) {
+      console.log(error)
       setNFTPrice(undefined)
     }
   }
@@ -128,6 +132,10 @@ const AdminMinting = ({
         }
       }
       setNftList(new_tokensOwned_arr)
+
+      //passing owned NFT state to top level App.js
+      setOwnedNFTs(new_tokensOwned_arr)
+
       if (new_tokensOwned_arr.length === 1) {
         setNftId(new_tokensOwned_arr[0].id)
         setGeneratorAddress(new_tokensOwned_arr[0].address)
@@ -136,7 +144,7 @@ const AdminMinting = ({
         setGeneratorContract(gen_contract)
 
         const gen_balance = await wallet.provider.getBalance(gen_contract.address)
-        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConvertionRate)))
+        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
       }
     }
   }
@@ -160,7 +168,7 @@ const AdminMinting = ({
           setGeneratorContract(gen_contract)
 
           const gen_balance = await wallet.provider.getBalance(gen_contract.address)
-          setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConvertionRate)))
+          setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
           break
         }
       }
@@ -246,6 +254,7 @@ const AdminMinting = ({
       setProductList(listOfProducts)
       if (listOfProducts.length === 1) {
         setProductId(listOfProducts[0].id)
+        setProductAddress(listOfProducts[0].address)
         if (listOfProducts[0].id !== undefined) {
           setSelectedProduct(listOfProducts[0].id)
         }
@@ -332,17 +341,17 @@ const AdminMinting = ({
     setProductId(prod_id)
     for (let ii = 0; ii < productList.length; ii++) {
       if (productList[ii].id === prod_id) {
-        setProductAddress(productList[ii].contractAddress)
+        setProductAddress(productList[ii].address)
         break
       }
     }
   }
 
   // General
-  const getETHUSDConvertionRate = async () => {
+  async function getETHUSDConversionRate() {
     if (contract) {
       const convertion_rate = await contract.getETHUSDConversionRate()
-      setETHUSDConvertionRate(ethers.utils.formatEther(convertion_rate))
+      setETHUSDConversionRate(ethers.utils.formatEther(convertion_rate))
     }
   }
 
@@ -400,7 +409,7 @@ const AdminMinting = ({
     if (!wallet) {
       resetAllFields()
     }
-    getETHUSDConvertionRate()
+    getETHUSDConversionRate()
   }, [wallet, loading])
 
   useEffect(() => {
@@ -432,7 +441,7 @@ const AdminMinting = ({
       }} >
         <NFTMintCard
           nftPrice={nftPrice}
-          ETHUSDConvertionRate={ETHUSDConvertionRate}
+          ETHUSDConversionRate={ETHUSDConversionRate}
           useAutoName={useAutoName}
           setUseAutoName={setUseAutoName}
           handleNFTName={handleNFTName}
@@ -448,7 +457,7 @@ const AdminMinting = ({
           generatorAddress={generatorAddress}
           copyToClipboard={copyToClipboard}
           generatorBalance={generatorBalance}
-          ETHUSDConvertionRate={ETHUSDConvertionRate}
+          ETHUSDConversionRate={ETHUSDConversionRate}
           withdrawBalance={withdrawBalance}
           loading={loading}
           renameNFT={renameNFT}
@@ -463,7 +472,7 @@ const AdminMinting = ({
           generatorAddress={generatorAddress}
           copyToClipboard={copyToClipboard}
           prodCurrentPrice={prodCurrentPrice}
-          ETHUSDConvertionRate={ETHUSDConvertionRate}
+          ETHUSDConversionRate={ETHUSDConversionRate}
           newProductPrice={newProductPrice}
           addNewProduct={addNewProduct}
           loading={loading}

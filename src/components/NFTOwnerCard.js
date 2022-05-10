@@ -6,7 +6,7 @@ import {
 import HardwareConnect from "./HardwareConnect"
 
 const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress,
-    copyToClipboard, generatorBalance, ETHUSDConvertionRate, withdrawBalance,
+    copyToClipboard, generatorBalance, ETHUSDConversionRate, withdrawBalance,
     loading, renameNFT, handleNewName, newNFTName }) => {
     return (
         <Grid>
@@ -57,7 +57,7 @@ const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress,
                                 startAdornment: <InputAdornment position="start">USD</InputAdornment>,
                                 endAdornment: <InputAdornment
                                     position="end">
-                                    {generatorBalance ? `(ETH ${(generatorBalance / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
+                                    {generatorBalance ? `(ETH ${(generatorBalance / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                 </InputAdornment>
                             }}
                             value={typeof generatorBalance !== "undefined" ? generatorBalance.toFixed(2) : ""}
