@@ -2,7 +2,7 @@ import React from "react"
 import { Card, Button, Typography, Box, Grid, CircularProgress, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip, Tooltip } from '@mui/material'
 import HardwareConnect from "./HardwareConnect"
 
-const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copyToClipboard, generatorBalance, ETHUSDConvertionRate, withdrawBalance, loading }) => {
+const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copyToClipboard, generatorBalance, ETHUSDConvertionRate, withdrawBalance, loading, renameNFT, handleNewName, newNFTName }) => {
     return (
         <Grid>
             <Box style={{ display: "flex", justifyContent: 'center' }}>
@@ -16,6 +16,7 @@ const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copy
                             labelId="nft-id"
                             id="nft-id"
                             label="NFT"
+                            // defaultValue=""
                             value={typeof nftId !== "undefined" ? nftId : ""}
                             onChange={getNFTInfo}
                         >
@@ -53,6 +54,22 @@ const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copy
                         />
                         <Button onClick={withdrawBalance} variant="contained" color="secondary">{loading ? (
                             <CircularProgress color="inherit" />) : ("Withdraw")}</Button>
+                    </FormControl>
+                    <FormControl sx={{ padding: 1, marginBottom: 1 }}>
+                        <TextField
+                            id="filled-new-nft-name"
+                            label="New name"
+                            type="text"
+                            InputLabelProps={{
+                                shrink: true,
+                            }}
+                            onChange={handleNewName}
+                            variant="filled"
+                            value={typeof newNFTName !== "undefined" ? newNFTName : ""}
+                            sx={{ minWidth: 300, maxWidth: 300 }}
+                        />
+                        <Button onClick={renameNFT} variant="contained" color="secondary">{loading ? (
+                            <CircularProgress color="inherit" />) : ("Rename NFT")}</Button>
                     </FormControl>
                 </Card>
             </Box>
