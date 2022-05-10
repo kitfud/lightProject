@@ -59,8 +59,8 @@ function App() {
 
 
   useEffect(() => {
-    console.log("In app js component " + selectProductPrice )
-    
+    console.log("In app js component " + selectProductPrice)
+
   }, [selectProductPrice])
 
   useEffect(() => {
@@ -105,9 +105,11 @@ function App() {
                 setSelectGeneratorAddress={setSelectGeneratorAddress}
                 setSelectedProduct={setSelectedProduct}
                 setSelectProductPrice={setSelectProductPrice}
+
                 setOwnedNFTs = {setOwnedNFTs}
             
             />} />
+
           </Routes>
         </Card>
         <Footer />

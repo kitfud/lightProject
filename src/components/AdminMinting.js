@@ -37,6 +37,7 @@ const AdminMinting = ({
   const [nftId, setNftId] = useState(undefined)
   const [productNewPrice, setProductNewPrice] = useState(undefined)
   const [generatorBalance, setGeneratorBalance] = useState(undefined)
+  const [newNFTName, setNewNFTName] = useState(undefined)
 
   // New product name
   const [newProductName, setNewProductName] = useState(undefined)
@@ -140,17 +141,21 @@ const AdminMinting = ({
     } else {
       nft_id = event.target.value
     }
+    setNftId(nft_id)
 
-    for (let ii = 0; ii < nftList.length; ii++) {
-      if (nftList[ii].id === nft_id) {
-        const nft_address = nftList[ii].address
-        setGeneratorAddress(nft_address)
+    if (typeof nft_id !== "undefined") {
+      for (let ii = 0; ii < nftList.length; ii++) {
+        if (nftList[ii].id === nft_id) {
+          const nft_address = nftList[ii].address
+          setGeneratorAddress(nft_address)
 
-        const gen_contract = getGeneratorContract(nft_address, wallet.signer)
-        setGeneratorContract(gen_contract)
+          const gen_contract = getGeneratorContract(nft_address, wallet.signer)
+          setGeneratorContract(gen_contract)
 
-        const gen_balance = await wallet.provider.getBalance(gen_contract.address)
-        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConvertionRate)))
+          const gen_balance = await wallet.provider.getBalance(gen_contract.address)
+          setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConvertionRate)))
+          break
+        }
       }
     }
   }
@@ -214,7 +219,7 @@ const AdminMinting = ({
       try {
         const tx = await generatorContract.changeProductPrice(productId, ethers.utils.parseEther(productNewPrice))
         await tx.wait(1)
-        const product = await generatorContract.idToProduct(productId)
+        // const product = await generatorContract.idToProduct(productId)
         const new_product_list = productList
         for (let ii = 0; ii < new_product_list.length; ii++) {
           if (new_product_list[ii].id === productId) {
@@ -261,6 +266,10 @@ const AdminMinting = ({
     setProductNewPrice(new_price)
   }
 
+  const handleNewName = (evt) => {
+    setNewNFTName(evt.target.value)
+  }
+
   const getETHUSDConvertionRate = async () => {
     if (contract) {
       const convertion_rate = await contract.getETHUSDConversionRate()
@@ -295,6 +304,36 @@ const AdminMinting = ({
     setLoading(false)
   }
 
+  const renameNFT = async (evt) => {
+    try {
+      if (!loading) {
+        setLoading(true)
+        const tx = await generatorContract.changeName(newNFTName)
+        await tx.wait(1)
+
+        for (let ii = 0; ii < nftList.length; ii++) {
+          if (nftList[ii].id === nftId) {
+            nftList[ii].name = newNFTName
+            setNftList(nftList)
+            break
+          }
+        }
+      }
+    } catch (error) {
+      if (error.code === 4001) {
+        handleAlerts("Transaction cancelled", "warning")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        handleAlerts("Insufficient funds for gas * price + value", "warning")
+      } else if (error.code === -32602 || error.code === -32603) {
+        handleAlerts("Internal error", "error")
+      } else {
+        handleAlerts("An unknown error occurred", "error")
+      }
+    }
+    setLoading(false)
+    setNewNFTName(undefined)
+  }
+
   const copyToClipboard = async () => {
     // const text = evt.target.value
     if ('clipboard' in navigator) {
@@ -313,6 +352,7 @@ const AdminMinting = ({
     setNftList([])
     setNftId(undefined)
     setProductNewPrice(undefined)
+    setNewNFTName(undefined)
   }
 
   useEffect(() => {
@@ -375,7 +415,7 @@ const AdminMinting = ({
     <>
       <Grid container sx={{ alignItems: "center", display: "flex", drection: "column", marginTop: 3, justifyContent: "space-around" }} >
         <NFTMintCard nftPrice={nftPrice} ETHUSDConvertionRate={ETHUSDConvertionRate} useAutoName={useAutoName} setUseAutoName={setUseAutoName} getNFTName={getNFTName} wallet={wallet} loading={loading} mintNFT={mintNFT} />
-        <NFTOwnerCard nftId={nftId} size={size} getNFTInfo={getNFTInfo} nftList={nftList} generatorAddress={generatorAddress} copyToClipboard={copyToClipboard} generatorBalance={generatorBalance} ETHUSDConvertionRate={ETHUSDConvertionRate} withdrawBalance={withdrawBalance} loading={loading} />
+        <NFTOwnerCard nftId={nftId} size={size} getNFTInfo={getNFTInfo} nftList={nftList} generatorAddress={generatorAddress} copyToClipboard={copyToClipboard} generatorBalance={generatorBalance} ETHUSDConvertionRate={ETHUSDConvertionRate} withdrawBalance={withdrawBalance} loading={loading} renameNFT={renameNFT} handleNewName={handleNewName} newNFTName={newNFTName} />
         <Grid>
           <Box style={{ display: "flex", justifyContent: 'center' }}>
             <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
