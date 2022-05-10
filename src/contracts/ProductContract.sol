@@ -51,7 +51,7 @@ contract ProductContract {
     //     productName = newName;
     // }
 
-    function withdraw() payable external onlyOwner(owner) {
+    function withdraw() external onlyOwner(owner) {
         uint256 contractBalance = address(this).balance;
         (bool sent,) = owner.call{value:address(this).balance}("");
         require(sent, 'Failed to Send Ether To Owner');
@@ -64,7 +64,7 @@ contract ProductContract {
 
     receive() external payable {
         require(msg.value >= getProductPriceInETH(), "amount sent too low");
-        require(msg.value < getProductPriceInETH() + 1*10**10, "amount sent too high");
+        
         emit Deposit(msg.sender, msg.value,block.timestamp, address(this).balance);
     }
 }

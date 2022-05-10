@@ -16,7 +16,7 @@ import "./LightGenerator.sol";
 
 contract LightFactory is ERC721URIStorage, Ownable {
 
-    string public NFT_URI = "https://ipfs.io/ipfs/QmfQLegNGGaH6TuuU2HMSbkWVEJFSJKJL6qmbG4sCQdNGv?filename=Candy_Lamp.png";
+    string public NFT_URI = "https://ipfs.io/ipfs/QmfN7WjsL6FiWV4fkSEgTVqUsywUnYCoAe7SVntXukUcVN?filename=CandyLamp.json";
 
     uint256 public currentNFTPriceInUSD;
     uint256 public tokenCount;
