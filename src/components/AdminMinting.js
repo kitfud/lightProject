@@ -329,7 +329,10 @@ const AdminMinting = ({
   }
 
   const handleNewProductName = (evt) => {
-    setNewProductName(evt.target.value)
+    
+    let input = evt
+    console.log(input)
+    setNewProductName(input)
   }
 
   const handleNewProductPrice = (evt) => {
@@ -337,7 +340,7 @@ const AdminMinting = ({
   }
 
   const handleProductChangePrice = (evt) => {
-    setProductNewPrice(evt.target.valu)
+    setProductNewPrice(evt.target.value)
   }
 
   const handleProductList = (evt) => {
@@ -486,6 +489,7 @@ const AdminMinting = ({
           handleNewProductPrice={handleNewProductPrice}
           productAddress={productAddress}
           setNewProductPrice={setNewProductPrice}
+          newProductName = {newProductName}
         />
       </Grid>
       <Snackbar

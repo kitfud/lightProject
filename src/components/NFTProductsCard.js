@@ -100,8 +100,8 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             id="filled-product-name"
                             label="Name"
                             variant="filled"
-                            onChange={handleNewProductName}
-                            value={typeof newProductName !== "undefined" ? newProductName : ""}
+                            onChange={(e)=>handleNewProductName(e.target.value)}
+                            value={newProductName !== undefined ? newProductName : ""}
                         />
                         <TextField
                             required
