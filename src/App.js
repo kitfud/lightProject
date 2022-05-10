@@ -52,6 +52,9 @@ function App() {
   const [selectedProduct, setSelectedProduct] = useState("clowny")
   const [selectProductPrice, setSelectProductPrice] = useState(undefined)
 
+  const [ownedNFTs, setOwnedNFTs]  = useState([])
+ 
+
 
 
 
@@ -89,6 +92,7 @@ function App() {
                 selectGeneratorAddress={selectGeneratorAddress}
                 selectedProduct={selectedProduct}
                 selectProductPrice={selectProductPrice}
+                ownedNFTs = {ownedNFTs}
               />} />
             <Route path='/shop' element={<Shop />} />
             <Route path='/admin' element={
@@ -102,7 +106,10 @@ function App() {
                 setSelectedProduct={setSelectedProduct}
                 setSelectProductPrice={setSelectProductPrice}
 
-              />} />
+                setOwnedNFTs = {setOwnedNFTs}
+            
+            />} />
+
           </Routes>
         </Card>
         <Footer />
