@@ -14,7 +14,8 @@ const AdminMinting = ({
   userAddress,
   setSelectGeneratorAddress,
   setSelectedProduct,
-  setSelectProductPrice
+  setSelectProductPrice,
+  setOwnedNFTs
 }) => {
 
   const [nftPrice, setNFTPrice] = useState(undefined)
@@ -104,6 +105,10 @@ const AdminMinting = ({
         }
       }
       setNftList(new_tokensOwned_arr)
+
+      //passing owned NFT state to top level App.js
+      setOwnedNFTs(new_tokensOwned_arr)
+      
       if (new_tokensOwned_arr.length === 1) {
         setNftId(new_tokensOwned_arr[0].id)
         setGeneratorAddress(new_tokensOwned_arr[0].address)
