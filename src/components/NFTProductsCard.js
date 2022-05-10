@@ -88,7 +88,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             sx={{ maxWidth: 300 }}
                         />
                         <Button onClick={setNewProductPrice} variant="contained" color="secondary">{loading ? (
-                            <CircularProgress color="inherit" />) : ("Set price")}</Button>
+                            <CircularProgress color="inherit" />) : ("Change price")}</Button>
                     </FormControl>
                     <FormControl sx={{ padding: 1 }}>
                         <TextField

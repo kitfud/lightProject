@@ -105,7 +105,7 @@ const AdminMinting = ({
       const nft_price = ethers.utils.formatEther(nft_price_BN)
       setNFTPrice(parseFloat(nft_price).toFixed(2))
     } catch (error) {
-      console.log(error)
+      // console.log(error)
       setNFTPrice(undefined)
     }
   }
@@ -187,6 +187,7 @@ const AdminMinting = ({
         await tx.wait(1)
         const gen_balance = await wallet.provider.getBalance(generatorContract.address)
         setGeneratorBalance(gen_balance)
+        handleAlerts("Withdrawed successfully", "success")
       } else if (generatorBalance <= 0) {
         handleAlerts("Not enough balance", "warning")
       } else if (loading) {
@@ -221,6 +222,7 @@ const AdminMinting = ({
           }
         }
       }
+      handleAlerts("NFT renamed successfully", "success")
     } catch (error) {
       if (error.code === 4001) {
         handleAlerts("Transaction cancelled", "warning")
@@ -272,6 +274,7 @@ const AdminMinting = ({
         await tx.wait(1)
         setNewProducPrice(undefined)
         setNewProductName(undefined)
+        handleAlerts("New product added successfully", "success")
       } catch (error) {
         if (error.code === 4001) {
           handleAlerts("Transaction cancelled", "warning")
@@ -307,6 +310,7 @@ const AdminMinting = ({
         }
         setProdCurrentPrice(productNewPrice)
         setProductNewPrice(undefined)
+        handleAlerts("Product price changed successfully", "success")
       } catch (error) {
         if (error.code === 4001) {
           handleAlerts("Transaction cancelled", "warning")
@@ -350,8 +354,8 @@ const AdminMinting = ({
   // General
   async function getETHUSDConversionRate() {
     if (contract) {
-      const convertion_rate = await contract.getETHUSDConversionRate()
-      setETHUSDConversionRate(ethers.utils.formatEther(convertion_rate))
+      const conversion_rate = await contract.getETHUSDConversionRate()
+      setETHUSDConversionRate(ethers.utils.formatEther(conversion_rate))
     }
   }
 
