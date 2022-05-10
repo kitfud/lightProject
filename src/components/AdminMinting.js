@@ -18,14 +18,14 @@ const AdminMinting = ({
   setOwnedNFTs
 }) => {
 
-  const [nftPrice, setNFTPrice] = useState(undefined)
+  const [nft_price, setNFTPrice] = useState(undefined)
   const [alerts, setAlerts] = useState([false])
   const [useAutoName, setUseAutoName] = useState(true)
   const [nftNameInput, setNftNameInput] = useState("")
   const [size, setSize] = useState([100, 100])
 
   // Factory Info
-  const [ETHUSDConvertionRate, setETHUSDConvertionRate] = useState(undefined)
+  const [ETHUSDConversionRate, setETHUSDConversionRate] = useState(undefined)
 
   // Generator Info
   const [generatorContract, setGeneratorContract] = useState(undefined)
@@ -68,7 +68,8 @@ const AdminMinting = ({
       }
 
       try {
-        let tx = await contract.mintGenerator(nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConvertionRate}`) })
+    
+        let tx = await contract.mintGenerator(nftName, { "value": ethers.utils.parseEther(`${nft_price / ETHUSDConversionRate}`) })
         await tx.wait(1)
         handleAlerts("NFT minted!", "success")
       } catch (error) {
@@ -118,14 +119,14 @@ const AdminMinting = ({
         setGeneratorContract(gen_contract)
 
         const gen_balance = await wallet.provider.getBalance(gen_contract.address)
-        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConvertionRate)))
+        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
       }
     }
   }
 
   const getNFTPrice = async () => {
     try {
-      await getETHUSDConvertionRate()
+      await getETHUSDConversionRate()
       const nft_price_BN = await contract.currentNFTPriceInUSD()
       const nft_price = ethers.utils.formatEther(nft_price_BN)
       setNFTPrice(parseFloat(nft_price).toFixed(2))
@@ -153,7 +154,7 @@ const AdminMinting = ({
           setGeneratorContract(gen_contract)
 
           const gen_balance = await wallet.provider.getBalance(gen_contract.address)
-          setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConvertionRate)))
+          setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
           break
         }
       }
@@ -270,10 +271,10 @@ const AdminMinting = ({
     setNewNFTName(evt.target.value)
   }
 
-  const getETHUSDConvertionRate = async () => {
+  const getETHUSDConversionRate = async () => {
     if (contract) {
-      const convertion_rate = await contract.getETHUSDConversionRate()
-      setETHUSDConvertionRate(ethers.utils.formatEther(convertion_rate))
+      const conversion_rate = await contract.getETHUSDConversionRate()
+      setETHUSDConversionRate(ethers.utils.formatEther(conversion_rate))
     }
   }
 
@@ -387,7 +388,7 @@ const AdminMinting = ({
     if (!wallet) {
       resetAllFields()
     }
-    getETHUSDConvertionRate()
+    getETHUSDConversionRate()
   }, [wallet, loading])
 
   useEffect(() => {
@@ -414,8 +415,8 @@ const AdminMinting = ({
   return (
     <>
       <Grid container sx={{ alignItems: "center", display: "flex", drection: "column", marginTop: 3, justifyContent: "space-around" }} >
-        <NFTMintCard nftPrice={nftPrice} ETHUSDConvertionRate={ETHUSDConvertionRate} useAutoName={useAutoName} setUseAutoName={setUseAutoName} getNFTName={getNFTName} wallet={wallet} loading={loading} mintNFT={mintNFT} />
-        <NFTOwnerCard nftId={nftId} size={size} getNFTInfo={getNFTInfo} nftList={nftList} generatorAddress={generatorAddress} copyToClipboard={copyToClipboard} generatorBalance={generatorBalance} ETHUSDConvertionRate={ETHUSDConvertionRate} withdrawBalance={withdrawBalance} loading={loading} renameNFT={renameNFT} handleNewName={handleNewName} newNFTName={newNFTName} />
+        <NFTMintCard nft_price={nft_price} ETHUSDConversionRate={ETHUSDConversionRate} useAutoName={useAutoName} setUseAutoName={setUseAutoName} getNFTName={getNFTName} wallet={wallet} loading={loading} mintNFT={mintNFT} />
+        <NFTOwnerCard nftId={nftId} size={size} getNFTInfo={getNFTInfo} nftList={nftList} generatorAddress={generatorAddress} copyToClipboard={copyToClipboard} generatorBalance={generatorBalance} ETHUSDConversionRate={ETHUSDConversionRate} withdrawBalance={withdrawBalance} loading={loading} renameNFT={renameNFT} handleNewName={handleNewName} newNFTName={newNFTName} />
         <Grid>
           <Box style={{ display: "flex", justifyContent: 'center' }}>
             <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
@@ -454,7 +455,7 @@ const AdminMinting = ({
                   variant="filled"
                   InputProps={{
                     startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                    endAdornment: <InputAdornment position="end">{prodCurrentPrice ? `(ETH ${(prodCurrentPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
+                    endAdornment: <InputAdornment position="end">{prodCurrentPrice ? `(ETH ${(prodCurrentPrice / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
                   }}
                   value={prodCurrentPrice ? prodCurrentPrice : ""}
                   sx={{ maxWidth: 300 }}
@@ -473,7 +474,7 @@ const AdminMinting = ({
                   variant="filled"
                   InputProps={{
                     startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                    endAdornment: <InputAdornment position="end">{productNewPrice ? `(ETH ${(productNewPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
+                    endAdornment: <InputAdornment position="end">{productNewPrice ? `(ETH ${(productNewPrice / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
                   }}
                   value={typeof productNewPrice !== "undefined" ? productNewPrice : ""}
                   sx={{ maxWidth: 300 }}
@@ -503,7 +504,7 @@ const AdminMinting = ({
                   variant="filled"
                   InputProps={{
                     startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                    endAdornment: <InputAdornment position="end">{newProductPrice ? `(ETH ${(newProductPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
+                    endAdornment: <InputAdornment position="end">{newProductPrice ? `(ETH ${(newProductPrice / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
                   }}
                   sx={{ maxWidth: 300 }}
                 />
