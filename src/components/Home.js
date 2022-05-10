@@ -36,9 +36,7 @@ const Home = ({
   const [productSelectedName, setProductSelectedName] = useState(null)
   const [productSelectedPrice, setProductSelectedPrice] = useState(null)
 
-  useEffect(() => {
-    console.log(ownedNFTs)
-  }, [])
+
 
 
   const ConnectToAdminPrompt = () =>{
@@ -119,8 +117,10 @@ const Home = ({
  }
 
   useEffect(()=>{
+    if(contract){
     console.log("selecting NFT data")
     setGeneratorContractData()
+    }
   },[nftSelected])
 
   useEffect(()=>{
