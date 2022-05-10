@@ -418,7 +418,7 @@ const AdminMinting = ({
         <NFTOwnerCard nftId={nftId} size={size} getNFTInfo={getNFTInfo} nftList={nftList} generatorAddress={generatorAddress} copyToClipboard={copyToClipboard} generatorBalance={generatorBalance} ETHUSDConvertionRate={ETHUSDConvertionRate} withdrawBalance={withdrawBalance} loading={loading} renameNFT={renameNFT} handleNewName={handleNewName} newNFTName={newNFTName} />
         <Grid>
           <Box style={{ display: "flex", justifyContent: 'center' }}>
-            <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
+            <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
               <Typography gutterBottom variant="h5" component="div">
                 NFT Products
               </Typography>

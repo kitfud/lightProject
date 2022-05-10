@@ -6,7 +6,7 @@ const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copy
     return (
         <Grid>
             <Box style={{ display: "flex", justifyContent: 'center' }}>
-                <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
+                <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
                     <Typography gutterBottom variant="h5" component="div">
                         Owned NFTs
                     </Typography>

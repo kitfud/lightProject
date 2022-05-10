@@ -41,11 +41,23 @@ const Home = ({
 
   const ConnectToAdminPrompt = () =>{
     return(
-      <center>
-      <Box>
-        <Link href='/admin'>CONNECT WALLET AND MINT AN NFT</Link>
-      </Box>
-      </center> 
+      <Box 
+        sx={{
+          alignItems: "center",
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "85vh",
+          minWidth: "100%",
+        }}
+      >
+        
+          <Link href='/admin'>
+            <Typography sx= {{ color: "#b87333" }}>
+              CONNECT WALLET AND MINT AN NFT
+            </Typography>
+          </Link>
+        
+      </Box> 
     )
   }
 
