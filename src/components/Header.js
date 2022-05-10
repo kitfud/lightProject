@@ -89,6 +89,7 @@ const Header = ({
       await setWallet(undefined)
       const new_contract = getFactoryContract()
       await setContract(new_contract)
+      setButtonColor("warning")
     }
   }
 
@@ -196,7 +197,7 @@ const Header = ({
           <Box sx={{ flexGrow: 0 }}>
 
             {wallet && wrongNetwork ? (
-              <Button onClick={connectWallet} variant="contained" color={buttonColor}>
+              <Button onClick={connectWallet} variant="contained" color={"error"}>
                 Wrong network
               </Button>) :
               (<Button color={buttonColor} onClick={connectWallet} variant="contained">

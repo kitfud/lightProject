@@ -18,11 +18,11 @@ import {
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 
-const Home = ({ 
-  wallet, 
-  contract, 
-  selectGeneratorAddress, 
-  selectedProduct, 
+const Home = ({
+  wallet,
+  contract,
+  selectGeneratorAddress,
+  selectedProduct,
   selectProductPrice,
   ownedNFTs }) => {
 
@@ -31,17 +31,17 @@ const Home = ({
   const [generatorAddress, setGeneratorAddress] = useState(undefined)
   const [nftNameSelected, setNFTNameSelected] = useState(undefined)
   const [productList, setProductList] = useState([])
-  const [productSelected,setProductSelected] = useState(undefined)
-  const [productSelectedAddress,setProductSelectedAddress] = useState(null)
+  const [productSelected, setProductSelected] = useState(undefined)
+  const [productSelectedAddress, setProductSelectedAddress] = useState(null)
   const [productSelectedName, setProductSelectedName] = useState(null)
   const [productSelectedPrice, setProductSelectedPrice] = useState(null)
 
 
 
 
-  const ConnectToAdminPrompt = () =>{
-    return(
-      <Box 
+  const ConnectToAdminPrompt = () => {
+    return (
+      <Box
         sx={{
           alignItems: "center",
           display: "flex",
@@ -50,18 +50,18 @@ const Home = ({
           minWidth: "100%",
         }}
       >
-        
-          <Link href='/admin'>
-            <Typography sx= {{ color: "#b87333" }}>
-              CONNECT WALLET AND MINT AN NFT
-            </Typography>
-          </Link>
-        
-      </Box> 
+
+        <Link href='/admin'>
+          <Typography sx={{ color: "#b87333" }}>
+            CONNECT WALLET AND MINT AN NFT
+          </Typography>
+        </Link>
+
+      </Box>
     )
   }
 
-  const handleResetNFT = (event)=>{
+  const handleResetNFT = (event) => {
     event.preventDefault()
     setGeneratorAddress(undefined)
     setGeneratorContract(undefined)
@@ -76,94 +76,94 @@ const Home = ({
 
   }
 
-  const PickLightColorAndPay = ()=>{
+  const PickLightColorAndPay = () => {
     return (
       <Box textAlign='center'>
-      <h1>Crypto Lights</h1>
-      <center>
-        <LightPicker/>
-      </center>
-      <Button variant ="contained" color="error" onClick = {handleResetNFT}>Select New NFT</Button>
-      <Box>
-      {nftNameSelected}
-      </Box>
-      <Box>
-      {productSelectedName}
-      </Box>
-      <Box>
-      {productSelectedAddress}
-      </Box>
+        <h1>Crypto Lights</h1>
+        <center>
+          <LightPicker />
+        </center>
+        <Button variant="contained" color="error" onClick={handleResetNFT}>Select New NFT</Button>
+        <Box>
+          {nftNameSelected}
+        </Box>
+        <Box>
+          {productSelectedName}
+        </Box>
+        <Box>
+          {productSelectedAddress}
+        </Box>
 
-      <Box>
-      $ {productSelectedPrice}
+        <Box>
+          $ {productSelectedPrice}
+        </Box>
+
+        <br />
+        <br />
+        <QR_Code
+          wallet={wallet}
+          contract={contract}
+          selectProductPrice={productSelectedPrice}
+          selectGeneratorAddress={productSelectedAddress}
+        />
       </Box>
-    
-      <br/>
-      <br/>
-      <QR_Code 
-        wallet={wallet}
-        contract={contract}
-        selectProductPrice={productSelectedPrice}
-        selectGeneratorAddress={productSelectedAddress}  
-      />
-    </Box>
     )
   }
 
   const getNFTInfo = async (event) => {
-      console.log(event.target.value)
-      setNFTSelected(event.target.value)
-      setNFTNameSelected(ownedNFTs[event.target.value].name)
+    console.log(event.target.value)
+    setNFTSelected(event.target.value)
+    setNFTNameSelected(ownedNFTs[event.target.value].name)
   }
 
- const setGeneratorContractData = ()=>{
-  for (let ii = 0; ii < ownedNFTs.length; ii++) {
-    if (ownedNFTs[ii].id === parseInt(nftSelected)) {
-      const nft_address = ownedNFTs[ii].address
-      setGeneratorAddress(nft_address)
+  const setGeneratorContractData = () => {
+    for (let ii = 0; ii < ownedNFTs.length; ii++) {
+      if (ownedNFTs[ii].id === parseInt(nftSelected)) {
+        const nft_address = ownedNFTs[ii].address
+        setGeneratorAddress(nft_address)
 
-      const gen_contract = getGeneratorContract(nft_address, wallet.signer)
-      setGeneratorContract(gen_contract)
+        const gen_contract = getGeneratorContract(nft_address, wallet.signer)
+        setGeneratorContract(gen_contract)
+      }
     }
   }
- }
 
-  useEffect(()=>{
-    if(contract){
-    console.log("selecting NFT data")
-    setGeneratorContractData()
+  useEffect(() => {
+    if (contract) {
+      console.log("selecting NFT data")
+      setGeneratorContractData()
     }
-  },[nftSelected])
+  }, [nftSelected])
 
-  useEffect(()=>{
-  console.log("generator address: " + generatorAddress)
+  useEffect(() => {
+    console.log("generator address: " + generatorAddress)
 
-  },[generatorAddress])
+  }, [generatorAddress])
 
-  useEffect(()=>{
+  useEffect(() => {
     console.log("nftName: " + nftNameSelected)
-    },[nftNameSelected])
+  }, [nftNameSelected])
 
-  const UserSelectNFT = ()=>{
-    return(
-    <FormControl sx={{ m: 1, minWidth: 300 }}>
-      <InputLabel id="nft-id">NFT</InputLabel>
-          <Select
-            labelId="nft-id"
-            id="nft-id"
-            label="NFT"
-            value={typeof nftSelected !== "undefined" ? nftSelected : ""}
-            onChange={getNFTInfo}
-            >
-        {ownedNFTs.map(nft => (
-          <MenuItem value={nft.id} key={nft.id}>{`${nft.id} - ${nft.name}`}</MenuItem>
-                            ))}
-            </Select>
-          </FormControl>
+  const UserSelectNFT = () => {
+    return (
+      <FormControl sx={{ m: 1, minWidth: 300 }}>
+        <InputLabel id="nft-id">NFT</InputLabel>
+        <Select
+          labelId="nft-id"
+          id="nft-id"
+          label="NFT"
+          value={typeof nftSelected !== "undefined" ? nftSelected : ""}
+          onChange={getNFTInfo}
+        >
+          {ownedNFTs.map(nft => (
+            <MenuItem value={nft.id} key={nft.id}>{`${nft.id} - ${nft.name}`}</MenuItem>
+          ))}
+        </Select>
+      </FormControl>
     )
   }
 
-  const getProductInfo = async (event)=>{
+  const getProductInfo = async (event) => {
     setProductSelected(event.target.value)
     setProductSelectedName(productList[event.target.value].name)
     let productContract = await generatorContract.idToProductContract(event.target.value)
@@ -172,24 +172,24 @@ const Home = ({
 
   }
 
-  const UserSelectProduct = ()=>{
+  const UserSelectProduct = () => {
     return (
-      productList.length >0 ? 
-      <FormControl sx={{ m: 1, minWidth: 300 }}>
-      <InputLabel id="product-id">Product Selection:</InputLabel>
+      productList.length > 0 ?
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+          <InputLabel id="product-id">Product Selection:</InputLabel>
           <Select
             labelId="product-id"
             id="product-id"
             label="PRODUCT"
             value={typeof productSelected !== "undefined" ? productSelected : ""}
             onChange={getProductInfo}
-            >
-        {productList.map(item => (
-          <MenuItem value={item.id} key={item.id}>{`${item.id} - ${item.name}`}</MenuItem>
-                            ))}
-            </Select>
-          </FormControl>: <Link href='/admin'>Make Some Products In Admin Page</Link>
-        
+          >
+            {productList.map(item => (
+              <MenuItem value={item.id} key={item.id}>{`${item.id} - ${item.name}`}</MenuItem>
+            ))}
+          </Select>
+        </FormControl> : <Link href='/admin'>Make Some Products In Admin Page</Link>
+
     )
   }
 
@@ -210,40 +210,40 @@ const Home = ({
     }
   }
 
-useEffect(()=>{
-if(productSelected){
-  setProductSelectedAddress()
-}
-},[productSelected])
+  useEffect(() => {
+    if (productSelected) {
+      setProductSelectedAddress()
+    }
+  }, [productSelected])
 
-  useEffect(()=>{
-if(generatorContract){
-  updateProducts()
-}
-  },[generatorContract])
+  useEffect(() => {
+    if (generatorContract) {
+      updateProducts()
+    }
+  }, [generatorContract])
 
-useEffect(()=>{
-console.log(productList)
-},[productList])
+  useEffect(() => {
+    console.log(productList)
+  }, [productList])
 
 
 
   return (
-      <>
-      {wallet && ownedNFTs.length > 0 ? 
+    <>
+      {wallet && ownedNFTs?.length > 0 ?
 
-      !generatorAddress?
-      <UserSelectNFT/>:
-      
-      !productSelectedAddress?
-      <UserSelectProduct/>:
-      <PickLightColorAndPay/>
-      : 
-      <ConnectToAdminPrompt/>
+        !generatorAddress ?
+          <UserSelectNFT /> :
+
+          !productSelectedAddress ?
+            <UserSelectProduct /> :
+            <PickLightColorAndPay />
+        :
+        <ConnectToAdminPrompt />
       }
-       
-      </>
-    )
-  }
+
+    </>
+  )
+}
 
 export default Home
