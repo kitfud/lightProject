@@ -56,8 +56,6 @@ function App() {
  
 
 
-
-
   useEffect(() => {
     console.log("In app js component " + selectProductPrice)
 
