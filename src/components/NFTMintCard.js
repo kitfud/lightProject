@@ -6,7 +6,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConvertionRate, useAutoName, setUseAutoNa
     return (
         <Grid >
             <Box style={{ display: "flex", justifyContent: 'center' }}>
-                <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3 }}>
+                <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3 }}>
                     <CardMedia component="img"
                         alt="nft"
                         style={{ transform: "scale(1)", objectFit: 'cover', raised: true }}

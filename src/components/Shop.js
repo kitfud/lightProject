@@ -66,7 +66,7 @@ function PricingContent() {
     };
 
 
-    return (
+  return (
       <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
@@ -97,7 +97,7 @@ function PricingContent() {
               sm={tier.title === 'Led Strip' ? 12 : 10}
               md={4}
             >
-              <Card>
+              <Card sx={{ bgcolor: "primary.main" }}>
                 <CardHeader
                   title={tier.title}
                   subheader={tier.subheader}
