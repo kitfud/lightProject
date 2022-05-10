@@ -1,7 +1,11 @@
 import React from 'react'
-import { Card, Button, Typography, Box, Grid, CircularProgress, CardMedia, FormControl, TextField, Checkbox, FormControlLabel } from '@mui/material'
+import {
+    Card, Button, Typography, Box, Grid, CircularProgress,
+    CardMedia, FormControl, TextField, Checkbox, FormControlLabel
+} from '@mui/material'
 
-const NFTMintCard = ({ nftPrice, ETHUSDConvertionRate, useAutoName, setUseAutoName, getNFTName, wallet, loading, mintNFT }) => {
+const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName,
+    setUseAutoName, handleNFTName, wallet, loading, mintNFT }) => {
 
     return (
         <Grid >
@@ -17,11 +21,21 @@ const NFTMintCard = ({ nftPrice, ETHUSDConvertionRate, useAutoName, setUseAutoNa
                         NFT Minting
                     </Typography>
                     <Typography variant="h6" color="text.secondary">
-                        {nftPrice ? (`Price: USD ${nftPrice} (ETH ${(nftPrice / ETHUSDConvertionRate).toFixed(6)})`) : ("Price: not available")}
+                        {nftPrice ? (`Price: USD ${nftPrice} (ETH ${(nftPrice / ETHUSDConversionRate).toFixed(6)})`) : ("Price: not available")}
                     </Typography>
                     <FormControl sx={{ m: 1, minWidth: 300 }}>
-                        <TextField onChange={getNFTName} id="outlined-basic" label="NFT Name" variant="outlined" disabled={useAutoName ? true : false} />
-                        <FormControlLabel control={<Checkbox checked={useAutoName} onChange={(evt) => setUseAutoName(evt.target.checked)} color="info" />} label="Use auto generated name" />
+                        <TextField onChange={handleNFTName}
+                            id="outlined-basic"
+                            label="NFT Name"
+                            variant="outlined"
+                            disabled={useAutoName ? true : false}
+                        />
+                        <FormControlLabel
+                            control={<Checkbox
+                                checked={useAutoName}
+                                onChange={(evt) => setUseAutoName(evt.target.checked)} color="info" />}
+                            label="Use auto generated name"
+                        />
                     </FormControl>
                     <Box mr={2} ml={2}>
                         {wallet ? (

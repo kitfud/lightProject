@@ -1,12 +1,20 @@
 import React from "react"
-import { Card, Button, Typography, Box, Grid, CircularProgress, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip, Tooltip } from '@mui/material'
+import {
+    Card, Button, Typography, Box, Grid, CircularProgress,
+    FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip, Tooltip
+} from '@mui/material'
 import HardwareConnect from "./HardwareConnect"
 
-const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copyToClipboard, generatorBalance, ETHUSDConvertionRate, withdrawBalance, loading, renameNFT, handleNewName, newNFTName }) => {
+const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress,
+    copyToClipboard, generatorBalance, ETHUSDConversionRate, withdrawBalance,
+    loading, renameNFT, handleNewName, newNFTName }) => {
     return (
         <Grid>
             <Box style={{ display: "flex", justifyContent: 'center' }}>
-                <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
+                <Card sx={{
+                    alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1,
+                    padding: 3, minWidth: size[0], minHeight: size[1]
+                }}>
                     <Typography gutterBottom variant="h5" component="div">
                         Owned NFTs
                     </Typography>
@@ -27,7 +35,7 @@ const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copy
                         <FormControl sx={{ m: 1, minWidth: 300 }}>
                             <Tooltip title="copy to clipboard">
                                 <Chip
-                                    label={generatorAddress ? generatorAddress : "Address"}
+                                    label={generatorAddress ? generatorAddress : "Generator Address"}
                                     onClick={copyToClipboard}
                                     disabled={generatorAddress ? false : true}
                                 />
@@ -47,7 +55,10 @@ const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copy
                             variant="filled"
                             InputProps={{
                                 startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                                endAdornment: <InputAdornment position="end">{generatorBalance ? `(ETH ${(generatorBalance / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
+                                endAdornment: <InputAdornment
+                                    position="end">
+                                    {generatorBalance ? `(ETH ${(generatorBalance / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
+                                </InputAdornment>
                             }}
                             value={typeof generatorBalance !== "undefined" ? generatorBalance.toFixed(2) : ""}
                             sx={{ maxWidth: 300 }}
@@ -57,6 +68,7 @@ const NFTOwnerCard = ({ nftId, size, getNFTInfo, nftList, generatorAddress, copy
                     </FormControl>
                     <FormControl sx={{ padding: 1, marginBottom: 1 }}>
                         <TextField
+                            required
                             id="filled-new-nft-name"
                             label="New name"
                             type="text"
