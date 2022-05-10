@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react'
-import { Card, Button, Typography, Box, Grid, CircularProgress, Tooltip, Snackbar, Chip, IconButton, Alert, Slide, FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close';
+import { Grid, Snackbar, IconButton, Alert, Slide } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
-import NFTMintCard from './NFTMintCard';
-import NFTOwnerCard from './NFTOwnerCard';
+import NFTMintCard from './NFTMintCard'
+import NFTOwnerCard from './NFTOwnerCard'
+import NFTProductsCard from './NFTProductsCard'
 
 const AdminMinting = ({
   wallet,
@@ -17,16 +18,17 @@ const AdminMinting = ({
   setSelectProductPrice
 }) => {
 
-  const [nftPrice, setNFTPrice] = useState(undefined)
+  // General
   const [alerts, setAlerts] = useState([false])
   const [useAutoName, setUseAutoName] = useState(true)
-  const [nftNameInput, setNftNameInput] = useState("")
   const [size, setSize] = useState([100, 100])
 
-  // Factory Info
+  // Regarding Factory Contract
   const [ETHUSDConvertionRate, setETHUSDConvertionRate] = useState(undefined)
+  const [nftPrice, setNFTPrice] = useState(undefined)
+  const [nftNameInput, setNftNameInput] = useState("")
 
-  // Generator Info
+  // Regarding Generator Contract
   const [generatorContract, setGeneratorContract] = useState(undefined)
   const [generatorAddress, setGeneratorAddress] = useState(undefined)
   const [productList, setProductList] = useState([])
@@ -38,10 +40,12 @@ const AdminMinting = ({
   const [generatorBalance, setGeneratorBalance] = useState(undefined)
   const [newNFTName, setNewNFTName] = useState(undefined)
 
-  // New product name
+  // Regarding Product Contract
+  const [productAddress, setProductAddress] = useState(undefined)
   const [newProductName, setNewProductName] = useState(undefined)
   const [newProductPrice, setNewProducPrice] = useState(undefined)
 
+  // Alerts
   const handleAlerts = (msg, severity) => {
     setAlerts([true, msg, severity])
   }
@@ -54,6 +58,7 @@ const AdminMinting = ({
     setAlerts([false])
   };
 
+  // NFT Mint Card
   const mintNFT = async () => {
     if (!loading) {
       setLoading(true)
@@ -67,7 +72,9 @@ const AdminMinting = ({
       }
 
       try {
-        let tx = await contract.mintGenerator(nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConvertionRate}`) })
+        let tx = await contract.mintGenerator(
+          nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConvertionRate}`) }
+        )
         await tx.wait(1)
         handleAlerts("NFT minted!", "success")
       } catch (error) {
@@ -88,6 +95,22 @@ const AdminMinting = ({
     setLoading(false)
   }
 
+  const getNFTPrice = async () => {
+    try {
+      await getETHUSDConvertionRate()
+      const nft_price_BN = await contract.currentNFTPriceInUSD()
+      const nft_price = ethers.utils.formatEther(nft_price_BN)
+      setNFTPrice(parseFloat(nft_price).toFixed(2))
+    } catch (error) {
+      setNFTPrice(undefined)
+    }
+  }
+
+  const handleNFTName = (evt) => {
+    setNftNameInput(evt.target.value)
+  }
+
+  // NFT Owner Card
   const checkIfTokenOwner = async () => {
     const isOwner = await contract.checkIfTokenHolder(userAddress)
     let tokensOwned
@@ -118,17 +141,6 @@ const AdminMinting = ({
     }
   }
 
-  const getNFTPrice = async () => {
-    try {
-      await getETHUSDConvertionRate()
-      const nft_price_BN = await contract.currentNFTPriceInUSD()
-      const nft_price = ethers.utils.formatEther(nft_price_BN)
-      setNFTPrice(parseFloat(nft_price).toFixed(2))
-    } catch (error) {
-      setNFTPrice(undefined)
-    }
-  }
-
   const getNFTInfo = async (event = undefined) => {
     let nft_id
     if (typeof event === "undefined") {
@@ -155,121 +167,8 @@ const AdminMinting = ({
     }
   }
 
-  const updateProducts = async () => {
-    if (generatorContract) {
-      const products_num = await generatorContract.productCount()
-      let listOfProducts = []
-      for (let ii = 0; ii < products_num; ii++) {
-        const product = await generatorContract.idToProduct(ii)
-        const product_obj = {
-          id: parseInt(product.id, 16),
-          name: product.name,
-          priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2)
-        }
-        listOfProducts.push(product_obj)
-      }
-      setProductList(listOfProducts)
-      if (listOfProducts.length === 1) {
-        setProductId(listOfProducts[0].id)
-        if (listOfProducts[0].id !== undefined) {
-          setSelectedProduct(listOfProducts[0].id)
-        }
-      }
-    }
-  }
-
-  const getNFTName = (evt) => {
-    const name = evt.target.value
-    setNftNameInput(name)
-  }
-
-  const addNewProduct = async () => {
-    if (!loading) {
-      try {
-        setLoading(true)
-        const tx = await generatorContract.addProduct(newProductName, ethers.utils.parseEther(newProductPrice))
-        await tx.wait(1)
-        setNewProducPrice(undefined)
-        setNewProductName(undefined)
-      } catch (error) {
-        if (error.code === 4001) {
-          handleAlerts("Transaction cancelled", "warning")
-        } else if (error.code === "INSUFFICIENT_FUNDS") {
-          handleAlerts("Insufficient funds for gas * price + value", "warning")
-        } else if (error.code === -32602 || error.code === -32603) {
-          handleAlerts("Internal error", "error")
-        } else {
-          handleAlerts("An unknown error occurred", "error")
-        }
-      }
-    } else if (loading) {
-      handleAlerts("Loading... Cannot execute while loading", "warning")
-    }
-    setLoading(false)
-  }
-
-  const setNewProductPrice = async () => {
-    if (!loading) {
-      setLoading(true)
-      try {
-        const tx = await generatorContract.changeProductPrice(productId, ethers.utils.parseEther(productNewPrice))
-        await tx.wait(1)
-        // const product = await generatorContract.idToProduct(productId)
-        const new_product_list = productList
-        for (let ii = 0; ii < new_product_list.length; ii++) {
-          if (new_product_list[ii].id === productId) {
-            new_product_list[ii].priceUSD = productNewPrice
-            break
-          }
-        }
-        setProdCurrentPrice(productNewPrice)
-        setProductNewPrice(undefined)
-      } catch (error) {
-        if (error.code === 4001) {
-          handleAlerts("Transaction cancelled", "warning")
-        } else if (error.code === "INSUFFICIENT_FUNDS") {
-          handleAlerts("Insufficient funds for gas * price + value", "warning")
-        } else if (error.code === -32602 || error.code === -32603) {
-          handleAlerts("Internal error", "error")
-        } else {
-          handleAlerts("An unknown error occurred", "error")
-        }
-      }
-    } else if (loading) {
-      handleAlerts("Loading... Cannot execute while loading", "warning")
-    }
-    setLoading(false)
-  }
-
-  const getNewProductName = (evt) => {
-    const new_name = evt.target.value
-    setNewProductName(new_name)
-  }
-
-  const getNewProductPrice = (evt) => {
-    const new_price = evt.target.value
-    setNewProducPrice(new_price)
-  }
-
-  const handleProductList = (evt) => {
-    const prod_id = evt.target.value
-    setProductId(prod_id)
-  }
-
-  const handleProductChangePrice = (evt) => {
-    const new_price = evt.target.value
-    setProductNewPrice(new_price)
-  }
-
   const handleNewName = (evt) => {
     setNewNFTName(evt.target.value)
-  }
-
-  const getETHUSDConvertionRate = async () => {
-    if (contract) {
-      const convertion_rate = await contract.getETHUSDConversionRate()
-      setETHUSDConvertionRate(ethers.utils.formatEther(convertion_rate))
-    }
   }
 
   const withdrawBalance = async () => {
@@ -329,6 +228,124 @@ const AdminMinting = ({
     setNewNFTName(undefined)
   }
 
+  // NFT Products Card
+  const updateProducts = async () => {
+    if (generatorContract) {
+      const products_num = await generatorContract.productCount()
+      let listOfProducts = []
+      for (let ii = 0; ii < products_num; ii++) {
+        const product = await generatorContract.idToProduct(ii)
+        const product_obj = {
+          id: parseInt(product.id, 16),
+          name: product.name,
+          priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
+          address: product.contractAddress
+        }
+        listOfProducts.push(product_obj)
+      }
+      setProductList(listOfProducts)
+      if (listOfProducts.length === 1) {
+        setProductId(listOfProducts[0].id)
+        if (listOfProducts[0].id !== undefined) {
+          setSelectedProduct(listOfProducts[0].id)
+        }
+      }
+    }
+  }
+
+  const addNewProduct = async () => {
+    if (!loading) {
+      try {
+        setLoading(true)
+        const tx = await generatorContract.addProduct(
+          newProductName, ethers.utils.parseEther(newProductPrice)
+        )
+        await tx.wait(1)
+        setNewProducPrice(undefined)
+        setNewProductName(undefined)
+      } catch (error) {
+        if (error.code === 4001) {
+          handleAlerts("Transaction cancelled", "warning")
+        } else if (error.code === "INSUFFICIENT_FUNDS") {
+          handleAlerts("Insufficient funds for gas * price + value", "warning")
+        } else if (error.code === -32602 || error.code === -32603) {
+          handleAlerts("Internal error", "error")
+        } else {
+          handleAlerts("An unknown error occurred", "error")
+        }
+      }
+    } else if (loading) {
+      handleAlerts("Loading... Cannot execute while loading", "warning")
+    }
+    setLoading(false)
+  }
+
+  const setNewProductPrice = async () => {
+    if (!loading) {
+      setLoading(true)
+      try {
+        const tx = await generatorContract.changeProductPrice(
+          productId, ethers.utils.parseEther(productNewPrice)
+        )
+        await tx.wait(1)
+        // const product = await generatorContract.idToProduct(productId)
+        const new_product_list = productList
+        for (let ii = 0; ii < new_product_list.length; ii++) {
+          if (new_product_list[ii].id === productId) {
+            new_product_list[ii].priceUSD = productNewPrice
+            break
+          }
+        }
+        setProdCurrentPrice(productNewPrice)
+        setProductNewPrice(undefined)
+      } catch (error) {
+        if (error.code === 4001) {
+          handleAlerts("Transaction cancelled", "warning")
+        } else if (error.code === "INSUFFICIENT_FUNDS") {
+          handleAlerts("Insufficient funds for gas * price + value", "warning")
+        } else if (error.code === -32602 || error.code === -32603) {
+          handleAlerts("Internal error", "error")
+        } else {
+          handleAlerts("An unknown error occurred", "error")
+        }
+      }
+    } else if (loading) {
+      handleAlerts("Loading... Cannot execute while loading", "warning")
+    }
+    setLoading(false)
+  }
+
+  const handleNewProductName = (evt) => {
+    setNewProductName(evt.target.value)
+  }
+
+  const handleNewProductPrice = (evt) => {
+    setNewProducPrice(evt.target.value)
+  }
+
+  const handleProductChangePrice = (evt) => {
+    setProductNewPrice(evt.target.valu)
+  }
+
+  const handleProductList = (evt) => {
+    const prod_id = evt.target.value
+    setProductId(prod_id)
+    for (let ii = 0; ii < productList.length; ii++) {
+      if (productList[ii].id === prod_id) {
+        setProductAddress(productList[ii].contractAddress)
+        break
+      }
+    }
+  }
+
+  // General
+  const getETHUSDConvertionRate = async () => {
+    if (contract) {
+      const convertion_rate = await contract.getETHUSDConversionRate()
+      setETHUSDConvertionRate(ethers.utils.formatEther(convertion_rate))
+    }
+  }
+
   const copyToClipboard = async () => {
     // const text = evt.target.value
     if ('clipboard' in navigator) {
@@ -350,6 +367,7 @@ const AdminMinting = ({
     setNewNFTName(undefined)
   }
 
+  // useEffects
   useEffect(() => {
     if (productId !== undefined) {
       setProductId(productId)
@@ -408,111 +426,77 @@ const AdminMinting = ({
 
   return (
     <>
-      <Grid container sx={{ alignItems: "center", display: "flex", drection: "column", marginTop: 3, justifyContent: "space-around" }} >
-        <NFTMintCard nftPrice={nftPrice} ETHUSDConvertionRate={ETHUSDConvertionRate} useAutoName={useAutoName} setUseAutoName={setUseAutoName} getNFTName={getNFTName} wallet={wallet} loading={loading} mintNFT={mintNFT} />
-        <NFTOwnerCard nftId={nftId} size={size} getNFTInfo={getNFTInfo} nftList={nftList} generatorAddress={generatorAddress} copyToClipboard={copyToClipboard} generatorBalance={generatorBalance} ETHUSDConvertionRate={ETHUSDConvertionRate} withdrawBalance={withdrawBalance} loading={loading} renameNFT={renameNFT} handleNewName={handleNewName} newNFTName={newNFTName} />
-        <Grid>
-          <Box style={{ display: "flex", justifyContent: 'center' }}>
-            <Card sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, padding: 3, minWidth: size[0], minHeight: size[1] }}>
-              <Typography gutterBottom variant="h5" component="div">
-                NFT Products
-              </Typography>
-              <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <InputLabel id="product-id">Product</InputLabel>
-                <Select
-                  labelId="product-id"
-                  id="product-id"
-                  label="Product"
-                  onChange={handleProductList}
-                  value={productId !== undefined ? productId : ""}
-                  disabled={productList ? false : true}
-                >
-                  {productList.map(product => (
-                    <MenuItem value={product.id} key={product.id}>{product.id + " - " + product.name}</MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-              <FormControl sx={{ m: 1, minWidth: 300 }}>
-                <Tooltip title="copy to clipboard">
-                  <Chip
-                    label={generatorAddress ? generatorAddress : "Address"}
-                    onClick={copyToClipboard}
-                    disabled={generatorAddress ? false : true}
-                  />
-                </Tooltip>
-              </FormControl>
-              <FormControl sx={{ padding: 1 }}>
-                <TextField
-                  disabled
-                  id="filled-required"
-                  label="Current price"
-                  variant="filled"
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                    endAdornment: <InputAdornment position="end">{prodCurrentPrice ? `(ETH ${(prodCurrentPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
-                  }}
-                  value={prodCurrentPrice ? prodCurrentPrice : ""}
-                  sx={{ maxWidth: 300 }}
-                />
-              </FormControl>
-              <FormControl sx={{ padding: 1 }}>
-                <TextField
-                  required
-                  id="filled-number"
-                  label="Price"
-                  type="number"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  onChange={handleProductChangePrice}
-                  variant="filled"
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                    endAdornment: <InputAdornment position="end">{productNewPrice ? `(ETH ${(productNewPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
-                  }}
-                  value={typeof productNewPrice !== "undefined" ? productNewPrice : ""}
-                  sx={{ maxWidth: 300 }}
-                />
-                <Button onClick={setNewProductPrice} variant="contained" color="secondary">{loading ? (
-                  <CircularProgress color="inherit" />) : ("Set price")}</Button>
-              </FormControl>
-              <FormControl sx={{ padding: 1 }}>
-                <TextField
-                  required
-                  id="filled-required"
-                  label="Name"
-                  variant="filled"
-                  onChange={getNewProductName}
-                  value={typeof newProductName !== "undefined" ? newProductName : ""}
-                />
-                <TextField
-                  required
-                  onChange={getNewProductPrice}
-                  id="filled-number"
-                  label="Price"
-                  type="number"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
-                  value={typeof newProductPrice !== "undefined" ? newProductPrice : ""}
-                  variant="filled"
-                  InputProps={{
-                    startAdornment: <InputAdornment position="start">USD</InputAdornment>,
-                    endAdornment: <InputAdornment position="end">{newProductPrice ? `(ETH ${(newProductPrice / ETHUSDConvertionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}</InputAdornment>
-                  }}
-                  sx={{ maxWidth: 300 }}
-                />
-                <Button variant="contained" color="secondary" onClick={addNewProduct}>{loading ? (
-                  <CircularProgress color="inherit" />) : ("Add product")}</Button>
-              </FormControl>
-            </Card>
-          </Box>
-        </Grid>
+      <Grid container sx={{
+        alignItems: "center", display: "flex",
+        drection: "column", marginTop: 3, justifyContent: "space-around"
+      }} >
+        <NFTMintCard
+          nftPrice={nftPrice}
+          ETHUSDConvertionRate={ETHUSDConvertionRate}
+          useAutoName={useAutoName}
+          setUseAutoName={setUseAutoName}
+          handleNFTName={handleNFTName}
+          wallet={wallet}
+          loading={loading}
+          mintNFT={mintNFT}
+        />
+        <NFTOwnerCard
+          nftId={nftId}
+          size={size}
+          getNFTInfo={getNFTInfo}
+          nftList={nftList}
+          generatorAddress={generatorAddress}
+          copyToClipboard={copyToClipboard}
+          generatorBalance={generatorBalance}
+          ETHUSDConvertionRate={ETHUSDConvertionRate}
+          withdrawBalance={withdrawBalance}
+          loading={loading}
+          renameNFT={renameNFT}
+          handleNewName={handleNewName}
+          newNFTName={newNFTName}
+        />
+        <NFTProductsCard
+          size={size}
+          handleProductList={handleProductList}
+          productId={productId}
+          productList={productList}
+          generatorAddress={generatorAddress}
+          copyToClipboard={copyToClipboard}
+          prodCurrentPrice={prodCurrentPrice}
+          ETHUSDConvertionRate={ETHUSDConvertionRate}
+          newProductPrice={newProductPrice}
+          addNewProduct={addNewProduct}
+          loading={loading}
+          productNewPrice={productNewPrice}
+          handleNewProductName={handleNewProductName}
+          handleProductChangePrice={handleProductChangePrice}
+          handleNewProductPrice={handleNewProductPrice}
+          productAddress={productAddress}
+          setNewProductPrice={setNewProductPrice}
+        />
       </Grid>
-      <Snackbar TransitionComponent={Slide} onClick={handleCloseAlerts} autoHideDuration={6000} open={alerts[0]}>
-        <Alert onClick={handleCloseAlerts} elevation={6} variant="filled" severity={alerts[2]} sx={{ width: '100%' }}>
-          {alerts[1]} <IconButton size="small" aria-label="close" color="inherit" onClick={handleCloseAlerts}>
-            <CloseIcon fontSize="small" />  </IconButton>
+      <Snackbar
+        TransitionComponent={Slide}
+        onClick={handleCloseAlerts}
+        autoHideDuration={6000}
+        open={alerts[0]}
+      >
+        <Alert
+          onClick={handleCloseAlerts}
+          elevation={6}
+          variant="filled"
+          severity={alerts[2]}
+          sx={{ width: '100%' }}
+        >
+          {alerts[1]}
+          <IconButton
+            size="small"
+            aria-label="close"
+            color="inherit"
+            onClick={handleCloseAlerts}
+          >
+            <CloseIcon fontSize="small" />
+          </IconButton>
         </Alert>
       </Snackbar>
     </>
