@@ -56,8 +56,8 @@ function App() {
 
 
   useEffect(() => {
-    console.log("In app js component " + selectProductPrice )
-    
+    console.log("In app js component " + selectProductPrice)
+
   }, [selectProductPrice])
 
   useEffect(() => {
@@ -79,7 +79,7 @@ function App() {
           wallet={wallet}
           contract={contract} />
 
-        <Card sx={{ height: '110vh', bgcolor: "secondary.main" }}>
+        <Card sx={{ bgcolor: "secondary.main" }}>
           <Routes>
             <Route path='/' element={<Home wallet={wallet} contract={contract} />} />
             <Route path='/home' element={
@@ -101,8 +101,8 @@ function App() {
                 setSelectGeneratorAddress={setSelectGeneratorAddress}
                 setSelectedProduct={setSelectedProduct}
                 setSelectProductPrice={setSelectProductPrice}
-            
-            />} />
+
+              />} />
           </Routes>
         </Card>
         <Footer />
