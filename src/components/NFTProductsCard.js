@@ -13,7 +13,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
             <Box style={{ display: "flex", justifyContent: 'center' }}>
                 <Card sx={{
                     alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1,
-                    padding: 3, minWidth: size[0], minHeight: size[1]
+                    padding: 3, minWidth: size[0], minHeight: size[1], bgcolor: "primary.main"
                 }}>
                     <Typography gutterBottom variant="h5" component="div">
                         NFT Products
@@ -30,6 +30,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                         >
                             {productList.map(product => (
                                 <MenuItem
+                                    sx={{ color: "black" }}
                                     value={product.id}
                                     key={product.id}
                                 >
