@@ -48,37 +48,21 @@ const AdminMinting = ({
   const [newProductPrice, setNewProducPrice] = useState(undefined)
   const [sumProductBalances, setSumProductBalances] = useState(0)
 
-  useEffect(()=>{
-
-    
-      console.log("getting product list")
-      getProductContractBalanceSum()
-     
-    
-
-  },[productList])
-  
-
-  const getProductContractBalanceSum = async ()=>{
-  const provider = await new ethers.providers.Web3Provider(window.ethereum)
-  var  sumBalance = 0 
-  for (let x = 0; x<productList.length; x++){
-    var bigNumBalance = await provider.getBalance(productList[x].address)
-    var stringbalance = bigNumBalance.toString()
-    var numBalance = parseInt(stringbalance)
-    console.log(numBalance)
-    console.log(typeof(numBalance))
-    sumBalance+=numBalance
-  }
-  let ethBalance = ethers.utils.formatEther(sumBalance.toString())
-  setSumProductBalances(ethBalance)
-  }
-
-  useEffect(()=>{
-    if(sumProductBalances !== 0){
-    console.log("SUM PRODUCT "+ sumProductBalances)
+  const getProductContractBalanceSum = async () => {
+    let sumBalance = 0
+    for (let x = 0; x < productList.length; x++) {
+      let bigNumBalance = await wallet.provider.getBalance(productList[x].address)
+      let numBalance = parseFloat(ethers.utils.formatEther(bigNumBalance))
+      sumBalance += numBalance
     }
-  },[sumProductBalances])
+    setSumProductBalances(sumBalance)
+  }
+
+  useEffect(() => {
+    // if (sumProductBalances !== 0) {
+    //   console.log("SUM PRODUCT " + sumProductBalances)
+    // }
+  }, [sumProductBalances])
 
   const handleAlerts = (msg, severity) => {
     setAlerts([true, msg, severity])
@@ -113,7 +97,6 @@ const AdminMinting = ({
         await tx.wait(1)
         handleAlerts("NFT minted!", "success")
       } catch (error) {
-        console.log(error)
         if (error.code === 4001) {
           handleAlerts("Transaction cancelled", "warning")
         } else if (error.code === "INSUFFICIENT_FUNDS") {
@@ -138,7 +121,6 @@ const AdminMinting = ({
       const nft_price = ethers.utils.formatEther(nft_price_BN)
       setNFTPrice(parseFloat(nft_price).toFixed(2))
     } catch (error) {
-      // console.log(error)
       setNFTPrice(undefined)
     }
   }
@@ -176,9 +158,7 @@ const AdminMinting = ({
         const gen_contract = getGeneratorContract(new_tokensOwned_arr[0].address, wallet.signer)
         setGeneratorContract(gen_contract)
 
-
-        console.log("current conract: " + gen_contract)
-        const gen_balance = await gen_contract.address.getBalance()
+        const gen_balance = await wallet.provider.getBalance(new_tokensOwned_arr[0].address)
         setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
       }
     }
@@ -364,10 +344,7 @@ const AdminMinting = ({
   }
 
   const handleNewProductName = (evt) => {
-    
-    let input = evt
-    console.log(input)
-    setNewProductName(input)
+    setNewProductName(evt)
   }
 
   const handleNewProductPrice = (evt) => {
@@ -420,12 +397,6 @@ const AdminMinting = ({
 
   // useEffects
   useEffect(() => {
-    if (productId !== undefined) {
-      setProductId(productId)
-    }
-  }, [productId])
-
-  useEffect(() => {
     if (generatorAddress !== undefined) {
       setSelectGeneratorAddress(generatorAddress)
     }
@@ -441,6 +412,8 @@ const AdminMinting = ({
           break
         }
       }
+      setProductId(productId)
+      getProductContractBalanceSum()
     }
   }, [productId])
 
@@ -479,7 +452,7 @@ const AdminMinting = ({
     <>
       <Grid container sx={{
         alignItems: "center", display: "flex",
-        drection: "column", marginTop: 3, justifyContent: "space-around"
+        drection: "column", margin: 3, justifyContent: "space-around"
       }} >
         <NFTMintCard
           nftPrice={nftPrice}
@@ -493,7 +466,7 @@ const AdminMinting = ({
         />
         <NFTOwnerCard
           sumProductBalances={sumProductBalances}
-          wallet = {wallet}
+          wallet={wallet}
           nftId={nftId}
           size={size}
           getNFTInfo={getNFTInfo}
@@ -507,6 +480,7 @@ const AdminMinting = ({
           renameNFT={renameNFT}
           handleNewName={handleNewName}
           newNFTName={newNFTName}
+          productList={productList}
         />
         <NFTProductsCard
           size={size}
@@ -526,7 +500,7 @@ const AdminMinting = ({
           handleNewProductPrice={handleNewProductPrice}
           productAddress={productAddress}
           setNewProductPrice={setNewProductPrice}
-          newProductName = {newProductName}
+          newProductName={newProductName}
         />
       </Grid>
       <Snackbar
