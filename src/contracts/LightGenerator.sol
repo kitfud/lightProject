@@ -14,7 +14,6 @@ import "./ILightGenerator.sol";
 
 contract LightGenerator is ILightGenerator {
     address public factoryAddress;
-    address payable owner;
     uint256 public immutable tokenId;
     uint256 public productCount;
     string public generatorName;
@@ -60,12 +59,11 @@ contract LightGenerator is ILightGenerator {
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         factoryAddress = _factoryAddress; // create an interface - should lower the gas
         tokenId = id;
-        owner = payable(IERC721(factoryAddress).ownerOf(tokenId));
         generatorName = _name;
     }
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Restricted to token owner");
+        require(msg.sender == IERC721(factoryAddress).ownerOf(tokenId), "Restricted to token owner");
         _;
     }
 
@@ -80,11 +78,19 @@ contract LightGenerator is ILightGenerator {
     }
 
 
-    function withdraw() public onlyOwner {
-        uint256 contractBalance = address(this).balance;
-        (bool sent, ) = owner.call{value: address(this).balance}("");
-        require(sent, "Failed to Send Ether To Owner");
+    function withdraw() external onlyOwner returns(uint256){
+        uint256 contractBalance;
+        address owner = IERC721(factoryAddress).ownerOf(tokenId);
+        for (uint i ; i<productCount ; i++) {
+            uint256 tempProductBalance = idToProductContract[i].balance;
+            if (tempProductBalance > 0) {
+                contractBalance += tempProductBalance;
+                (bool sent, ) = owner.call{value: tempProductBalance}("");
+                require(sent, "Failed to Send Ether To Owner");
+            }
+        }
         emit Withdraw(block.timestamp, contractBalance, owner);
+        return contractBalance;
     }
 
     // remove - gas reasons
@@ -161,6 +167,7 @@ contract LightGenerator is ILightGenerator {
     }
 
     function addProduct(string memory _name, uint256 _price) public onlyOwner {
+        address owner = IERC721(factoryAddress).ownerOf(tokenId);
         ProductContract newContract = new ProductContract(productCount, _name, _price, owner);
         productContracts.push(newContract);
         idToProductContract[productCount] = payable(newContract);
