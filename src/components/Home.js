@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
+import LightBulb from './LightBulb';
 
 const Home = ({
   wallet,
@@ -35,6 +36,7 @@ const Home = ({
   const [productSelectedAddress, setProductSelectedAddress] = useState(null)
   const [productSelectedName, setProductSelectedName] = useState(null)
   const [productSelectedPrice, setProductSelectedPrice] = useState(null)
+  const [currentColorSelect, setCurrentColorSelect] = useState(null)
 
 
 
@@ -81,7 +83,11 @@ const Home = ({
       <Box textAlign='center'>
         <h1>Crypto Lights</h1>
         <center>
-          <LightPicker />
+      <LightBulb currentColorSelect={currentColorSelect}/>
+      </center>
+
+        <center>
+          <LightPicker setCurrentColorSelect={setCurrentColorSelect} />
         </center>
         <Button variant="contained" color="error" onClick={handleResetNFT}>Select New NFT</Button>
         <Box>
@@ -98,6 +104,8 @@ const Home = ({
           $ {productSelectedPrice}
         </Box>
 
+     
+        
         <br />
         <br />
         <QR_Code
