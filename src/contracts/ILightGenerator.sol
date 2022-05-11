@@ -3,7 +3,7 @@ pragma solidity 0.8.13;
 
 interface ILightGenerator {
 
-    function withdraw() external;
+    function withdraw() external returns(uint256);
 
     function getProductPriceInETH(uint256 productId) external view returns(uint256);
 
