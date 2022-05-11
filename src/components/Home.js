@@ -154,9 +154,14 @@ const Home = ({
 
   const UserSelectNFT = () => {
     return (
-      <FormControl sx={{ m: 1, minWidth: 300 }}>
-        <InputLabel id="nft-id">NFT</InputLabel>
+      <FormControl sx={{ m: 1, minWidth: 300}}>
+        <InputLabel id="nft-id">
+          <Typography sx={{ color: "Black" }}>
+            NFT
+          </Typography>
+        </InputLabel>
         <Select
+          sx={{ bgcolor: "white" }}
           labelId="nft-id"
           id="nft-id"
           label="NFT"
@@ -164,7 +169,11 @@ const Home = ({
           onChange={getNFTInfo}
         >
           {ownedNFTs.map(nft => (
-            <MenuItem value={nft.id} key={nft.id}>{`${nft.id} - ${nft.name}`}</MenuItem>
+            <MenuItem
+              sx={{ color: "Black" }} 
+              value={nft.id}
+              key={nft.id}>{`${nft.id} - ${nft.name}`}
+            </MenuItem>
           ))}
         </Select>
       </FormControl>
@@ -184,8 +193,13 @@ const Home = ({
     return (
       productList.length > 0 ?
         <FormControl sx={{ m: 1, minWidth: 300 }}>
-          <InputLabel id="product-id">Product Selection:</InputLabel>
+          <InputLabel id="product-id">
+            <Typography sx={{ color: "black" }}>
+              Product Selection:
+            </Typography>
+          </InputLabel>
           <Select
+            sx={{ bgcolor: "white" }}
             labelId="product-id"
             id="product-id"
             label="PRODUCT"
@@ -193,7 +207,11 @@ const Home = ({
             onChange={getProductInfo}
           >
             {productList.map(item => (
-              <MenuItem value={item.id} key={item.id}>{`${item.id} - ${item.name}`}</MenuItem>
+              <MenuItem
+                sx={{ color: "black" }} 
+                value={item.id}
+                key={item.id}>{`${item.id} - ${item.name}`}
+              </MenuItem>
             ))}
           </Select>
         </FormControl> : <Link href='/admin'>Make Some Products In Admin Page</Link>

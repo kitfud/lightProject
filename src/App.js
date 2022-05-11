@@ -47,7 +47,7 @@ function App() {
   const [wallet, setWallet] = useState(undefined)
   const [contract, setContract] = useState(undefined)
   const [loading, setLoading] = useState(false)
-  const [colorMode, setColorMode] = useState("light")
+  const [colorMode, setColorMode] = useState("dark")
   const [selectGeneratorAddress, setSelectGeneratorAddress] = useState(undefined)
   const [selectedProduct, setSelectedProduct] = useState("clowny")
   const [selectProductPrice, setSelectProductPrice] = useState(undefined)
@@ -69,7 +69,7 @@ function App() {
 
   return (
     <>
-      <ThemeProvider theme={colorMode === "light" ? themeLightMode : themeDarkMode}>
+      <ThemeProvider theme={colorMode === "dark" ? themeDarkMode : themeLightMode}>
 
         <Header
           setColorMode={setColorMode}

@@ -39,7 +39,7 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
             <Box style={{ display: "flex", justifyContent: 'center' }}>
                 <Card sx={{
                     alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1,
-                    padding: 3, minWidth: size[0], minHeight: size[1]
+                    padding: 3, minWidth: size[0], minHeight: size[1], bgcolor: "primary.main"
                 }}>
                     <Typography gutterBottom variant="h5" component="div">
                         Owned NFTs
@@ -55,7 +55,11 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                             onChange={getNFTInfo}
                         >
                             {nftList.map(nft => (
-                                <MenuItem value={nft.id} key={nft.id}>{`${nft.id} - ${nft.name}`}</MenuItem>
+                                <MenuItem
+                                    sx={{ color: "black" }} 
+                                    value={nft.id}
+                                    key={nft.id}>{`${nft.id} - ${nft.name}`}
+                                </MenuItem>
                             ))}
                         </Select>
                         <FormControl sx={{ m: 1, minWidth: 300 }}>
