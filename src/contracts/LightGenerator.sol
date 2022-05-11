@@ -75,9 +75,9 @@ contract LightGenerator is ILightGenerator {
 
     // remove - gas reasons
 
-    // function getBalance() public view onlyOwner returns(uint256 balance){
-    //     balance = address(this).balance;
-    // }
+    function getBalance() public view onlyOwner returns(uint256 balance){
+        balance = address(this).balance;
+    }
 
 
     function withdraw() public onlyOwner {

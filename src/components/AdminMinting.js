@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react'
 import { Grid, Snackbar, IconButton, Alert, Slide } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { ethers } from 'ethers'
-import { getGeneratorContract } from "../utils"
+import { getProductContract, getGeneratorContract } from "../utils"
 import NFTMintCard from './NFTMintCard'
 import NFTOwnerCard from './NFTOwnerCard'
 import NFTProductsCard from './NFTProductsCard'
+import { parseEther } from 'ethers/lib/utils'
 
 const AdminMinting = ({
   wallet,
@@ -45,8 +46,40 @@ const AdminMinting = ({
   const [productAddress, setProductAddress] = useState(undefined)
   const [newProductName, setNewProductName] = useState(undefined)
   const [newProductPrice, setNewProducPrice] = useState(undefined)
+  const [sumProductBalances, setSumProductBalances] = useState(0)
 
-  // Alerts
+  useEffect(()=>{
+
+    
+      console.log("getting product list")
+      getProductContractBalanceSum()
+     
+    
+
+  },[productList])
+  
+
+  const getProductContractBalanceSum = async ()=>{
+  const provider = await new ethers.providers.Web3Provider(window.ethereum)
+  var  sumBalance = 0 
+  for (let x = 0; x<productList.length; x++){
+    var bigNumBalance = await provider.getBalance(productList[x].address)
+    var stringbalance = bigNumBalance.toString()
+    var numBalance = parseInt(stringbalance)
+    console.log(numBalance)
+    console.log(typeof(numBalance))
+    sumBalance+=numBalance
+  }
+  let ethBalance = ethers.utils.formatEther(sumBalance.toString())
+  setSumProductBalances(ethBalance)
+  }
+
+  useEffect(()=>{
+    if(sumProductBalances !== 0){
+    console.log("SUM PRODUCT "+ sumProductBalances)
+    }
+  },[sumProductBalances])
+
   const handleAlerts = (msg, severity) => {
     setAlerts([true, msg, severity])
   }
@@ -143,7 +176,9 @@ const AdminMinting = ({
         const gen_contract = getGeneratorContract(new_tokensOwned_arr[0].address, wallet.signer)
         setGeneratorContract(gen_contract)
 
-        const gen_balance = await wallet.provider.getBalance(gen_contract.address)
+
+        console.log("current conract: " + gen_contract)
+        const gen_balance = await gen_contract.address.getBalance()
         setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
       }
     }
@@ -457,6 +492,8 @@ const AdminMinting = ({
           mintNFT={mintNFT}
         />
         <NFTOwnerCard
+          sumProductBalances={sumProductBalances}
+          wallet = {wallet}
           nftId={nftId}
           size={size}
           getNFTInfo={getNFTInfo}
