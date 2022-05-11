@@ -214,7 +214,7 @@
 		"inputs": [],
 		"name": "withdraw",
 		"outputs": [],
-		"stateMutability": "payable",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
