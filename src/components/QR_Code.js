@@ -66,7 +66,7 @@ const QR_Code = ({ wallet, contract, selectProductPrice, selectGeneratorAddress 
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginTop: 3 }}>
+      <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginBottom: 2 }}>
         <Box>
             { howToQR }
           <br/><br/>
