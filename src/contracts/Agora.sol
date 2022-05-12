@@ -26,13 +26,7 @@ contract Agora is IAgora {
     VOTE_STATE public vote_state;
 
     constructor() {
-        voters = [
-            msg.sender,
-            0xa97e80DF47220afaD2D017a10b023B55FDB86293,
-            0x8BDD43Eb657847d2dC730eb45e1288eb3f588A04,
-            0xa65AA8747Fa0934d51315082336938696E80136E,
-            0x9466b7430eC51c81e1F43dDCf69278878B559382
-        ];
+
 
         for (uint i ; i< voters.length ; i++) {
             isVoter[voters[i]] = true;
