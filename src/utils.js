@@ -55,7 +55,7 @@ const getGeneratorContract = (generatorAddress, signer = undefined) => {
     }
 }
 
-const getProductContract = (productAddress, signer = undefined)=>{
+const getProductContract = (productAddress, signer = undefined) => {
     if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const productABI = ProductContractABI

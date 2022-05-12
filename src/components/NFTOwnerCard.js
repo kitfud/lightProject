@@ -1,32 +1,50 @@
-import React, { useEffect, useState } from "react"
+import React, { useEffect } from "react"
 import {
     Card, Button, Typography, Box, Grid, CircularProgress,
-    FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip, Tooltip, Checkbox, Container
+    FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip, Tooltip, Checkbox, FormControlLabel
 } from '@mui/material'
 import HardwareConnect from "./HardwareConnect"
 
 const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, generatorAddress,
-    copyToClipboard, generatorBalance, ETHUSDConversionRate, withdrawBalance,
-    loading, renameNFT, handleNewName, newNFTName, productList }) => {
+    copyToClipboard, ETHUSDConversionRate, withdrawBalance,
+    loading, renameNFT, handleNewName, newNFTName, productList, setProductList, selectedAll, setSelectedAll }) => {
 
-    const [selectedProducts, setSelectedProducts] = useState([])
-    const [selectedAll, setSelectedAll] = useState(false)
+    const handleProductsCheckBoxes = (evt, id) => {
+        const product_list_arr = productList.slice()
+        const product_selected = []
+        for (let ii = 0; ii < product_list_arr.length; ii++) {
+            if (product_list_arr[ii].id === id) {
+                product_list_arr[ii].selected = evt.target.checked
+            }
+            product_selected.push(product_list_arr[ii].selected)
+        }
 
-    const handleCheckBoxes = (evt, index) => {
-        // console.log(evt.target.checked, index)
-        // const selected_products_arr = selectedProducts
-        // console.log(selected_products_arr)
-        selectedProducts[index] = evt.target.checked
-        // setSelectedProducts(selectedProducts)
+        setProductList(product_list_arr)
+
+        if (!product_selected.includes(false)) {
+            setSelectedAll(true)
+        } else if (product_selected.includes(false)) {
+            setSelectedAll(false)
+        }
     }
 
-    useEffect(() => {
-        const selected_products_arr = []
-        for (let ii = 0; ii < productList.length; ii++) {
-            selected_products_arr.push(false)
+    const handleAllCheckBoxes = (evt) => {
+        const checkbox = evt.target.checked
+        setSelectedAll(checkbox)
+        const product_list_arr = productList
+        for (let ii = 0; ii < product_list_arr.length; ii++) {
+            product_list_arr[ii].selected = checkbox
         }
-        setSelectedProducts(selected_products_arr)
-    }, [productList])
+        setProductList(product_list_arr)
+    }
+
+    // useEffect(() => {
+    //     const selected_products_arr = []
+    //     for (let ii = 0; ii < productList.length; ii++) {
+    //         selected_products_arr.push(false)
+    //     }
+    //     setSelectedProducts(selected_products_arr)
+    // }, [productList])
 
 
     useEffect(() => {
@@ -70,8 +88,8 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                     </FormControl>
                     <HardwareConnect />
                     <FormControl sx={{ padding: 1, marginBottom: 1 }}>
-                        {productList.map((product, index) => (
-                            <Grid container>
+                        {productList.map(product => (
+                            <Grid container key={product.id}>
                                 <TextField
                                     disabled
                                     id="filled-number"
@@ -85,14 +103,14 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                                         startAdornment: <InputAdornment position="start">USD</InputAdornment>,
                                         endAdornment: <InputAdornment
                                             position="end">
-                                            {sumProductBalances !== 0 ? `(ETH ${sumProductBalances})` : `(ETH ${(0).toFixed(6)})`}
+                                            {product.balance !== 0 ? `(ETH ${product.balance.toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                         </InputAdornment>
 
                                     }}
-                                    value={typeof generatorBalance !== "undefined" ? generatorBalance.toFixed(2) : ""}
+                                    value={(product.balance * ETHUSDConversionRate).toFixed(2)}
                                     sx={{ maxWidth: 300 }}
                                 />
-                                <Checkbox checked={selectedProducts[index]} onChange={(event) => handleCheckBoxes(event, index)} />
+                                <Checkbox checked={product.selected} onChange={event => handleProductsCheckBoxes(event, product.id)} />
                             </Grid>
                         )
                         )}
@@ -110,13 +128,13 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                                     startAdornment: <InputAdornment position="start">USD</InputAdornment>,
                                     endAdornment: <InputAdornment
                                         position="end">
-                                        {sumProductBalances !== 0 ? `(ETH ${sumProductBalances})` : `(ETH ${(0).toFixed(6)})`}
+                                        {sumProductBalances !== 0 ? `(ETH ${sumProductBalances.toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                     </InputAdornment>
                                 }}
-                                value={typeof generatorBalance !== "undefined" ? generatorBalance.toFixed(2) : ""}
+                                value={typeof sumProductBalances !== 0 ? (sumProductBalances * ETHUSDConversionRate).toFixed(2) : ""}
                                 sx={{ maxWidth: 300 }}
                             />
-                            <Checkbox checked={selectedAll} onChange={evt => setSelectedAll(evt.target.checked)} />
+                            <Checkbox checked={selectedAll} onChange={handleAllCheckBoxes} />
                         </Grid>
                         <Button onClick={withdrawBalance} variant="contained" color="secondary">{loading ? (
                             <CircularProgress color="inherit" />) : ("Withdraw")}</Button>

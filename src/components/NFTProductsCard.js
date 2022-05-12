@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import {
     Card, Button, Typography, Box, Grid, CircularProgress, Tooltip, Chip, FormControl,
     InputLabel, Select, MenuItem, TextField, InputAdornment
@@ -100,7 +100,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             id="filled-product-name"
                             label="Name"
                             variant="filled"
-                            onChange={(e)=>handleNewProductName(e.target.value)}
+                            onChange={(e) => handleNewProductName(e.target.value)}
                             value={newProductName !== undefined ? newProductName : ""}
                         />
                         <TextField
