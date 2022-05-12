@@ -1,12 +1,12 @@
 import React, { useEffect } from "react"
 import {
     Card, Button, Typography, Box, Grid, CircularProgress,
-    FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip, Tooltip, Checkbox, FormControlLabel
+    FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip, Tooltip, Checkbox
 } from '@mui/material'
 import HardwareConnect from "./HardwareConnect"
 
 const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, generatorAddress,
-    copyToClipboard, ETHUSDConversionRate, withdrawBalance,
+    copyToClipboard, ETHUSDConversionRate, withdrawBalance, withdrawAndDelete,
     loading, renameNFT, handleNewName, newNFTName, productList, setProductList, selectedAll, setSelectedAll }) => {
 
     const handleProductsCheckBoxes = (evt, id) => {
@@ -68,13 +68,12 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                             labelId="nft-id"
                             id="nft-id"
                             label="NFT"
-                            // defaultValue=""
                             value={typeof nftId !== "undefined" ? nftId : ""}
                             onChange={getNFTInfo}
                         >
                             {nftList.map(nft => (
                                 <MenuItem
-                                    sx={{ color: "black" }} 
+                                    sx={{ color: "black" }}
                                     value={nft.id}
                                     key={nft.id}>{`${nft.id} - ${nft.name}`}
                                 </MenuItem>
@@ -114,7 +113,7 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                                     value={(product.balance * ETHUSDConversionRate).toFixed(2)}
                                     sx={{ maxWidth: 300 }}
                                 />
-                                <Checkbox checked={product.selected} onChange={event => handleProductsCheckBoxes(event, product.id)} />
+                                <Checkbox color="info" checked={product.selected} onChange={event => handleProductsCheckBoxes(event, product.id)} />
                             </Grid>
                         )
                         )}
@@ -135,13 +134,15 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                                         {sumProductBalances !== 0 ? `(ETH ${sumProductBalances.toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                     </InputAdornment>
                                 }}
-                                value={typeof sumProductBalances !== 0 ? (sumProductBalances * ETHUSDConversionRate).toFixed(2) : ""}
+                                value={sumProductBalances !== 0 ? (sumProductBalances * ETHUSDConversionRate).toFixed(2) : ""}
                                 sx={{ maxWidth: 300 }}
                             />
-                            <Checkbox checked={selectedAll} onChange={handleAllCheckBoxes} />
+                            <Checkbox color="info" checked={selectedAll} onChange={handleAllCheckBoxes} />
                         </Grid>
                         <Button onClick={withdrawBalance} variant="contained" color="secondary">{loading ? (
                             <CircularProgress color="inherit" />) : ("Withdraw")}</Button>
+                        <Button sx={{ marginTop: 0.5 }} onClick={withdrawAndDelete} variant="contained" color="secondary">{loading ? (
+                            <CircularProgress color="inherit" />) : ("Withdraw and delete")}</Button>
                     </FormControl>
                     <FormControl sx={{ padding: 1, marginBottom: 1 }}>
                         <TextField
