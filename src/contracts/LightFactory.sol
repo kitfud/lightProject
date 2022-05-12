@@ -3,10 +3,11 @@ pragma solidity ^0.8.13;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-import "@openzeppelin/contracts/access/Ownable.sol";
+// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-
+import "./IAgora.sol";
 import "./LightGenerator.sol";
+import "./ILightFactory.sol";
 
 // TO DO: change checkIfTokenHolder to a mapping with boolean?
 // TO DO: change to several owner - whitelist?
@@ -14,10 +15,11 @@ import "./LightGenerator.sol";
 // TO DO:
 // TO DO:
 
-contract LightFactory is ERC721URIStorage, Ownable {
+contract LightFactory is ILightFactory, ERC721URIStorage {
+
+    address public immutable agoraAddress;
 
     string public NFT_URI = "https://ipfs.io/ipfs/QmfN7WjsL6FiWV4fkSEgTVqUsywUnYCoAe7SVntXukUcVN?filename=CandyLamp.json";
-
     uint256 public currentNFTPriceInUSD;
     uint256 public tokenCount;
 
@@ -27,7 +29,8 @@ contract LightFactory is ERC721URIStorage, Ownable {
     mapping(uint256 => LightGenerator) public tokenIDToGenerator;
     // mapping(address => bool) public addressOwnsToken; // could be useful
 
-    constructor(address _priceFeedAddress) ERC721('Light Maker', 'VIBE') {
+    constructor(address _agora, address _priceFeedAddress) ERC721('Light Maker', 'VIBE') {
+        agoraAddress = _agora;
         // ethusd price feed address on rinkeby : 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         priceFeedAddress = _priceFeedAddress;
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
@@ -35,7 +38,12 @@ contract LightFactory is ERC721URIStorage, Ownable {
         tokenCount = 0;
     }
 
-    function setNFTPrice(uint256 price) public onlyOwner {
+    modifier onlyAgora {
+       require(msg.sender == agoraAddress, "only Agora");
+        _;
+    }
+
+    function setNFTPrice(uint256 price) external onlyAgora {
         currentNFTPriceInUSD = price;
     }
 
@@ -53,8 +61,8 @@ contract LightFactory is ERC721URIStorage, Ownable {
 
     function mintGenerator(string memory _name) public payable {
         require(msg.value >= getNFTPriceInETH(),"Not Enough Eth to purchase NFT.");
-        // Change this to manage multiple addresses
-        (bool sent,) = owner().call{value:msg.value}("");
+        // IAgora(agoraAddress).receivePayment(msg.value);
+        (bool sent,) = agoraAddress.call{value:msg.value}("");
         require(sent, "Failed to purchase NFT. Send Eth to buy.");
 
         uint256 newTokenId = tokenCount;

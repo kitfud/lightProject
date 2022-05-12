@@ -13,7 +13,7 @@ import "./ILightGenerator.sol";
 // TO DO: Think about te lottery logic and the NFT generation for each light bought.
 
 contract LightGenerator is ILightGenerator {
-    address public factoryAddress;
+    address public immutable factoryAddress;
     uint256 public immutable tokenId;
     uint256 public productCount;
     string public generatorName;
@@ -63,7 +63,7 @@ contract LightGenerator is ILightGenerator {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == IERC721(factoryAddress).ownerOf(tokenId), "Restricted to token owner");
+        require(msg.sender == IERC721(factoryAddress).ownerOf(tokenId), "Only owner");
         _;
     }
 
@@ -76,7 +76,6 @@ contract LightGenerator is ILightGenerator {
     function getBalance() public view onlyOwner returns(uint256 balance){
         balance = address(this).balance;
     }
-
 
     function withdraw() external onlyOwner returns(uint256){
         uint256 contractBalance;
@@ -167,8 +166,8 @@ contract LightGenerator is ILightGenerator {
     }
 
     function addProduct(string memory _name, uint256 _price) public onlyOwner {
-        address owner = IERC721(factoryAddress).ownerOf(tokenId);
-        ProductContract newContract = new ProductContract(productCount, _name, _price, owner);
+        // address owner = IERC721(factoryAddress).ownerOf(tokenId);
+        ProductContract newContract = new ProductContract(productCount, _name, _price, tokenId, factoryAddress);
         productContracts.push(newContract);
         idToProductContract[productCount] = payable(newContract);
 
