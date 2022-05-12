@@ -36,7 +36,7 @@ const Home = ({
   const [productSelectedAddress, setProductSelectedAddress] = useState(null)
   const [productSelectedName, setProductSelectedName] = useState(null)
   const [productSelectedPrice, setProductSelectedPrice] = useState(null)
-  const [currentColorSelect, setCurrentColorSelect] = useState(null)
+  const [currentColorSelect, setCurrentColorSelect] = useState('#FFFFFF')
 
 
 
@@ -121,8 +121,12 @@ const Home = ({
   const getNFTInfo = async (event) => {
     console.log(event.target.value)
     setNFTSelected(event.target.value)
-    setNFTNameSelected(ownedNFTs[event.target.value].name)
+
   }
+
+  useEffect(()=>{
+    setNFTNameSelected(nftNameSelected)
+  },[generatorContract])
 
   const setGeneratorContractData = () => {
     for (let ii = 0; ii < ownedNFTs.length; ii++) {
