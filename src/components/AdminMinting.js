@@ -6,7 +6,6 @@ import { getProductContract, getGeneratorContract } from "../utils"
 import NFTMintCard from './NFTMintCard'
 import NFTOwnerCard from './NFTOwnerCard'
 import NFTProductsCard from './NFTProductsCard'
-import { parseEther } from 'ethers/lib/utils'
 
 const AdminMinting = ({
   wallet,
@@ -39,7 +38,6 @@ const AdminMinting = ({
   const [nftList, setNftList] = useState([])
   const [nftId, setNftId] = useState(undefined)
   const [productNewPrice, setProductNewPrice] = useState(undefined)
-  const [generatorBalance, setGeneratorBalance] = useState(undefined)
   const [newNFTName, setNewNFTName] = useState(undefined)
 
   // Regarding Product Contract
@@ -47,22 +45,7 @@ const AdminMinting = ({
   const [newProductName, setNewProductName] = useState(undefined)
   const [newProductPrice, setNewProducPrice] = useState(undefined)
   const [sumProductBalances, setSumProductBalances] = useState(0)
-
-  const getProductContractBalanceSum = async () => {
-    let sumBalance = 0
-    for (let x = 0; x < productList.length; x++) {
-      let bigNumBalance = await wallet.provider.getBalance(productList[x].address)
-      let numBalance = parseFloat(ethers.utils.formatEther(bigNumBalance))
-      sumBalance += numBalance
-    }
-    setSumProductBalances(sumBalance)
-  }
-
-  useEffect(() => {
-    // if (sumProductBalances !== 0) {
-    //   console.log("SUM PRODUCT " + sumProductBalances)
-    // }
-  }, [sumProductBalances])
+  const [selectedAll, setSelectedAll] = useState(false)
 
   const handleAlerts = (msg, severity) => {
     setAlerts([true, msg, severity])
@@ -157,9 +140,6 @@ const AdminMinting = ({
 
         const gen_contract = getGeneratorContract(new_tokensOwned_arr[0].address, wallet.signer)
         setGeneratorContract(gen_contract)
-
-        const gen_balance = await wallet.provider.getBalance(new_tokensOwned_arr[0].address)
-        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
       }
     }
   }
@@ -181,9 +161,6 @@ const AdminMinting = ({
 
           const gen_contract = getGeneratorContract(nft_address, wallet.signer)
           setGeneratorContract(gen_contract)
-
-          const gen_balance = await wallet.provider.getBalance(gen_contract.address)
-          setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
           break
         }
       }
@@ -196,15 +173,40 @@ const AdminMinting = ({
 
   const withdrawBalance = async () => {
     try {
-      if (generatorBalance > 0 && !loading) {
+      if (!loading) {
         setLoading(true)
-        const tx = await generatorContract.withdraw()
-        await tx.wait(1)
-        const gen_balance = await wallet.provider.getBalance(generatorContract.address)
-        setGeneratorBalance(gen_balance)
-        handleAlerts("Withdrawed successfully", "success")
-      } else if (generatorBalance <= 0) {
-        handleAlerts("Not enough balance", "warning")
+
+        if (selectedAll && sumProductBalances > 0) {
+          const tx = await generatorContract.withdraw()
+          const rc = await tx.wait(1)
+          const event = rc.events.find(event => event.event === 'Withdraw');
+          const [time, amount, owner] = event.args;
+          console.log(parseFloat(ethers.utils.formatEther(amount)));
+
+          handleAlerts("Withdrawed successfully", "success")
+        } else if (selectedAll && sumProductBalances <= 0) {
+          handleAlerts("Not enough balance", "warning")
+        } else if (!selectedAll) {
+
+          let there_is_product_selected = false
+          let products_str = ""
+          for (let ii = 0; ii < productList.length; ii++) {
+            if (productList[ii].selected) {
+              there_is_product_selected = true
+              const tx = await productList[ii].contract.withdraw()
+              await tx.wait(1)
+
+              products_str += productList[ii].id + ", "
+            }
+          }
+
+          if (there_is_product_selected) {
+            handleAlerts("Withdrawed successfully from products (IDs): " + products_str.substr(0, products_str.length - 2), "success")
+          } else {
+            handleAlerts("No product selected!", "warning")
+          }
+        }
+        await updateProducts()
       } else if (loading) {
         handleAlerts("Loading... Cannot execute while loading", "info")
       }
@@ -222,7 +224,7 @@ const AdminMinting = ({
     setLoading(false)
   }
 
-  const renameNFT = async (evt) => {
+  const renameNFT = async () => {
     try {
       if (!loading) {
         setLoading(true)
@@ -258,20 +260,31 @@ const AdminMinting = ({
     if (generatorContract) {
       const products_num = await generatorContract.productCount()
       let listOfProducts = []
+      let total_balance = 0
       for (let ii = 0; ii < products_num; ii++) {
         const product = await generatorContract.idToProduct(ii)
+        const product_balance_BN = await wallet.provider.getBalance(product.contractAddress)
+        const product_balance = parseFloat(ethers.utils.formatEther(product_balance_BN))
         const product_obj = {
           id: parseInt(product.id, 16),
           name: product.name,
           priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
-          address: product.contractAddress
+          address: product.contractAddress,
+          selected: false,
+          balance: product_balance,
+          contract: getProductContract(product.contractAddress, wallet.signer)
         }
         listOfProducts.push(product_obj)
+        total_balance += product_balance
       }
+
       setProductList(listOfProducts)
+      setSumProductBalances(total_balance)
+
       if (listOfProducts.length === 1) {
         setProductId(listOfProducts[0].id)
         setProductAddress(listOfProducts[0].address)
+
         if (listOfProducts[0].id !== undefined) {
           setSelectedProduct(listOfProducts[0].id)
         }
@@ -374,12 +387,12 @@ const AdminMinting = ({
     }
   }
 
-  const copyToClipboard = async () => {
+  const copyToClipboard = async (evt) => {
     // const text = evt.target.value
     if ('clipboard' in navigator) {
-      return await navigator.clipboard.writeText(generatorAddress);
+      return await navigator.clipboard.writeText(evt.target.innerText);
     } else {
-      return document.execCommand('copy', true, generatorAddress);
+      return document.execCommand('copy', true, evt.target.innerText);
     }
   }
 
@@ -393,6 +406,7 @@ const AdminMinting = ({
     setNftId(undefined)
     setProductNewPrice(undefined)
     setNewNFTName(undefined)
+    setSelectedAll(false)
   }
 
   // useEffects
@@ -413,7 +427,6 @@ const AdminMinting = ({
         }
       }
       setProductId(productId)
-      getProductContractBalanceSum()
     }
   }, [productId])
 
@@ -424,6 +437,7 @@ const AdminMinting = ({
     if (!wallet) {
       resetAllFields()
     }
+    setSelectedAll(false)
     getETHUSDConversionRate()
   }, [wallet, loading])
 
@@ -473,7 +487,6 @@ const AdminMinting = ({
           nftList={nftList}
           generatorAddress={generatorAddress}
           copyToClipboard={copyToClipboard}
-          generatorBalance={generatorBalance}
           ETHUSDConversionRate={ETHUSDConversionRate}
           withdrawBalance={withdrawBalance}
           loading={loading}
@@ -481,6 +494,9 @@ const AdminMinting = ({
           handleNewName={handleNewName}
           newNFTName={newNFTName}
           productList={productList}
+          setProductList={setProductList}
+          selectedAll={selectedAll}
+          setSelectedAll={setSelectedAll}
         />
         <NFTProductsCard
           size={size}
