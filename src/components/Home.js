@@ -87,7 +87,7 @@ const Home = ({
       </center>
 
         <center>
-          <LightPicker setCurrentColorSelect={setCurrentColorSelect} />
+          <LightPicker currentColorSelect={currentColorSelect} setCurrentColorSelect={setCurrentColorSelect} />
         </center>
         <Button variant="contained" color="error" onClick={handleResetNFT}>Select New NFT</Button>
         <Box>
