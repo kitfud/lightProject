@@ -190,14 +190,19 @@ const AdminMinting = ({
 
           let there_is_product_selected = false
           let products_str = ""
+          let tx = undefined
           for (let ii = 0; ii < productList.length; ii++) {
             if (productList[ii].selected) {
               there_is_product_selected = true
-              const tx = await productList[ii].contract.withdraw()
-              await tx.wait(1)
+              if (productList[ii].balance > 0) {
+                tx = await productList[ii].contract.withdraw()
 
-              products_str += productList[ii].id + ", "
+                products_str += productList[ii].id + ", "
+              }
             }
+          }
+          if (tx) {
+            await tx.wait(1)
           }
 
           if (there_is_product_selected) {
@@ -207,6 +212,7 @@ const AdminMinting = ({
           }
         }
         await updateProducts()
+
       } else if (loading) {
         handleAlerts("Loading... Cannot execute while loading", "info")
       }
@@ -221,6 +227,46 @@ const AdminMinting = ({
         handleAlerts("An unknown error occurred", "error")
       }
     }
+
+    setLoading(false)
+  }
+
+  const withdrawAndDelete = async () => {
+    try {
+      if (!loading) {
+        setLoading(true)
+
+        let products_str = ""
+        let tx = undefined
+        for (let ii = 0; ii < productList.length; ii++) {
+          if (productList[ii].selected) {
+            tx = await productList[ii].contract.destroy()
+
+            products_str += productList[ii].id + ", "
+          }
+        }
+
+        if (tx) {
+          await tx.wait(1)
+        }
+
+        handleAlerts("Successfully deleted products (IDs): " + products_str.substr(0, products_str.length - 2), "success")
+
+      } else if (loading) {
+        handleAlerts("Loading... Cannot execute while loading", "info")
+      }
+    } catch (error) {
+      if (error.code === 4001) {
+        handleAlerts("Transaction cancelled", "warning")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        handleAlerts("Insufficient funds for gas * price + value", "warning")
+      } else if (error.code === -32602 || error.code === -32603) {
+        handleAlerts("Internal error", "error")
+      } else {
+        handleAlerts("An unknown error occurred", "error")
+      }
+    }
+
     setLoading(false)
   }
 
@@ -420,7 +466,7 @@ const AdminMinting = ({
     if (productId !== undefined) {
       setSelectedProduct(productId)
       for (let ii = 0; ii < productList.length; ii++) {
-        if (productList[ii].id == productId) {
+        if (productList[ii].id === productId) {
           setProdCurrentPrice(productList[ii].priceUSD)
           setSelectProductPrice(productList[ii].priceUSD)
           break
@@ -497,6 +543,7 @@ const AdminMinting = ({
           setProductList={setProductList}
           selectedAll={selectedAll}
           setSelectedAll={setSelectedAll}
+          withdrawAndDelete={withdrawAndDelete}
         />
         <NFTProductsCard
           size={size}
