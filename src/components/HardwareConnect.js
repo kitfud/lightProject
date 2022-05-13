@@ -15,11 +15,13 @@ const HardwareConnect = ({ colorData }) => {
   }
 
   useEffect(() => {
-    console.log("COLOR DATA: " + JSON.stringify(colorData))
 
-    if (colorData !== null && connectionStatus === true && connection !== null) {
+    if (colorData !== null ) {
+      console.log("COLOR DATA: " + JSON.stringify(colorData))
+      if(connectionStatus === true && connection !== null){
       console.log("COLOR SELECTION + PAYMENT MADE! MACHINE TRIGGERED")
       connection.send("paymentMade", colorData)
+      }
     }
 
   }, [colorData])

@@ -78,28 +78,44 @@ const QR_Code = ({ wallet, contract, selectProductPrice, selectGeneratorAddress 
             onClick={ handleOpen }>
               Get QR
           </Button>
-          <Modal
+     
+        <Modal
             open={ open }
             onClose={ handleClose }
             aria-labelledby="QRCode"
-            aria-describedby="Shows the QR code in a modal.">
-            <Box className={ classes.qRPic }>
-              <div style={{ background: 'white', padding: '16px' }}>
-                <QRCode value={selectGeneratorAddress} />
-                  <Typography>
-                    <Box>
-                      Price:  
-                      {selectProductPrice}
-                    </Box>
-                    <Box>
-                      Address:  
-                      {selectGeneratorAddress}
-                    </Box>
-                  </Typography>
-                {/* Select NFT and Token of address you selected */}
-              </div>
-            </Box>
+            aria-describedby="Shows the QR code in a modal."
+            >
+
+            <Card>
+              <center>
+              <QRCode value={selectGeneratorAddress} />
+              </center>
+            
+            <center>
+          <Box className={ classes.qRPic } sx={{background: 'white', padding: '16px'}}>
+       
+          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+          </Typography>
+             </Box>
+            
+             <Typography  variant="h6" component="h2">
+       
+       Address:{selectGeneratorAddress}
+           </Typography>
+           
+           <Typography  variant="h6" component="h2">
+       Price:{selectProductPrice}
+           </Typography>              
+              </center>
+            </Card>
+    
+            
+        
+
+
+
           </Modal>
+
         </Box>
       </Grid>
     </ThemeProvider>

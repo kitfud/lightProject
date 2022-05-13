@@ -2,18 +2,35 @@ import React, { useEffect, useState } from 'react'
 import { SketchPicker } from 'react-color';
 import HardwareConnect from './HardwareConnect';
 
-const LightPicker = ({ currentColorSelect, setCurrentColorSelect }) => {
-  const [rgbData, setRGBData] = useState(null)
+const LightPicker = ({
+  setCurrentColorSelectRGB, 
+  currentColorSelectRGB,
+  currentColorSelectHex, 
+  setCurrentColorSelectHex }) => {
+
   const [hardwareData, setHardwareData]= useState(null)
 
   const handleChangeComplete = (color) => {
-    console.log("Testing onChangeComplete")
-    setCurrentColorSelect(color.hex)
-    setRGBData(color.rgb)
-    console.log("Testing bottom onChangeComplete")
+    setCurrentColorSelectHex(color.hex)
+    setCurrentColorSelectRGB(color.rgb)
   }
 
-  const formatRGBVal = (color) => {
+useEffect(()=>{
+if(currentColorSelectRGB !== '0,0,0'){
+ formatRGBVal(currentColorSelectRGB)
+ console.log(currentColorSelectHex)
+}
+// setRGBData(currentColorSelect.rgb.r)
+},[currentColorSelectRGB])
+
+
+useEffect(()=>{
+if(currentColorSelectHex){
+}
+},[currentColorSelectHex])
+
+const formatRGBVal = (color) => {
+
     let r = color.r
     let g = color.g
     let b = color.b
@@ -23,22 +40,14 @@ const LightPicker = ({ currentColorSelect, setCurrentColorSelect }) => {
  
   }
 
-
-useEffect(()=>{
-if (rgbData !== null){
-console.log("In use effect rgbData")
-formatRGBVal(rgbData)
-}
-  },[rgbData])
-
   return (
     <div className="p-4">
       <SketchPicker
-        color={currentColorSelect}
-        onChangeComplete={(c) => handleChangeComplete(c)}
+        color={currentColorSelectHex}
+        onChangeComplete={(e) => handleChangeComplete(e)}
       />
       <div>
-        {currentColorSelect}
+        {currentColorSelectHex}
       </div>
     <HardwareConnect colorData={hardwareData}/>
     </div>

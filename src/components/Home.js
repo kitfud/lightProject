@@ -36,10 +36,13 @@ const Home = ({
   const [productSelectedAddress, setProductSelectedAddress] = useState(null)
   const [productSelectedName, setProductSelectedName] = useState(null)
   const [productSelectedPrice, setProductSelectedPrice] = useState(null)
-  const [currentColorSelect, setCurrentColorSelect] = useState('#FFFFFF')
+  const [currentColorSelectHex, setCurrentColorSelectHex] = useState('#FFFFFF')
+  const [currentColorSelectRGB, setCurrentColorSelectRGB] = useState('0,0,0')
 
 
-
+ useEffect(()=>{
+console.log("in home component "+ currentColorSelectHex)
+ },[currentColorSelectHex])
 
   const ConnectToAdminPrompt = () => {
     return (
@@ -83,11 +86,15 @@ const Home = ({
       <Box textAlign='center'>
         <h1>Crypto Lights</h1>
         <center>
-      <LightBulb currentColorSelect={currentColorSelect}/>
+      <LightBulb currentColorSelect={currentColorSelectHex}/>
       </center>
 
         <center>
-          <LightPicker currentColorSelect={currentColorSelect} setCurrentColorSelect={setCurrentColorSelect} />
+          <LightPicker
+            currentColorSelectRGB={currentColorSelectRGB} 
+            setCurrentColorSelectRGB={setCurrentColorSelectRGB}
+            currentColorSelectHex={currentColorSelectHex} 
+            setCurrentColorSelectHex={setCurrentColorSelectHex} />
         </center>
         <Button variant="contained" color="error" onClick={handleResetNFT}>Select New NFT</Button>
         <Box>
