@@ -38,6 +38,7 @@ const Home = ({
   const [productSelectedPrice, setProductSelectedPrice] = useState(null)
   const [currentColorSelectHex, setCurrentColorSelectHex] = useState('#FFFFFF')
   const [currentColorSelectRGB, setCurrentColorSelectRGB] = useState('0,0,0')
+  const [paymentData, setPaymentData] = useState(undefined)
 
 
  useEffect(()=>{
@@ -86,11 +87,15 @@ console.log("in home component "+ currentColorSelectHex)
       <Box textAlign='center'>
         <h1>Crypto Lights</h1>
         <center>
-      <LightBulb currentColorSelect={currentColorSelectHex}/>
+      <LightBulb
+      paymentData={paymentData} 
+      currentColorSelect={currentColorSelectHex}/>
       </center>
 
         <center>
           <LightPicker
+            setPaymentData={setPaymentData}
+            productSelectedAddress={productSelectedAddress}
             currentColorSelectRGB={currentColorSelectRGB} 
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
             currentColorSelectHex={currentColorSelectHex} 

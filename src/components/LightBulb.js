@@ -1,8 +1,10 @@
 import React,{useRef,useEffect,useState} from 'react'
 
-const LightBulb = ({currentColorSelect}) => {
+const LightBulb = ({currentColorSelect, paymentData}) => {
 const canvasRef = useRef(null)
 let circleColor= currentColorSelect
+
+const [pastPaymentData, setPastPaymentData] = useState(undefined)
 
 const draw = ctx => {
 
@@ -19,13 +21,15 @@ const draw = ctx => {
   }
 
 useEffect(() => {
-    let canvas = canvasRef.current
-    let context = canvas.getContext('2d')
-    canvas.width = 60
-    canvas.height =60
-    draw(context)
-    
-  }, [])
+    if(paymentData & paymentData !== pastPaymentData) {
+      let canvas = canvasRef.current
+      let context = canvas.getContext('2d')
+      canvas.width = 60
+      canvas.height =60
+      draw(context)
+      setPastPaymentData(paymentData)
+    }
+  }, [paymentData])
 
 return (
     <canvas ref={canvasRef} />
