@@ -177,6 +177,7 @@ const AdminMinting = ({
         setLoading(true)
 
         if (selectedAll && sumProductBalances > 0) {
+          //product contract withdraw
           const tx = await generatorContract.withdraw()
           const rc = await tx.wait(1)
           const event = rc.events.find(event => event.event === 'Withdraw');
