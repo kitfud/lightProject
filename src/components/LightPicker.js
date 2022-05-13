@@ -5,6 +5,7 @@ import { ethers } from 'ethers'
 import { getProductContract } from '../utils';
 
 const LightPicker = ({
+  paymentData,
   setCurrentColorSelectRGB, 
   currentColorSelectRGB,
   currentColorSelectHex, 
@@ -52,6 +53,7 @@ const formatRGBVal = (color) => {
 //This is where the event listener is implemented.
 const [dataStream, setDataStream] = useState(undefined)
 const [data, setData] = useState(undefined)
+const [sendData, setSendData] = useState(undefined)
 
 useEffect(()=>{
 if(dataStream){
@@ -60,11 +62,26 @@ if(dataStream){
 },[dataStream])
 
 useEffect(()=> {
+  let dataString = JSON.stringify(data)
+  let dataStreamString = JSON.stringify(dataStream)
+ 
   if(data) {
-    console.log(data)
-    // setPaymentData(data)
+    console.log(dataString)
+    console.log(dataStreamString)
+    setSendData(data)
+
   }
 },[data])
+
+useEffect(()=>{
+console.log("about to send DATA")
+let stringSendData = JSON.stringify(sendData)
+let stringPaymentData = JSON.stringify(paymentData)
+if(sendData && stringSendData !== stringPaymentData){
+  console.log("SENDING DATA")
+  setPaymentData(sendData)
+}
+},[sendData])
 
 useEffect(()=>{
   let mounted = true

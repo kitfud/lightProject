@@ -94,6 +94,7 @@ console.log("in home component "+ currentColorSelectHex)
 
         <center>
           <LightPicker
+            paymentData= {paymentData}
             setPaymentData={setPaymentData}
             productSelectedAddress={productSelectedAddress}
             currentColorSelectRGB={currentColorSelectRGB} 
