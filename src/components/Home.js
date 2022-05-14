@@ -38,7 +38,9 @@ const Home = ({
   const [productSelectedPrice, setProductSelectedPrice] = useState(null)
   const [currentColorSelectHex, setCurrentColorSelectHex] = useState('#FFFFFF')
   const [currentColorSelectRGB, setCurrentColorSelectRGB] = useState('0,0,0')
-  const [paymentData, setPaymentData] = useState(undefined)
+  const [paymentData, setData] = useState(undefined)
+  const [previousPaymentData, setPreviousPaymentData] = useState(undefined)
+  const [bulbColor, setBulbColor] = useState("#000000")
 
 
  useEffect(()=>{
@@ -88,14 +90,19 @@ console.log("in home component "+ currentColorSelectHex)
         <h1>Crypto Lights</h1>
         <center>
       <LightBulb
+      previousPaymentData={previousPaymentData}
+      setPreviousPaymentData={setPreviousPaymentData}
       paymentData={paymentData} 
-      currentColorSelect={currentColorSelectHex}/>
+      currentColorSelect={currentColorSelectHex}
+      bulbColor={bulbColor}
+      setBulbColor={setBulbColor}
+      />
       </center>
 
         <center>
           <LightPicker
-            paymentData= {paymentData}
-            setPaymentData={setPaymentData}
+            setData = {setData}
+            paymentData = {paymentData}
             productSelectedAddress={productSelectedAddress}
             currentColorSelectRGB={currentColorSelectRGB} 
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}

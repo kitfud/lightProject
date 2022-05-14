@@ -6,12 +6,13 @@ import { getProductContract } from '../utils';
 
 const LightPicker = ({
   paymentData,
+  setData,
   setCurrentColorSelectRGB, 
   currentColorSelectRGB,
   currentColorSelectHex, 
   setCurrentColorSelectHex,
   productSelectedAddress,
-  setPaymentData
+  
 
 }) => {
 
@@ -50,42 +51,11 @@ const formatRGBVal = (color) => {
  
   }
 
-//This is where the event listener is implemented.
-const [dataStream, setDataStream] = useState(undefined)
-const [data, setData] = useState(undefined)
-const [sendData, setSendData] = useState(undefined)
-
-useEffect(()=>{
-if(dataStream){
- setData(dataStream)
-  }
-},[dataStream])
-
-useEffect(()=> {
-  let dataString = JSON.stringify(data)
-  let dataStreamString = JSON.stringify(dataStream)
- 
-  if(data) {
-    console.log(dataString)
-    console.log(dataStreamString)
-    setSendData(data)
-
-  }
-},[data])
-
-useEffect(()=>{
-console.log("about to send DATA")
-let stringSendData = JSON.stringify(sendData)
-let stringPaymentData = JSON.stringify(paymentData)
-if(sendData && stringSendData !== stringPaymentData){
-  console.log("SENDING DATA")
-  setPaymentData(sendData)
-}
-},[sendData])
+const [datastream, setDataStream] = useState(null)
 
 useEffect(()=>{
   let mounted = true
-  if(selectedProductContract && mounted) {
+  if(selectedProductContract !== undefined && mounted) {
 
     selectedProductContract.on("Deposit", (payee,value, time, currentContractBalance, event)=>  {
       
@@ -96,16 +66,16 @@ useEffect(()=>{
         currentContractBalance: currentContractBalance.toString(),
         event: event
       }
-      if(JSON.stringify(dataInternal) !== JSON.stringify(dataStream)){
-        setDataStream(dataInternal)
-      }
-
-      selectedProductContract.removeListener("Deposit", (payee,value, time, currentContractBalance, event))
+      let stringDataInternal = JSON.stringify(dataInternal)
       
+      if(stringDataInternal!== datastream){
+        setDataStream(stringDataInternal)
+        setData(stringDataInternal)
+      }
+      selectedProductContract.removeListener("Deposit", (payee,value, time, currentContractBalance, event))
       // selectedProductContract.removeListener("Deposit", (payee,value, time, currentContractBalance, event))
       //We just want to catch the first part of the event, and cancel it after. We don't need it a million times.
     })
-
   }
   return ()=>{mounted = false}
 },[selectedProductContract])
