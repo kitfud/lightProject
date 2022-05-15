@@ -84,8 +84,7 @@ contract LightGenerator is ILightGenerator {
             uint256 tempProductBalance = idToProductContract[i].balance;
             if (tempProductBalance > 0) {
                 contractBalance += tempProductBalance;
-                (bool sent, ) = owner.call{value: tempProductBalance}("");
-                require(sent, "Failed to Send Ether To Owner");
+                productContracts[i].withdraw();
             }
         }
         emit Withdraw(block.timestamp, contractBalance, owner);
