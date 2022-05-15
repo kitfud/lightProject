@@ -20,7 +20,7 @@ const draw = (ctx) => {
         //This is the upper part of the light bulb -------------------------------------------------------------------
     //this is a circle
     ctx.beginPath();
-    ctx.arc(30, 22.5, 22.5, 0, 2 * Math.PI);
+    ctx.arc(30, 23.5, 22.5, 0, 2 * Math.PI);
     //circule color "bulb" light color is the line below
     ctx.fillStyle = bulbColor
     ctx.stroke();
@@ -38,10 +38,10 @@ const draw = (ctx) => {
     //End upper half of light bulb-------------------------------------------------------------------------------- 
 
 
-    //This is the lower half of the lightbulb. ------------------------------------------------------------------
+        //This is the lower half of the lightbulb. ------------------------------------------------------------------
     //THIS IS A RECTANGLE
     ctx.fillStyle = "grey";
-    ctx.fillRect(17.5, 42, 25, 7)
+    ctx.fillRect(17.5, 43, 25, 6)
 
     //This is a smaller rectangle
     ctx.fillStyle = "black";
@@ -71,6 +71,7 @@ const draw = (ctx) => {
     ctx.fillStyle = "black";
     ctx.fillRect(25, 58.25, 10, 1.75)
     //End lower half of light bulb--------------------------------------------------------------------------------
+ 
  
   }
 
