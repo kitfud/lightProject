@@ -15,18 +15,63 @@ const canvasRef = useRef(null)
 
 const draw = (ctx) => {
     console.log("NEW DATA RECIEVED")
-  
-    //THIS IS A RECTANGLE
-    ctx.fillStyle = "gray";
-    ctx.fillRect(12.5, 40, 25, 50)
+    
+    
+        //This is the upper part of the light bulb -------------------------------------------------------------------
     //this is a circle
     ctx.beginPath();
-    ctx.arc(25, 25, 20, 0, 2 * Math.PI);
+    ctx.arc(30, 22.5, 22.5, 0, 2 * Math.PI);
     //circule color "bulb" light color is the line below
     ctx.fillStyle = bulbColor
-  
-    ctx.fill()
-    ctx.stroke();  
+    ctx.stroke();
+    ctx.fill();
+
+    //This is the inside of the light bulb (WIRES) not color
+    ctx.beginPath();
+    ctx.moveTo(24,43);
+    ctx.lineTo(24,29.5);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(36, 43);
+    ctx.lineTo(36, 29.5);
+    ctx.stroke();
+    //End upper half of light bulb-------------------------------------------------------------------------------- 
+
+
+    //This is the lower half of the lightbulb. ------------------------------------------------------------------
+    //THIS IS A RECTANGLE
+    ctx.fillStyle = "grey";
+    ctx.fillRect(17.5, 42, 25, 7)
+
+    //This is a smaller rectangle
+    ctx.fillStyle = "black";
+    ctx.fillRect(17.5, 49, 25, 0.75)
+
+    //This is a smaller rectangle
+    ctx.fillStyle = "grey";
+    ctx.fillRect(17.5, 49.75, 25, 3)
+    
+    //This is a smaller rectangle
+    ctx.fillStyle = "black";
+    ctx.fillRect(18.75, 52.75, 22.5, 0.75)
+
+    //This is a smaller rectangle
+    ctx.fillStyle = "grey";
+    ctx.fillRect(18.75, 53.5, 22.5, 2)
+
+    //This is a smaller rectangle
+    ctx.fillStyle = "black";
+    ctx.fillRect(20, 55.5, 20, 0.75)
+
+    //This is a smaller rectangle
+    ctx.fillStyle = "grey";
+    ctx.fillRect(22.5, 56.25, 15, 2)
+
+    //This is a smaller rectangle
+    ctx.fillStyle = "black";
+    ctx.fillRect(25, 58.25, 10, 1.75)
+    //End lower half of light bulb--------------------------------------------------------------------------------
+ 
   }
 
 const generateGraphic = ()=>{
