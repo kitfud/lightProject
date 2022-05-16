@@ -6,7 +6,7 @@ import {
 
 const NFTProductsCard = ({ size, handleProductList, productId, productList, copyToClipboard, prodCurrentPrice,
     ETHUSDConversionRate, handleProductChangePrice, setNewProductPrice, loading, handleNewProductName, newProductName,
-    handleNewProductPrice, addNewProduct, productNewPrice, newProductPrice, productAddress }) => {
+    handleNewProductPrice, addNewProduct, productNewPrice, newProductPrice, productAddress, generatorId }) => {
 
     return (
         <Grid>
@@ -25,18 +25,18 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             id="product-id"
                             label="Product"
                             onChange={handleProductList}
-                            value={productId !== undefined ? productId : ""}
+                            value={productId ? productId : ""}
                             disabled={productList ? false : true}
                         >
-                            {productList.map(product => (
+                            {productList && generatorId ? (Object.keys(productList[generatorId]).map(productKey => (
                                 <MenuItem
                                     sx={{ color: "black" }}
-                                    value={product.id}
-                                    key={product.id}
+                                    value={productKey}
+                                    key={productKey}
                                 >
-                                    {product.id + " - " + product.name}
+                                    {productKey + " - " + productList[generatorId][productKey].name}
                                 </MenuItem>
-                            ))}
+                            ))) : (<div></div>)}
                         </Select>
                     </FormControl>
                     <FormControl sx={{ m: 1, minWidth: 300 }}>

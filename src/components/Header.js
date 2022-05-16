@@ -1,6 +1,9 @@
-
 import React, { useEffect, useState } from 'react'
-import { AppBar, Box, Toolbar, IconButton, Typography, Menu, Container, Avatar, Button, MenuItem } from '@mui/material'
+import { useDispatch, useSelector } from 'react-redux'
+import {
+  AppBar, Box, Toolbar, IconButton, Typography,
+  Menu, Container, Avatar, Button, MenuItem
+} from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Link } from "react-router-dom"
 import { makeStyles } from '@mui/styles'
@@ -8,6 +11,10 @@ import { getWeb3, getFactoryContract } from "../utils"
 import { ethers } from "ethers"
 import DarkAndLightMode from './DarkAndLightMode'
 import { CHAIN_ID } from "../ABIs/deployment_address.js"
+import { setWallet } from '../features/wallet'
+import { setFactoryContract } from '../features/factoryContract'
+import { setUserAddress } from '../features/userAddress'
+import { setNetwork } from '../features/network'
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -28,7 +35,52 @@ const useStyles = makeStyles((theme) => ({
       borderBottom: "1px solid white",
     },
   },
-}));
+}))
+
+const warningPulse = makeStyles((theme) => ({
+  pulse: {
+    boxShadow: "0 0 0 0 rgba(255, 167, 38, 1)",
+    transform: "scale(1)",
+    animation: "$pulse 2s infinite"
+  },
+  "@keyframes pulse": {
+    "0%": {
+      transform: "scale(0.95)",
+      boxShadow: "0 0 0 0 rgba(255, 167, 38, 0.7)"
+    },
+    "70%": {
+      transform: "scale(1)",
+      boxShadow: "0 0 0 10px rgba(255, 167, 38, 0)"
+    },
+    "100%": {
+      transform: "scale(0.95)",
+      boxShadow: "0 0 0 0 rgba(255, 167, 38, 0)"
+    }
+  }
+}))
+
+const errorPulse = makeStyles((theme) => ({
+  pulse: {
+    boxShadow: "0 0 0 0 rgba(244, 67, 54, 1)",
+    transform: "scale(1)",
+    animation: "$pulse 2s infinite"
+  },
+  "@keyframes pulse": {
+    "0%": {
+      transform: "scale(0.95)",
+      boxShadow: "0 0 0 0 rgba(244, 67, 54, 0.7)"
+    },
+    "70%": {
+      transform: "scale(1)",
+      boxShadow: "0 0 0 10px rgba(244, 67, 54, 0)"
+    },
+    "100%": {
+      transform: "scale(0.95)",
+      boxShadow: "0 0 0 0 rgba(244, 67, 54, 0)"
+    }
+  }
+}))
+
 
 const pages = ['Home', 'Admin', 'Shop'];
 
@@ -36,59 +88,65 @@ let first = true
 
 
 const Header = ({
-  setColorMode,
-  setUserAddress,
-  userAddress,
-  setWallet,
-  setContract,
-  wallet,
-  contract }) => {
+  setColorMode, updateProductList, updateGeneratorList, handleAlerts
+}) => {
+  // Global Variables
+  const dispatch = useDispatch()
+  const wallet = useSelector((state) => state.wallet.value)
+  const factoryContract = useSelector((state) => state.factoryContract.value)
+  const userAddress = useSelector((state) => state.userAddress.value)
+  const wrongNetwork = useSelector((state) => state.network.value.wrongNetwork)
 
-
-  const classes = useStyles()
-  const [wrongNetwork, setWrongNetwork] = useState(false);
+  // Local Variables
   const [anchorElNav, setAnchorElNav] = useState(null);
-  const [anchorElUser, setAnchorElUser] = useState(null);
   const [buttonColor, setButtonColor] = useState("warning")
+  const classes = useStyles()
+  const warningPulseClass = warningPulse()
+  const errorPulseClass = errorPulse()
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
-  };
-  const handleOpenUserMenu = (event) => {
-    setAnchorElUser(event.currentTarget);
   };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
-  };
-
   const connectWallet = async () => {
     if (!wallet) {
-      const wallet = await getWeb3()
+      const new_wallet = await getWeb3()
       let new_contract
-      if (contract) {
-        new_contract = contract.connect(wallet.signer)
+      if (factoryContract) {
+        new_contract = factoryContract.connect(new_wallet.signer)
       } else {
-        new_contract = getFactoryContract(wallet.signer)
+        new_contract = getFactoryContract(new_wallet.signer)
       }
-      await setUserAddress(ethers.utils.getAddress(wallet.provider.provider.selectedAddress))
-      await setWallet(wallet)
-      await setContract(new_contract)
+
+      const new_user_address = ethers.utils.getAddress(new_wallet.provider.provider.selectedAddress)
+
+      dispatch(setWallet(new_wallet))
+      dispatch(setFactoryContract(new_contract))
+      dispatch(setUserAddress(new_user_address))
+
+
+      await updateGeneratorList()
+      await updateProductList()
+
     } else if (wallet && wrongNetwork) {
-      const contract_chainId = CHAIN_ID
       await wallet.provider.provider.request({
         method: 'wallet_switchEthereumChain',
-        params: [{ chainId: "0x" + Number(contract_chainId).toString(16) }],
+        params: [{ chainId: "0x" + Number(CHAIN_ID).toString(16) }],
       })
+
+      await updateGeneratorList()
+      await updateProductList()
+      handleAlerts("Data from address collected!", "info")
+
     } else {
-      await setUserAddress(undefined)
-      await setWallet(undefined)
+      dispatch(setUserAddress(undefined))
+      dispatch(setWallet(undefined))
       const new_contract = getFactoryContract()
-      await setContract(new_contract)
+      dispatch(setFactoryContract(new_contract))
       setButtonColor("warning")
     }
   }
@@ -112,11 +170,16 @@ const Header = ({
       const chainId = parseInt(chainId_hex, 16)
       const contract_chainIds = CHAIN_ID
       setButtonColor("success")
-      if (contract_chainIds == chainId) {
-        setWrongNetwork(false)
+      if (contract_chainIds === chainId) {
+        dispatch(setNetwork({
+          chainId,
+          wrongNetwork: false
+        }))
       } else {
-
-        setWrongNetwork(true)
+        dispatch(setNetwork({
+          chainId,
+          wrongNetwork: true
+        }))
       }
     }
   }, [wallet])
@@ -197,10 +260,10 @@ const Header = ({
           <Box sx={{ flexGrow: 0 }}>
 
             {wallet && wrongNetwork ? (
-              <Button onClick={connectWallet} variant="contained" color={"error"}>
+              <Button className={errorPulseClass.pulse} onClick={connectWallet} variant="contained" color={"error"}>
                 Wrong network
               </Button>) :
-              (<Button color={buttonColor} onClick={connectWallet} variant="contained">
+              (<Button className={buttonColor === "warning" ? warningPulseClass.pulse : ""} color={buttonColor} onClick={connectWallet} variant="contained">
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
               </Button>)}
           </Box>

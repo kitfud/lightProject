@@ -4,8 +4,12 @@ import {
     CardMedia, FormControl, TextField, Checkbox, FormControlLabel
 } from '@mui/material'
 
-const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName,
-    setUseAutoName, handleNFTName, wallet, loading, mintNFT }) => {
+const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts,
+    setUseAutoName, handleNFTName, loading, mintNFT, wallet }) => {
+
+    const showAlert_WalletNotConnected = () => {
+        handleAlerts("Please, first connect your crypto wallet (click on the top right orange button)", "warning")
+    }
 
     return (
         <Grid >
@@ -42,7 +46,14 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName,
                             <Button color='warning' size="large" variant='contained' onClick={mintNFT} >{loading ? (
                                 <CircularProgress color="inherit" />) : ("Mint NFT")} </Button>
                         ) : (
-                            <Button color='error' size="large" variant='contained' >Connect wallet</Button>
+                            <Button
+                                onClick={showAlert_WalletNotConnected}
+                                color='error'
+                                size="large"
+                                variant='contained'
+                            >
+                                Connect wallet
+                            </Button>
                         )}
                     </Box>
                 </Card>
