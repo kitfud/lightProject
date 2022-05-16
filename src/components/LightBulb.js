@@ -1,23 +1,26 @@
-import React,{useRef,useEffect,useState} from 'react'
+import React, { useRef, useEffect, useState } from 'react'
+import { useSelector } from 'react-redux'
 
 const LightBulb = ({
   previousPaymentData,
   setPreviousPaymentData,
-  currentColorSelect, 
+  currentColorSelect,
   paymentData,
   bulbColor,
-  setBulbColor
-  }) => {
+  setBulbColor,
+  previousTxHash,
+  currentTxHash,
+  setPreviousTxHash,
+  currentColorSelectRGB
+}) => {
 
-const canvasRef = useRef(null)
+  const canvasRef = useRef(null)
+  const connection = useSelector(state => state.connection.value)
 
 
 
-const draw = (ctx) => {
-    console.log("NEW DATA RECIEVED")
-    
-    
-        //This is the upper part of the light bulb -------------------------------------------------------------------
+  const draw = (ctx) => {
+    //This is the upper part of the light bulb -------------------------------------------------------------------
     //this is a circle
     ctx.beginPath();
     ctx.arc(30, 23.5, 22.5, 0, 2 * Math.PI);
@@ -28,8 +31,8 @@ const draw = (ctx) => {
 
     //This is the inside of the light bulb (WIRES) not color
     ctx.beginPath();
-    ctx.moveTo(24,43);
-    ctx.lineTo(24,29.5);
+    ctx.moveTo(24, 43);
+    ctx.lineTo(24, 29.5);
     ctx.stroke();
     ctx.beginPath();
     ctx.moveTo(36, 43);
@@ -38,7 +41,7 @@ const draw = (ctx) => {
     //End upper half of light bulb-------------------------------------------------------------------------------- 
 
 
-        //This is the lower half of the lightbulb. ------------------------------------------------------------------
+    //This is the lower half of the lightbulb. ------------------------------------------------------------------
     //THIS IS A RECTANGLE
     ctx.fillStyle = "grey";
     ctx.fillRect(17.5, 43, 25, 6)
@@ -50,7 +53,7 @@ const draw = (ctx) => {
     //This is a smaller rectangle
     ctx.fillStyle = "grey";
     ctx.fillRect(17.5, 49.75, 25, 3)
-    
+
     //This is a smaller rectangle
     ctx.fillStyle = "black";
     ctx.fillRect(18.75, 52.75, 22.5, 0.75)
@@ -71,34 +74,36 @@ const draw = (ctx) => {
     ctx.fillStyle = "black";
     ctx.fillRect(25, 58.25, 10, 1.75)
     //End lower half of light bulb--------------------------------------------------------------------------------
- 
- 
+
+
   }
 
-const generateGraphic = ()=>{
-  let canvas = canvasRef.current
-  let context = canvas.getContext('2d')
-  canvas.width = 60
-  canvas.height =60
-  draw(context)
-}
+  const generateGraphic = () => {
+    let canvas = canvasRef.current
+    let context = canvas.getContext('2d')
+    canvas.width = 60
+    canvas.height = 60
+    draw(context)
+  }
 
-useEffect(() => {
-    if(paymentData !== undefined && paymentData !== previousPaymentData) {
-      setPreviousPaymentData(paymentData)
+  useEffect(() => {
+    if (paymentData !== undefined && previousTxHash !== currentTxHash) {
+      setPreviousTxHash(currentTxHash)
       console.log("IN LIGHT BULB COMPONENT, PAYMENT RECIEVED")
       setBulbColor(currentColorSelect)
-     
+      if (connection) {
+        connection("paymentMade", currentColorSelectRGB)
       }
-  }, [paymentData])
+    }
+  }, [currentTxHash])
 
-useEffect(()=>{
-generateGraphic()
-},[bulbColor])
+  useEffect(() => {
+    generateGraphic()
+  }, [bulbColor])
 
 
 
-return (
+  return (
     <canvas ref={canvasRef} />
   )
 }

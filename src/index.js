@@ -12,6 +12,7 @@ import productReducer from "./features/product"
 import generatorReducer from "./features/generator"
 import alertsReducer from "./features/alerts"
 import networkReducer from "./features/network"
+import connectionReducer from "./features/connection"
 
 const store = configureStore({
   reducer: {
@@ -21,7 +22,8 @@ const store = configureStore({
     product: productReducer,
     generator: generatorReducer,
     alerts: alertsReducer,
-    network: networkReducer
+    network: networkReducer,
+    connection: connectionReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

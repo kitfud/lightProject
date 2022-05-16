@@ -35,7 +35,7 @@ const theme = createTheme({
 
 
 
-const QR_Code = ({ refAddress, contract, selectProductPrice, selectGeneratorAddress }) => {
+const QR_Code = ({ refAddress, contract, selectProductPrice, selectGeneratorAddress, productSelected }) => {
   const classes = useStyles()
   const howToQR = "Select a color, then click the button below."
   const [open, setOpen] = React.useState(false);
@@ -63,14 +63,24 @@ const QR_Code = ({ refAddress, contract, selectProductPrice, selectGeneratorAddr
         <Box>
           {howToQR}
           <br /><br />
-          <Button
-            variant="contained"
-            size="large"
-            color="primary"
-            endIcon={<QrCode2Icon />}
-            onClick={handleOpen}>
-            Get QR
-          </Button>
+          {typeof productSelected !== "undefined" ? (
+            <Button
+              variant="contained"
+              size="large"
+              color="primary"
+              endIcon={<QrCode2Icon />}
+              onClick={handleOpen}>
+              Get QR
+            </Button>) :
+            (<Button
+              variant="contained"
+              size="large"
+              color="primary"
+              endIcon={<QrCode2Icon />}
+            >
+              Select product
+            </Button>)}
+
 
           <Modal
             open={open}
