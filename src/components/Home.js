@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { getGeneratorContract } from "../utils"
-import { ethers } from 'ethers'
 import {
   Box,
   Button,
   Typography,
-  Link,
   FormControl,
   InputLabel,
   Select,
@@ -15,16 +12,24 @@ import {
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 import LightBulb from './LightBulb';
+import { useSearchParams } from 'react-router-dom';
+import { ethers } from 'ethers';
+import { getProductContract } from '../utils';
+import { setProductList } from '../features/product';
 
-const Home = () => {
+const Home = ({ handleAlerts, updateGeneratorList }) => {
+
+  const [searchParams] = useSearchParams()
+  const dispatch = useDispatch()
 
   // Global Variables  
   const productList = useSelector((state) => state.product.value)
   const factoryContract = useSelector((state) => state.factoryContract.value)
-  const wallet = useSelector((state) => state.wallet.value)
   const generatorList = useSelector((state) => state.generator.value)
 
   // Local Variables
+  const [refAddress, setRefAddress] = useState(undefined)
+  const [validUrl, setValidUrl] = useState(false)
   const [nftSelected, setNFTSelected] = useState(undefined)
   const [generatorContract, setGeneratorContract] = useState(undefined)
   const [generatorAddress, setGeneratorAddress] = useState(undefined)
@@ -39,10 +44,49 @@ const Home = () => {
   const [previousPaymentData, setPreviousPaymentData] = useState(undefined)
   const [bulbColor, setBulbColor] = useState("#000000")
 
+  const checkIfValidUrl = async () => {
+    if (refAddress) {
+      const isOwner = await factoryContract.checkIfTokenHolder(refAddress)
+      console.log(isOwner)
+      if (!isOwner) {
+        handleAlerts("Given address has no NFTs", "warning")
+      } else {
+        await updateGeneratorList(refAddress)
+      }
+    }
+  }
 
-  useEffect(() => {
-    console.log("in home component " + currentColorSelectHex)
-  }, [currentColorSelectHex])
+  const updateProductList = async () => {
+    if (generatorList) {
+      handleAlerts("Fetching products registered per NFT...", "info", true)
+      let objOfProducts_perGenerator = {}
+      const generatorList_KeysArr = Object.keys(generatorList)
+      for (let jj = 0; jj < generatorList_KeysArr.length; jj++) {
+        const generatorKey = generatorList_KeysArr[jj]
+        const generatorContract = generatorList[generatorKey].contract
+        const products_num = await generatorContract.productCount()
+        let objOfProducts_fromGenerator = {}
+        for (let ii = 0; ii < products_num; ii++) {
+          const product = await generatorContract.idToProduct(ii)
+          const product_id = parseInt(product.id, 16)
+
+          objOfProducts_fromGenerator[product_id] = {
+            name: product.name,
+            priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
+            address: product.contractAddress,
+            contract: getProductContract(product.contractAddress)
+          }
+        }
+        objOfProducts_perGenerator[generatorKey] = objOfProducts_fromGenerator
+      }
+
+      dispatch(setProductList(objOfProducts_perGenerator))
+      handleAlerts("Products per NFT collected!", "info")
+
+    } else {
+      dispatch(setProductList(undefined))
+    }
+  }
 
   const handleResetNFT = (event) => {
     event.preventDefault()
@@ -76,6 +120,31 @@ const Home = () => {
   }
 
   useEffect(() => {
+    console.log("in home component " + currentColorSelectHex)
+  }, [currentColorSelectHex])
+
+  useEffect(() => {
+    if (generatorList) {
+      updateProductList()
+    }
+  }, [generatorList])
+
+  useEffect(() => {
+    if (refAddress) {
+      checkIfValidUrl()
+    }
+  }, [refAddress])
+
+  useEffect(() => {
+    const ref_address = searchParams.get('ref')
+    setRefAddress(ref_address)
+
+    if (!ref_address) {
+      handleAlerts("Make sure you are in a valid URL with a valid referral address!", "warning", true)
+    }
+  }, [])
+
+  useEffect(() => {
     if (productSelected) {
       setProductSelectedAddress()
     }
@@ -91,27 +160,6 @@ const Home = () => {
     }
   }, [nftSelected])
 
-  const ConnectToAdminPrompt = () => {
-    return (
-      <Box
-        sx={{
-          alignItems: "center",
-          display: "flex",
-          flexDirection: "column",
-          minHeight: "85vh",
-          minWidth: "100%",
-        }}
-      >
-
-        <Link href='/admin'>
-          <Typography sx={{ color: "#b87333" }}>
-            CONNECT WALLET AND MINT AN NFT
-          </Typography>
-        </Link>
-
-      </Box>
-    )
-  }
 
   const UserSelectNFT = () => {
     return (
@@ -122,6 +170,7 @@ const Home = () => {
           </Typography>
         </InputLabel>
         <Select
+          disabled={generatorList ? false : true}
           sx={{ bgcolor: "white" }}
           labelId="nft-id"
           id="nft-id"
@@ -146,33 +195,32 @@ const Home = () => {
 
   const UserSelectProduct = () => {
     return (
-      productList ?
-        <FormControl sx={{ m: 1, minWidth: 300 }}>
-          <InputLabel id="product-id">
-            <Typography sx={{ color: "black" }}>
-              Product Selection:
-            </Typography>
-          </InputLabel>
-          <Select
-            sx={{ bgcolor: "white" }}
-            labelId="product-id"
-            id="product-id"
-            label="PRODUCT"
-            value={typeof productSelected !== "undefined" ? productSelected : ""}
-            onChange={getProductInfo}
-          >
-            {productList && typeof nftSelected !== "undefined" ? (Object.keys(productList[nftSelected]).map(productKey => (
-              <MenuItem
-                sx={{ color: "black" }}
-                value={productKey}
-                key={productKey}
-              >
-                {productKey + " - " + productList[nftSelected][productKey].name}
-              </MenuItem>
-            ))) : (<div></div>)}
-          </Select>
-        </FormControl> : <Link href='/admin'>Make Some Products In Admin Page</Link>
-
+      <FormControl sx={{ m: 1, minWidth: 300 }}>
+        <InputLabel id="product-id">
+          <Typography sx={{ color: "black" }}>
+            Product
+          </Typography>
+        </InputLabel>
+        <Select
+          disabled={productList ? false : true}
+          sx={{ bgcolor: "white" }}
+          labelId="product-id"
+          id="product-id"
+          label="PRODUCT"
+          value={typeof productSelected !== "undefined" ? productSelected : ""}
+          onChange={getProductInfo}
+        >
+          {productList && typeof nftSelected !== "undefined" ? (Object.keys(productList[nftSelected]).map(productKey => (
+            <MenuItem
+              sx={{ color: "black" }}
+              value={productKey}
+              key={productKey}
+            >
+              {productKey + " - " + productList[nftSelected][productKey].name}
+            </MenuItem>
+          ))) : (<div></div>)}
+        </Select>
+      </FormControl>
     )
   }
 
@@ -215,7 +263,7 @@ const Home = () => {
         <br />
         <br />
         <QR_Code
-          wallet={wallet}
+          refAddress={refAddress}
           contract={factoryContract}
           selectProductPrice={productSelectedPrice}
           selectGeneratorAddress={productSelectedAddress}
@@ -226,18 +274,9 @@ const Home = () => {
 
   return (
     <>
-      {wallet && generatorList ?
-
-        !generatorAddress ?
-          <UserSelectNFT /> :
-
-          !productSelectedAddress ?
-            <UserSelectProduct /> :
-            <PickLightColorAndPay />
-        :
-        <ConnectToAdminPrompt />
-      }
-
+      <UserSelectNFT />
+      <UserSelectProduct />
+      <PickLightColorAndPay />
     </>
   )
 }

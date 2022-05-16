@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   AppBar, Box, Toolbar, IconButton, Typography,
-  Menu, Container, Avatar, Button, MenuItem
+  Menu, Container, Avatar, Button, MenuItem, Tooltip, Chip
 } from '@mui/material'
 import MenuIcon from '@mui/icons-material/Menu'
 import { Link } from "react-router-dom"
@@ -82,13 +82,13 @@ const errorPulse = makeStyles((theme) => ({
 }))
 
 
-const pages = ['Home', 'Admin', 'Shop'];
+const pages = ['Admin', 'Shop'];
 
 let first = true
 
 
 const Header = ({
-  setColorMode, updateProductList, updateGeneratorList, handleAlerts
+  setColorMode, updateProductList, updateGeneratorList, handleAlerts, copyToClipboard
 }) => {
   // Global Variables
   const dispatch = useDispatch()
@@ -100,9 +100,12 @@ const Header = ({
   // Local Variables
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [buttonColor, setButtonColor] = useState("warning")
+  const [refLink, setRefLink] = useState(undefined)
   const classes = useStyles()
   const warningPulseClass = warningPulse()
   const errorPulseClass = errorPulse()
+
+  const pathname = window.location.pathname
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -132,6 +135,7 @@ const Header = ({
       await updateGeneratorList()
       await updateProductList()
 
+      setRefLink(window.location.origin + "?ref=" + new_user_address)
     } else if (wallet && wrongNetwork) {
       await wallet.provider.provider.request({
         method: 'wallet_switchEthereumChain',
@@ -148,6 +152,7 @@ const Header = ({
       const new_contract = getFactoryContract()
       dispatch(setFactoryContract(new_contract))
       setButtonColor("warning")
+      setRefLink(undefined)
     }
   }
 
@@ -225,10 +230,7 @@ const Header = ({
               onClose={handleCloseNavMenu}
               sx={{
                 display: { xs: 'block', md: 'none' },
-              }}
-            >
-
-
+              }}            >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
                   <Typography textAlign="center">{page}</Typography>
@@ -246,11 +248,11 @@ const Header = ({
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pages.map((page) => (
+            {pathname === "/Admin" || pathname === "/Shop" ? pages.map((page) => (
               <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page}
               </Link>
-            ))}
+            )) : (<ins></ins>)}
           </Box>
 
           <Box sx={{ flexGrow: 1 }}>
@@ -258,14 +260,23 @@ const Header = ({
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
+            {pathname === "/Admin" || pathname === "/Shop" ? (
+              <Tooltip title="copy to clipboard">
+                <Chip
+                  label={refLink ? refLink : "Referral link"}
+                  onClick={copyToClipboard}
+                  disabled={refLink ? false : true}
+                />
+              </Tooltip>) : (<ins></ins>)}
 
-            {wallet && wrongNetwork ? (
+            {pathname === "/Admin" || pathname === "/Shop" ? (wallet && wrongNetwork ? (
               <Button className={errorPulseClass.pulse} onClick={connectWallet} variant="contained" color={"error"}>
                 Wrong network
               </Button>) :
               (<Button className={buttonColor === "warning" ? warningPulseClass.pulse : ""} color={buttonColor} onClick={connectWallet} variant="contained">
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
-              </Button>)}
+              </Button>)
+            ) : (<ins></ins>)}
           </Box>
         </Toolbar>
       </Container>
