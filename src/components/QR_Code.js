@@ -1,26 +1,20 @@
-import React, { useState, useEffect } from 'react'
-import pic from '../img/Sample_QR_Code.jpg'
+import React from 'react'
 import {
-    Box,
-    Button,
-    Typography,
-    Container,
-    IconButton,
-    Card,
-    Grid,
-    Modal
-  } from '@mui/material'
+  Box,
+  Button,
+  Typography,
+  Card,
+  Grid,
+  Modal
+} from '@mui/material'
 import { makeStyles } from "@mui/styles"
-import { elementAcceptingRef } from '@mui/utils'
 import QrCode2Icon from '@mui/icons-material/QrCode2';
-import { ThemeContext } from '@emotion/react'
-import ReactDOM from "react-dom";
 import QRCode from "react-qr-code";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 
 const useStyles = makeStyles({
- 
+
   qRPic: {
     position: "fixed",
     top: "50%",
@@ -41,7 +35,7 @@ const theme = createTheme({
 
 
 
-const QR_Code = ({ wallet, contract, selectProductPrice, selectGeneratorAddress }) => {
+const QR_Code = ({ refAddress, contract, selectProductPrice, selectGeneratorAddress }) => {
   const classes = useStyles()
   const howToQR = "Select a color, then click the button below."
   const [open, setOpen] = React.useState(false);
@@ -49,9 +43,8 @@ const QR_Code = ({ wallet, contract, selectProductPrice, selectGeneratorAddress 
   const handleClose = () => setOpen(false);
 
   const checkTokenHolder = async () => {
-    console.log(wallet)
     try {
-      const isTokenHolder = await contract.checkIfTokenHolder(wallet.provider.provider.selectAddress)
+      const isTokenHolder = await contract.checkIfTokenHolder(refAddress)
       // const nft_price = ethers.utils.formatEther(nft_price_BN)
       console.log(isTokenHolder)
       // setNFTPrice(nft_price)
@@ -60,7 +53,7 @@ const QR_Code = ({ wallet, contract, selectProductPrice, selectGeneratorAddress 
       // setNFTPrice(undefined)
     }
   }
-  
+
   // addressToTokenID
   // tokenIdToGenerator()
 
@@ -68,49 +61,49 @@ const QR_Code = ({ wallet, contract, selectProductPrice, selectGeneratorAddress 
     <ThemeProvider theme={theme}>
       <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginBottom: 2 }}>
         <Box>
-            { howToQR }
-          <br/><br/>
-          <Button 
+          {howToQR}
+          <br /><br />
+          <Button
             variant="contained"
-            size="large" 
+            size="large"
             color="primary"
             endIcon={<QrCode2Icon />}
-            onClick={ handleOpen }>
-              Get QR
+            onClick={handleOpen}>
+            Get QR
           </Button>
-     
-        <Modal
-            open={ open }
-            onClose={ handleClose }
+
+          <Modal
+            open={open}
+            onClose={handleClose}
             aria-labelledby="QRCode"
             aria-describedby="Shows the QR code in a modal."
-            >
+          >
 
             <Card>
               <center>
-              <QRCode value={selectGeneratorAddress} />
+                <QRCode value={selectGeneratorAddress} />
               </center>
-            
-            <center>
-          <Box className={ classes.qRPic } sx={{background: 'white', padding: '16px'}}>
-       
-          <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-          </Typography>
-             </Box>
-            
-             <Typography  variant="h6" component="h2">
-       
-       Address:{selectGeneratorAddress}
-           </Typography>
-           
-           <Typography  variant="h6" component="h2">
-       Price:{selectProductPrice}
-           </Typography>              
+
+              <center>
+                <Box className={classes.qRPic} sx={{ background: 'white', padding: '16px' }}>
+
+                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                  </Typography>
+                </Box>
+
+                <Typography variant="h6" component="h2">
+
+                  Address:{selectGeneratorAddress}
+                </Typography>
+
+                <Typography variant="h6" component="h2">
+                  Price:{selectProductPrice}
+                </Typography>
               </center>
             </Card>
-    
-            
-        
+
+
+
 
 
 

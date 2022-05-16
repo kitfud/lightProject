@@ -16,7 +16,8 @@ const AdminMinting = ({
   updateGeneratorList,
   updateProductList,
   sumProductBalances,
-  handleAlerts
+  handleAlerts,
+  copyToClipboard
 }) => {
 
   // Dispatch
@@ -363,15 +364,6 @@ const AdminMinting = ({
     if (factoryContract) {
       const conversion_rate = await factoryContract.getETHUSDConversionRate()
       setETHUSDConversionRate(ethers.utils.formatEther(conversion_rate))
-    }
-  }
-
-  const copyToClipboard = async (evt) => {
-    // const text = evt.target.value
-    if ('clipboard' in navigator) {
-      return await navigator.clipboard.writeText(evt.target.innerText);
-    } else {
-      return document.execCommand('copy', true, evt.target.innerText);
     }
   }
 

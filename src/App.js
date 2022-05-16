@@ -76,19 +76,39 @@ function App() {
     dispatch(setAlerts([false]))
   };
 
-  const updateGeneratorList = async () => {
-    if (wallet && userAddress) {
+  const copyToClipboard = async (evt) => {
+    // const text = evt.target.value
+    if ('clipboard' in navigator) {
+      return await navigator.clipboard.writeText(evt.target.innerText);
+    } else {
+      return document.execCommand('copy', true, evt.target.innerText);
+    }
+  }
+
+  const updateGeneratorList = async (refAddress = undefined) => {
+    if ((wallet && userAddress) || refAddress) {
       handleAlerts("Fetching NFTs owned by address...", "info", true)
-      const isOwner = await factoryContract.checkIfTokenHolder(userAddress)
+      let use_address
+      if (refAddress) {
+        use_address = refAddress
+      } else {
+        use_address = userAddress
+      }
+      const isOwner = await factoryContract.checkIfTokenHolder(use_address)
       let tokensOwned
       if (isOwner) {
-        tokensOwned = await factoryContract.addressToTokenID(userAddress)
+        tokensOwned = await factoryContract.addressToTokenID(use_address)
         let generatorsObj = {}
         for (let ii = 0; ii < tokensOwned.length; ii++) {
           if (tokensOwned[ii] === true) {
             const generator_address = await factoryContract.tokenIDToGenerator(ii)
 
-            const gen_contract = getGeneratorContract(generator_address, wallet.signer)
+            let gen_contract
+            if (wallet) {
+              gen_contract = getGeneratorContract(generator_address, wallet.signer)
+            } else {
+              gen_contract = getGeneratorContract(generator_address)
+            }
             const gen_name = await gen_contract.generatorName()
 
             generatorsObj[ii] = {
@@ -176,13 +196,21 @@ function App() {
           updateProductList={updateProductList}
           handleAlerts={handleAlerts}
           handleCloseAlerts={handleCloseAlerts}
+          copyToClipboard={copyToClipboard}
         />
 
         <Card sx={{ bgcolor: "secondary.main" }}>
           <Routes>
-            <Route path='/' element={<Home />} />
+            <Route path='/' element={
+              <Home
+                handleAlerts={handleAlerts}
+                updateGeneratorList={updateGeneratorList}
+              />} />
             <Route path='/home' element={
-              <Home />} />
+              <Home
+                handleAlerts={handleAlerts}
+                updateGeneratorList={updateGeneratorList}
+              />} />
             <Route path='/shop' element={<Shop />} />
             <Route path='/admin' element={
               <AdminMinting
@@ -192,7 +220,7 @@ function App() {
                 updateProductList={updateProductList}
                 sumProductBalances={sumProductBalances}
                 handleAlerts={handleAlerts}
-                handleCloseAlerts={handleCloseAlerts}
+                copyToClipboard={copyToClipboard}
               />} />
 
           </Routes>
