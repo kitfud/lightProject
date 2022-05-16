@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   Box,
@@ -7,7 +7,8 @@ import {
   FormControl,
   InputLabel,
   Select,
-  MenuItem
+  MenuItem,
+  Grid
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
@@ -29,7 +30,6 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   // Local Variables
   const [refAddress, setRefAddress] = useState(undefined)
-  const [validUrl, setValidUrl] = useState(false)
   const [nftSelected, setNFTSelected] = useState(undefined)
   const [generatorContract, setGeneratorContract] = useState(undefined)
   const [generatorAddress, setGeneratorAddress] = useState(undefined)
@@ -41,13 +41,16 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
   const [currentColorSelectHex, setCurrentColorSelectHex] = useState('#FFFFFF')
   const [currentColorSelectRGB, setCurrentColorSelectRGB] = useState('0,0,0')
   const [paymentData, setPaymentData] = useState(undefined)
-  const [previousPaymentData, setPreviousPaymentData] = useState(undefined)
   const [bulbColor, setBulbColor] = useState("#000000")
+  const [datastream, setDataStream] = useState(null)
+  const firstTimeListener = useRef(true)
+  const [selectedProductContract, setSelectedProductContract] = useState(undefined)
+  const [previousTxHash, setPreviousTxHash] = useState(undefined)
+  const [currentTxHash, setCurrentTxHash] = useState(undefined)
 
   const checkIfValidUrl = async () => {
     if (refAddress) {
       const isOwner = await factoryContract.checkIfTokenHolder(refAddress)
-      console.log(isOwner)
       if (!isOwner) {
         handleAlerts("Given address has no NFTs", "warning")
       } else {
@@ -106,17 +109,18 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
   }
 
   const setGeneratorContractData = () => {
+    setNFTNameSelected(generatorList[nftSelected].name)
     setGeneratorAddress(generatorList[nftSelected].address)
     setGeneratorContract(generatorList[nftSelected].contract)
   }
 
   const getProductInfo = (event) => {
     const new_selected_product = parseInt(event.target.value)
-    console.log(productList[nftSelected][new_selected_product])
     setProductSelected(new_selected_product)
     setProductSelectedName(productList[nftSelected][new_selected_product].name)
     setProductSelectedAddress(productList[nftSelected][new_selected_product].address)
-    setProductSelectedPrice(productList[new_selected_product].priceUSD)
+    setProductSelectedPrice(productList[nftSelected][new_selected_product].priceUSD)
+    setSelectedProductContract(productList[nftSelected][new_selected_product].contract)
   }
 
   useEffect(() => {
@@ -160,6 +164,35 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
     }
   }, [nftSelected])
 
+  useEffect(() => {
+
+    if (selectedProductContract !== undefined && firstTimeListener) {
+      selectedProductContract.on("Deposit", (payee, value, time, currentContractBalance, event) => {
+        let dataInternal = {
+          payee: payee,
+          value: value.toString(),
+          time: time.toString(),
+          currentContractBalance: currentContractBalance.toString(),
+          event: event
+        }
+
+        const tx_hash = event.transactionHash
+
+        if (currentTxHash !== tx_hash) {
+          setPreviousTxHash(currentTxHash)
+          setCurrentTxHash(tx_hash)
+        }
+        let stringDataInternal = JSON.stringify(dataInternal)
+
+        if (stringDataInternal !== datastream) {
+          setDataStream(stringDataInternal)
+          setPaymentData(stringDataInternal)
+        }
+      })
+
+      firstTimeListener.current = false
+    }
+  }, [selectedProductContract])
 
   const UserSelectNFT = () => {
     return (
@@ -231,7 +264,14 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
         <center>
           <LightBulb
             paymentData={paymentData}
-            currentColorSelect={currentColorSelectHex} />
+            currentColorSelect={currentColorSelectHex}
+            previousTxHash={previousTxHash}
+            currentTxHash={currentTxHash}
+            setBulbColor={setBulbColor}
+            bulbColor={bulbColor}
+            setPreviousTxHash={setPreviousTxHash}
+            currentColorSelectRGB={currentColorSelectRGB}
+          />
         </center>
 
         <center>
@@ -245,17 +285,17 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
         </center>
         <Button variant="contained" color="error" onClick={handleResetNFT}>Select New NFT</Button>
         <Box>
-          {nftNameSelected}
+          {"NFT name: " + nftNameSelected}
         </Box>
         <Box>
-          {productSelectedName}
+          {"Product name: " + productSelectedName}
         </Box>
         <Box>
-          {productSelectedAddress}
+          {"Product address: " + productSelectedAddress}
         </Box>
 
         <Box>
-          $ {productSelectedPrice}
+          {"Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / 1) + ")"}
         </Box>
 
 
@@ -263,6 +303,7 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
         <br />
         <br />
         <QR_Code
+          productSelected={productSelected}
           refAddress={refAddress}
           contract={factoryContract}
           selectProductPrice={productSelectedPrice}
@@ -274,8 +315,10 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   return (
     <>
-      <UserSelectNFT />
-      <UserSelectProduct />
+      <Grid container>
+        <UserSelectNFT />
+        <UserSelectProduct />
+      </Grid>
       <PickLightColorAndPay />
     </>
   )

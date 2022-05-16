@@ -1,26 +1,30 @@
 import React, { useState, useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { Button, Box, Typography, Card, Grid } from "@mui/material"
+import { setConnection } from '../features/connection';
 import { connect } from "simple-web-serial";
 
 const HardwareConnect = ({ colorData }) => {
 
-  const [connection, setConnection] = useState(false);
+  const dispatch = useDispatch()
+  const connection = useSelector((state) => state.connection.value)
+
   const [buttoncolor, setButtonColor] = useState("primary")
   const [connectionStatus, setConnectionStatus] = useState(false)
 
   const handleConnect = () => {
-    setConnection(connect(57600))
+    dispatch(setConnection(connect(57600)))
     setConnectionStatus(true)
     setButtonColor("success")
   }
 
   useEffect(() => {
 
-    if (colorData !== null ) {
+    if (colorData !== null) {
       console.log("COLOR DATA: " + JSON.stringify(colorData))
-      if(connectionStatus === true && connection !== null){
-      console.log("COLOR SELECTION + PAYMENT MADE! MACHINE TRIGGERED")
-      connection.send("paymentMade", colorData)
+      if (connectionStatus === true && connection !== null) {
+        console.log("COLOR SELECTION + PAYMENT MADE! MACHINE TRIGGERED")
+        connection.send("paymentMade", colorData)
       }
     }
 
