@@ -1,56 +1,57 @@
-import React, { useEffect } from "react"
+import React from "react"
 import {
     Card, Button, Typography, Box, Grid, CircularProgress,
     FormControl, InputLabel, Select, MenuItem, TextField, InputAdornment, Chip, Tooltip, Checkbox
 } from '@mui/material'
 import HardwareConnect from "./HardwareConnect"
+import { setProductList } from "../features/product"
+import { useDispatch } from "react-redux"
 
-const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, generatorAddress,
-    copyToClipboard, ETHUSDConversionRate, withdrawBalance, withdrawAndDelete,
-    loading, renameNFT, handleNewName, newNFTName, productList, setProductList, selectedAll, setSelectedAll }) => {
+const NFTOwnerCard = ({ sumProductBalances, generatorId, size, getGeneratorInfo, generatorList, generatorAddress,
+    copyToClipboard, ETHUSDConversionRate, withdrawBalance, withdrawAndDelete, loading, renameNFT, setSelectedProduct,
+    handleNewName, newNFTName, productList, selectedAll, setSelectedAll }) => {
+
+    const dispatch = useDispatch()
 
     const handleProductsCheckBoxes = (evt, id) => {
-        const product_list_arr = productList.slice()
+        const product_list_arr = { ...productList[generatorId] }
+        const product_sub_obj = { ...product_list_arr[id], selected: evt.target.checked }
+        product_list_arr[id] = product_sub_obj
+
+        const product_gen_obj = { ...productList }
+        product_gen_obj[generatorId] = product_list_arr
+
+        const products = Object.keys(product_list_arr)
         const product_selected = []
-        for (let ii = 0; ii < product_list_arr.length; ii++) {
-            if (product_list_arr[ii].id === id) {
-                product_list_arr[ii].selected = evt.target.checked
-            }
-            product_selected.push(product_list_arr[ii].selected)
+        for (let ii = 0; ii < products.length; ii++) {
+            product_selected.push(product_list_arr[products[ii]].selected)
         }
 
-        setProductList(product_list_arr)
+        dispatch(setProductList(product_gen_obj))
 
         if (!product_selected.includes(false)) {
             setSelectedAll(true)
         } else if (product_selected.includes(false)) {
             setSelectedAll(false)
         }
+
+        setSelectedProduct(product_selected.includes(true))
     }
 
     const handleAllCheckBoxes = (evt) => {
         const checkbox = evt.target.checked
         setSelectedAll(checkbox)
-        const product_list_arr = productList
-        for (let ii = 0; ii < product_list_arr.length; ii++) {
-            product_list_arr[ii].selected = checkbox
+        const product_list_arr = { ...productList[generatorId] }
+        const products = Object.keys(product_list_arr)
+        for (let ii = 0; ii < products.length; ii++) {
+            const product_sub_obj = { ...product_list_arr[products[ii]], selected: checkbox }
+            product_list_arr[products[ii]] = product_sub_obj
         }
-        setProductList(product_list_arr)
+        const product_gen_obj = { ...productList }
+        product_gen_obj[generatorId] = product_list_arr
+        dispatch(setProductList(product_gen_obj))
+        setSelectedProduct(checkbox)
     }
-
-    // useEffect(() => {
-    //     const selected_products_arr = []
-    //     for (let ii = 0; ii < productList.length; ii++) {
-    //         selected_products_arr.push(false)
-    //     }
-    //     setSelectedProducts(selected_products_arr)
-    // }, [productList])
-
-
-    useEffect(() => {
-        console.log("Updating product balances")
-        console.log("in NFT owned component" + sumProductBalances)
-    }, [sumProductBalances])
 
     return (
         <Grid>
@@ -65,19 +66,23 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                     <FormControl sx={{ m: 1, minWidth: 300 }}>
                         <InputLabel id="nft-id">NFT</InputLabel>
                         <Select
+                            disabled={generatorList ? false : true}
                             labelId="nft-id"
                             id="nft-id"
                             label="NFT"
-                            value={typeof nftId !== "undefined" ? nftId : ""}
-                            onChange={getNFTInfo}
+                            value={typeof generatorId !== "undefined" ? generatorId : ""}
+                            onChange={getGeneratorInfo}
                         >
-                            {nftList.map(nft => (
+                            {generatorList ? (Object.keys(generatorList).map(generatorKey => (
                                 <MenuItem
                                     sx={{ color: "black" }}
-                                    value={nft.id}
-                                    key={nft.id}>{`${nft.id} - ${nft.name}`}
+                                    value={generatorKey}
+                                    key={generatorKey}
+                                >
+                                    {`${generatorKey} - ${generatorList[generatorKey].name}`}
                                 </MenuItem>
-                            ))}
+                            ))) : (<div></div>)
+                            }
                         </Select>
                         <FormControl sx={{ m: 1, minWidth: 300 }}>
                             <Tooltip title="copy to clipboard">
@@ -91,12 +96,12 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                     </FormControl>
                     <HardwareConnect />
                     <FormControl sx={{ padding: 1, marginBottom: 1 }}>
-                        {productList.map(product => (
-                            <Grid container key={product.id}>
+                        {productList && generatorId ? (Object.keys(productList[generatorId]).map(productKey => (
+                            <Grid container key={productKey}>
                                 <TextField
                                     disabled
                                     id="filled-number"
-                                    label={`${product.name} balance`}
+                                    label={`${productList[generatorId][productKey].name} balance`}
                                     type="number"
                                     InputLabelProps={{
                                         shrink: true,
@@ -106,17 +111,22 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                                         startAdornment: <InputAdornment position="start">USD</InputAdornment>,
                                         endAdornment: <InputAdornment
                                             position="end">
-                                            {product.balance !== 0 ? `(ETH ${product.balance.toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
+                                            {productList[generatorId][productKey].balance !== 0 ?
+                                                `(ETH ${productList[generatorId][productKey].balance.toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                         </InputAdornment>
 
                                     }}
-                                    value={(product.balance * ETHUSDConversionRate).toFixed(2)}
+                                    value={(productList[generatorId][productKey].balance * ETHUSDConversionRate).toFixed(2)}
                                     sx={{ maxWidth: 300 }}
                                 />
-                                <Checkbox color="info" checked={product.selected} onChange={event => handleProductsCheckBoxes(event, product.id)} />
+                                <Checkbox
+                                    color="info"
+                                    checked={productList[generatorId][productKey].selected}
+                                    onChange={event => handleProductsCheckBoxes(event, productKey)}
+                                />
                             </Grid>
                         )
-                        )}
+                        )) : (<div></div>)}
                         <Grid container>
                             <TextField
                                 disabled
@@ -131,10 +141,10 @@ const NFTOwnerCard = ({ sumProductBalances, nftId, size, getNFTInfo, nftList, ge
                                     startAdornment: <InputAdornment position="start">USD</InputAdornment>,
                                     endAdornment: <InputAdornment
                                         position="end">
-                                        {sumProductBalances !== 0 ? `(ETH ${sumProductBalances.toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
+                                        {sumProductBalances && generatorId ? `(ETH ${sumProductBalances[generatorId].toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                     </InputAdornment>
                                 }}
-                                value={sumProductBalances !== 0 ? (sumProductBalances * ETHUSDConversionRate).toFixed(2) : ""}
+                                value={sumProductBalances && generatorId ? (sumProductBalances[generatorId] * ETHUSDConversionRate).toFixed(2) : ""}
                                 sx={{ maxWidth: 300 }}
                             />
                             <Checkbox color="info" checked={selectedAll} onChange={handleAllCheckBoxes} />
