@@ -5,12 +5,14 @@ import { ethers } from 'ethers'
 import { getProductContract } from '../utils';
 
 const LightPicker = ({
+  paymentData,
+  setData,
   setCurrentColorSelectRGB, 
   currentColorSelectRGB,
   currentColorSelectHex, 
   setCurrentColorSelectHex,
   productSelectedAddress,
-  setPaymentData
+  
 
 }) => {
 
@@ -49,43 +51,33 @@ const formatRGBVal = (color) => {
  
   }
 
-//This is where the event listener is implemented.
-const [dataStream, setDataStream] = useState(undefined)
-const [data, setData] = useState(undefined)
-
-useEffect(()=> {
-  if(data) {
-    setPaymentData(data)
-  }
-},[data])
+const [datastream, setDataStream] = useState(null)
 
 useEffect(()=>{
-  let mounted=true
-  console.log(selectedProductContract)
-  console.log("In useEffect for event listener.")
-  if(selectedProductContract) {
-    console.log("EVENT LISTENER ACTIVE")
+  let mounted = true
+  if(selectedProductContract !== undefined && mounted) {
 
     selectedProductContract.on("Deposit", (payee,value, time, currentContractBalance, event)=>  {
-
-      let data = { 
+      
+      let dataInternal = { 
         payee: payee,
         value: value.toString(),
         time: time.toString(),
         currentContractBalance: currentContractBalance.toString(),
         event: event
       }
-
-      if(dataStream !== data) {
-        setDataStream(data)
-        setData(data)
+      let stringDataInternal = JSON.stringify(dataInternal)
+      
+      if(stringDataInternal!== datastream){
+        setDataStream(stringDataInternal)
+        setData(stringDataInternal)
       }
-
-      //We just want to catch the first part of the event, and cancel it after. We don't need it a million times.
       selectedProductContract.removeListener("Deposit", (payee,value, time, currentContractBalance, event))
-
+      // selectedProductContract.removeListener("Deposit", (payee,value, time, currentContractBalance, event))
+      //We just want to catch the first part of the event, and cancel it after. We don't need it a million times.
     })
   }
+  return ()=>{mounted = false}
 },[selectedProductContract])
 
 const processSelectedContractAddress = async () => {
