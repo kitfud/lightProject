@@ -13,6 +13,7 @@ import generatorReducer from "./features/generator"
 import alertsReducer from "./features/alerts"
 import networkReducer from "./features/network"
 import connectionReducer from "./features/connection"
+import rgbColorReducer from "./features/rgbColor"
 
 const store = configureStore({
   reducer: {
@@ -23,7 +24,8 @@ const store = configureStore({
     generator: generatorReducer,
     alerts: alertsReducer,
     network: networkReducer,
-    connection: connectionReducer
+    connection: connectionReducer,
+    rgbColor: rgbColorReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

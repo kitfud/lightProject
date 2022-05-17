@@ -1,23 +1,20 @@
-import React, { useRef, useEffect, useState } from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 const LightBulb = ({
-  previousPaymentData,
-  setPreviousPaymentData,
-  currentColorSelect,
-  paymentData,
+  currentColorSelectHex,
   bulbColor,
   setBulbColor,
   previousTxHash,
   currentTxHash,
   setPreviousTxHash,
-  currentColorSelectRGB
+  currentColorSelectRGB,
+  sendData
 }) => {
 
   const canvasRef = useRef(null)
-  const connection = useSelector(state => state.connection.value)
-
-
+  const { port } = useSelector(state => state.connection.value)
+  const rgbColor = useSelector(state => state.rgbColor.value)
 
   const draw = (ctx) => {
     //This is the upper part of the light bulb -------------------------------------------------------------------
@@ -87,12 +84,11 @@ const LightBulb = ({
   }
 
   useEffect(() => {
-    if (paymentData !== undefined && previousTxHash !== currentTxHash) {
+    if (previousTxHash !== currentTxHash) {
       setPreviousTxHash(currentTxHash)
-      console.log("IN LIGHT BULB COMPONENT, PAYMENT RECIEVED")
-      setBulbColor(currentColorSelect)
-      if (connection) {
-        connection("paymentMade", currentColorSelectRGB)
+      setBulbColor(currentColorSelectHex)
+      if (port && rgbColor) {
+        sendData()
       }
     }
   }, [currentTxHash])
@@ -100,8 +96,6 @@ const LightBulb = ({
   useEffect(() => {
     generateGraphic()
   }, [bulbColor])
-
-
 
   return (
     <canvas ref={canvasRef} />

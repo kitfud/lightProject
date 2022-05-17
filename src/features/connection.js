@@ -1,17 +1,23 @@
 import { createSlice } from "@reduxjs/toolkit"
 
-const initialStateValue = undefined
+const initialStateValue = {
+    port: undefined,
+    status: false
+}
 
 export const connectionSlice = createSlice({
     name: "connection",
     initialState: { value: initialStateValue },
     reducers: {
-        setConnection: (state, action) => {
-            state.value = action.payload
+        setPort: (state, action) => {
+            state.port.value = action.payload
+        },
+        setStatus: (state, action) => {
+            state.status.value = action.payload
         }
     }
 })
 
-export const { setConnection } = connectionSlice.actions
+export const { setPort, setStatus } = connectionSlice.actions
 
 export default connectionSlice.reducer
