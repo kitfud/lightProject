@@ -7,16 +7,17 @@ const HardwareConnect = ({ handleAlerts }) => {
 
   const dispatch = useDispatch()
   const { port, status } = useSelector((state) => state.connection.value)
-  console.log("NEW PORT: ", port)
   const [buttoncolor, setButtonColor] = useState("primary")
   const [connectionStatus, setConnectionStatus] = useState(false)
 
   const handleConnect = async () => {
     if ("serial" in navigator) {
       const new_port = await navigator.serial.requestPort()
-      console.log("in handle Connect", new_port)
+      console.log("in Hardware Connect", new_port)
+      console.log("New port: ", new_port)
       dispatch(setPort(new_port))
-      await new_port.open({ baudRate: 57600 })
+      const res= await new_port.open({ baudRate: 57600 })
+      console.log(res)
     } else {
       handleAlerts("Web serial API is not supported by the browser", "warning")
     }

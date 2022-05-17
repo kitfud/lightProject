@@ -127,6 +127,7 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   const sendData = async () => {
    if(port) {  
+     //spread operator is doing a slice of an empty object.
    const currPort ={...port}
    console.log("curr port:", currPort)
  
