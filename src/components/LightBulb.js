@@ -72,8 +72,6 @@ const LightBulb = ({
     ctx.fillStyle = "black";
     ctx.fillRect(25, 58.25, 10, 1.75)
     //End lower half of light bulb--------------------------------------------------------------------------------
-
-
   }
 
   const generateGraphic = () => {
