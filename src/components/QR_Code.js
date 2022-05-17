@@ -13,7 +13,6 @@ import QRCode from "react-qr-code";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
 const useStyles = makeStyles({
-
   qRPic: {
     position: "fixed",
     top: "50%",

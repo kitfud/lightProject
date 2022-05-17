@@ -7,25 +7,20 @@ import {
   InputLabel,
   Select,
   MenuItem,
-  Grid
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 import LightBulb from './LightBulb';
-import HardwareConnect from './HardwareConnect';
 import { useSearchParams } from 'react-router-dom';
 import { ethers } from 'ethers';
 import { getProductContract } from '../utils';
 import { setProductList } from '../features/product';
-import { setPort, setStatus } from '../features/connection';
 import { setRefAddress } from '../features/refAddress';
 
 const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
-  const { port } = useSelector(state => state.connection.value)
-  const rgbColor = useSelector(state => state.rgbColor.value)
 
   // Global Variables  
   const productList = useSelector((state) => state.product.value)
