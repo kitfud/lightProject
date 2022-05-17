@@ -126,17 +126,21 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
   }
 
   const sendData = async () => {
-    dispatch(setStatus(true))
-    // eslint-disable-next-line no-undef
-    const textEncoder = new TextEncoderStream()
-    const writableStreamClosed = textEncoder.readable.pipeTo(port.writable)
-    const writer = port.writable.getWriter()
-    await writer.write(rgbColor)
+   if(port) {  
+   const currPort ={...port}
+   console.log("curr port:", currPort)
+ 
+    const encoder = new TextEncoder();
+    const writer = currPort.writable.getWriter();
+    await writer.write(encoder.encode(rgbColor));
+    writer.releaseLock();
+   }
+   
   }
 
   useEffect(() => {
     if (port && rgbColor) {
-      sendData()
+      // sendData()
     }
   }, [port])
 

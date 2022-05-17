@@ -7,13 +7,14 @@ const HardwareConnect = ({ handleAlerts }) => {
 
   const dispatch = useDispatch()
   const { port, status } = useSelector((state) => state.connection.value)
-
+  console.log("NEW PORT: ", port)
   const [buttoncolor, setButtonColor] = useState("primary")
   const [connectionStatus, setConnectionStatus] = useState(false)
 
   const handleConnect = async () => {
     if ("serial" in navigator) {
       const new_port = await navigator.serial.requestPort()
+      console.log("in handle Connect", new_port)
       dispatch(setPort(new_port))
       await new_port.open({ baudRate: 57600 })
     } else {
@@ -21,21 +22,21 @@ const HardwareConnect = ({ handleAlerts }) => {
     }
   }
 
-  const readData = async () => {
-    const reader = port.readable.getReader();
+  // const readData = async () => {
+  //   const reader = port.readable.getReader();
 
-    // Listen to data coming from the serial device.
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) {
-        // Allow the serial port to be closed later.
-        reader.releaseLock();
-        break;
-      }
-      // value is a Uint8Array.
-      console.log(value);
-    }
-  }
+  //   // Listen to data coming from the serial device.
+  //   while (true) {
+  //     const { value, done } = await reader.read();
+  //     if (done) {
+  //       // Allow the serial port to be closed later.
+  //       reader.releaseLock();
+  //       break;
+  //     }
+  //     // value is a Uint8Array.
+  //     console.log(value);
+  //   }
+  // }
 
   const handleDisconnect = async () => {
     await port.close()
@@ -43,11 +44,11 @@ const HardwareConnect = ({ handleAlerts }) => {
     dispatch(setPort(undefined))
   }
 
-  useEffect(() => {
-    if (port) {
-      readData()
-    }
-  }, [port])
+  // useEffect(() => {
+  //   if (port) {
+  //     readData()
+  //   }
+  // }, [port])
 
   return (
     <>
