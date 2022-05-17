@@ -12,7 +12,6 @@ import QrCode2Icon from '@mui/icons-material/QrCode2';
 import QRCode from "react-qr-code";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 
-
 const useStyles = makeStyles({
 
   qRPic: {
@@ -33,29 +32,12 @@ const theme = createTheme({
   },
 });
 
-
-
-const QR_Code = ({ refAddress, contract, selectProductPrice, selectGeneratorAddress, productSelected }) => {
+const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }) => {
   const classes = useStyles()
   const howToQR = "Select a color, then click the button below."
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const checkTokenHolder = async () => {
-    try {
-      const isTokenHolder = await contract.checkIfTokenHolder(refAddress)
-      // const nft_price = ethers.utils.formatEther(nft_price_BN)
-      console.log(isTokenHolder)
-      // setNFTPrice(nft_price)
-    } catch (error) {
-      console.log(error)
-      // setNFTPrice(undefined)
-    }
-  }
-
-  // addressToTokenID
-  // tokenIdToGenerator()
 
   return (
     <ThemeProvider theme={theme}>
@@ -80,45 +62,30 @@ const QR_Code = ({ refAddress, contract, selectProductPrice, selectGeneratorAddr
             >
               Select product
             </Button>)}
-
-
           <Modal
             open={open}
             onClose={handleClose}
             aria-labelledby="QRCode"
             aria-describedby="Shows the QR code in a modal."
           >
-
             <Card>
               <center>
                 <QRCode value={selectGeneratorAddress} />
               </center>
-
               <center>
                 <Box className={classes.qRPic} sx={{ background: 'white', padding: '16px' }}>
-
                   <Typography id="modal-modal-description" sx={{ mt: 2 }}>
                   </Typography>
                 </Box>
-
                 <Typography variant="h6" component="h2">
-
                   Address:{selectGeneratorAddress}
                 </Typography>
-
                 <Typography variant="h6" component="h2">
                   Price:{selectProductPrice}
                 </Typography>
               </center>
             </Card>
-
-
-
-
-
-
           </Modal>
-
         </Box>
       </Grid>
     </ThemeProvider>

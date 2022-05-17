@@ -266,7 +266,8 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
           <LightPicker
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
             currentColorSelectHex={currentColorSelectHex}
-            setCurrentColorSelectHex={setCurrentColorSelectHex} />
+            setCurrentColorSelectHex={setCurrentColorSelectHex}
+          />
         </center>
         <Box>
           {nftNameSelected ? ("NFT name: " + nftNameSelected) : ("NFT name: --")}
@@ -286,8 +287,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <br />
         <QR_Code
           productSelected={productSelected}
-          refAddress={refAddress}
-          contract={factoryContract}
           selectProductPrice={productSelectedPrice}
           selectGeneratorAddress={productSelectedAddress}
         />
@@ -297,15 +296,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   return (
     <>
-      <Grid container
-        spacing={0}
-        direction="column"
-        alignItems="center"
-        justifyContent="center"
-      >
+      <center>
         <UserSelectNFT />
         <UserSelectProduct />
-      </Grid>
+      </center>
       <PickLightColorAndPay />
     </>
   )
