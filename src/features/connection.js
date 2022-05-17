@@ -10,10 +10,10 @@ export const connectionSlice = createSlice({
     initialState: { value: initialStateValue },
     reducers: {
         setPort: (state, action) => {
-            state.port.value = action.payload
+            state.value.port = action.payload
         },
         setStatus: (state, action) => {
-            state.status.value = action.payload
+            state.value.status = action.payload
         }
     }
 })

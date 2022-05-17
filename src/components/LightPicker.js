@@ -1,20 +1,16 @@
-import React, { useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
+import React from 'react'
 import { SketchPicker } from 'react-color';
-import { setRGBColor } from '../features/rgbColor';
 
 const LightPicker = ({
-  setCurrentColorSelectRGB,
-  currentColorSelectRGB,
   currentColorSelectHex,
   setCurrentColorSelectHex,
+  setCurrentColorSelectRGB
 }) => {
-
-  const dispatch = useDispatch()
 
   const handleChangeComplete = (color) => {
     setCurrentColorSelectHex(color.hex)
-    setCurrentColorSelectRGB(color.rgb)
+    const rgb_string = formatRGBVal(color.rgb)
+    setCurrentColorSelectRGB(rgb_string)
   }
 
   const formatRGBVal = (color) => {
@@ -24,14 +20,8 @@ const LightPicker = ({
     const b = color.b
 
     const rgb_string = `${r},${g},${b}`
-    dispatch(setRGBColor(rgb_string))
+    return rgb_string
   }
-
-  useEffect(() => {
-    if (currentColorSelectRGB) {
-      formatRGBVal(currentColorSelectRGB)
-    }
-  }, [currentColorSelectRGB])
 
   return (
     <div className="p-4">
@@ -40,7 +30,7 @@ const LightPicker = ({
         onChangeComplete={(e) => handleChangeComplete(e)}
       />
       <div>
-        {currentColorSelectHex}
+        {currentColorSelectHex ? currentColorSelectHex : "---"}
       </div>
     </div>
   )

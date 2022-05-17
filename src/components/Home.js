@@ -17,10 +17,10 @@ import { useSearchParams } from 'react-router-dom';
 import { ethers } from 'ethers';
 import { getProductContract } from '../utils';
 import { setProductList } from '../features/product';
-import { setStatus } from '../features/connection';
+import { setPort, setStatus } from '../features/connection';
+import { setRefAddress } from '../features/refAddress';
 
-
-const Home = ({ handleAlerts, updateGeneratorList }) => {
+const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
@@ -31,9 +31,9 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
   const productList = useSelector((state) => state.product.value)
   const factoryContract = useSelector((state) => state.factoryContract.value)
   const generatorList = useSelector((state) => state.generator.value)
+  const refAddress = useSelector((state) => state.refAddress.value)
 
   // Local Variables
-  const [refAddress, setRefAddress] = useState(undefined)
   const [nftSelected, setNFTSelected] = useState(undefined)
   const [generatorContract, setGeneratorContract] = useState(undefined)
   const [nftNameSelected, setNFTNameSelected] = useState(undefined)
@@ -52,48 +52,53 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   const checkIfValidUrl = async () => {
     if (refAddress) {
-      const isOwner = await factoryContract.checkIfTokenHolder(refAddress)
-      if (!isOwner) {
-        handleAlerts("Given address has no NFTs", "warning")
-      } else {
-        await updateGeneratorList(refAddress)
-      }
-      const conversion_rate = await factoryContract.getETHUSDConversionRate()
-      setETHUSDConversionRate(ethers.utils.formatEther(conversion_rate))
-    }
-  }
-
-  const updateProductList = async () => {
-    if (generatorList) {
-      handleAlerts("Fetching products registered per NFT...", "info", true)
-      let objOfProducts_perGenerator = {}
-      const generatorList_KeysArr = Object.keys(generatorList)
-      for (let jj = 0; jj < generatorList_KeysArr.length; jj++) {
-        const generatorKey = generatorList_KeysArr[jj]
-        const generatorContract = generatorList[generatorKey].contract
-        const products_num = await generatorContract.productCount()
-        let objOfProducts_fromGenerator = {}
-        for (let ii = 0; ii < products_num; ii++) {
-          const product = await generatorContract.idToProduct(ii)
-          const product_id = parseInt(product.id, 16)
-
-          objOfProducts_fromGenerator[product_id] = {
-            name: product.name,
-            priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
-            address: product.contractAddress,
-            contract: getProductContract(product.contractAddress)
-          }
+      const valid_address = ethers.utils.isAddress(refAddress)
+      if (valid_address) {
+        const isOwner = await factoryContract.checkIfTokenHolder(refAddress)
+        if (!isOwner) {
+          handleAlerts("Given address has no NFTs", "warning")
+        } else {
+          await updateGeneratorList(refAddress)
         }
-        objOfProducts_perGenerator[generatorKey] = objOfProducts_fromGenerator
+        const conversion_rate = await factoryContract.getETHUSDConversionRate()
+        setETHUSDConversionRate(ethers.utils.formatEther(conversion_rate))
+      } else {
+        handleAlerts("Invalid address!", "error")
       }
-
-      dispatch(setProductList(objOfProducts_perGenerator))
-      handleAlerts("Products per NFT collected!", "info")
-
-    } else {
-      dispatch(setProductList(undefined))
     }
   }
+
+  // const updateProductList = async () => {
+  //   if (generatorList) {
+  //     handleAlerts("Fetching products registered per NFT...", "info", true)
+  //     let objOfProducts_perGenerator = {}
+  //     const generatorList_KeysArr = Object.keys(generatorList)
+  //     for (let jj = 0; jj < generatorList_KeysArr.length; jj++) {
+  //       const generatorKey = generatorList_KeysArr[jj]
+  //       const generatorContract = generatorList[generatorKey].contract
+  //       const products_num = await generatorContract.productCount()
+  //       let objOfProducts_fromGenerator = {}
+  //       for (let ii = 0; ii < products_num; ii++) {
+  //         const product = await generatorContract.idToProduct(ii)
+  //         const product_id = parseInt(product.id, 16)
+
+  //         objOfProducts_fromGenerator[product_id] = {
+  //           name: product.name,
+  //           priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
+  //           address: product.contractAddress,
+  //           contract: getProductContract(product.contractAddress)
+  //         }
+  //       }
+  //       objOfProducts_perGenerator[generatorKey] = objOfProducts_fromGenerator
+  //     }
+
+  //     dispatch(setProductList(objOfProducts_perGenerator))
+  //     handleAlerts("Products per NFT collected!", "info")
+
+  //   } else {
+  //     dispatch(setProductList(undefined))
+  //   }
+  // }
 
   const handleResetNFT = (event) => {
     event.preventDefault()
@@ -125,21 +130,6 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
     setSelectedProductContract(productList[nftSelected][new_selected_product].contract)
   }
 
-  const sendData = async () => {
-    dispatch(setStatus(true))
-    // eslint-disable-next-line no-undef
-    const textEncoder = new TextEncoderStream()
-    const writableStreamClosed = textEncoder.readable.pipeTo(port.writable)
-    const writer = port.writable.getWriter()
-    await writer.write(rgbColor)
-  }
-
-  useEffect(() => {
-    if (port && rgbColor) {
-      sendData()
-    }
-  }, [port])
-
   useEffect(() => {
     console.log("in home component " + currentColorSelectHex)
   }, [currentColorSelectHex])
@@ -158,7 +148,7 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   useEffect(() => {
     const ref_address = searchParams.get('ref')
-    setRefAddress(ref_address)
+    dispatch(setRefAddress(ref_address))
 
     if (!ref_address) {
       handleAlerts("Make sure you are in a valid URL with a valid referral address!", "warning", true)
@@ -268,21 +258,16 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
             bulbColor={bulbColor}
             setPreviousTxHash={setPreviousTxHash}
             currentColorSelectRGB={currentColorSelectRGB}
-            sendData={sendData}
+            setCurrentColorSelectRGB={setCurrentColorSelectRGB}
           />
         </center>
 
         <center>
           <LightPicker
-            productSelectedAddress={productSelectedAddress}
-            currentColorSelectRGB={currentColorSelectRGB}
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
             currentColorSelectHex={currentColorSelectHex}
             setCurrentColorSelectHex={setCurrentColorSelectHex} />
         </center>
-        <HardwareConnect
-          handleAlerts={handleAlerts}
-        />
         <Box>
           {nftNameSelected ? ("NFT name: " + nftNameSelected) : ("NFT name: --")}
         </Box>
@@ -312,7 +297,12 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   return (
     <>
-      <Grid container>
+      <Grid container
+        spacing={0}
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+      >
         <UserSelectNFT />
         <UserSelectProduct />
       </Grid>
