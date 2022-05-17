@@ -84,6 +84,9 @@ const LightBulb = ({
   }
 
   useEffect(() => {
+    console.log("previousTxHash", previousTxHash)
+    console.log("currentTxHash", currentTxHash)
+    console.log("colorSelected: ", currentColorSelectRGB)
     if (previousTxHash !== currentTxHash && currentColorSelectRGB) {
       setPreviousTxHash(currentTxHash)
       setBulbColor(currentColorSelectHex)

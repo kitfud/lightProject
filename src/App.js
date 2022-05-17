@@ -276,7 +276,7 @@ connectionStatus === false?
         <ConnectButton/>:
             <Grid sx={{alignItems:"center",display:'flex', flexDirection:'column'}}>
             <Card sx={{width:1/2, backgroundColor: '#84ffff' }}>
-                <Typography component="span">Vending Machine Connected</Typography>
+                <Typography component="span">Hardware Connected</Typography>
                 <Disconnect/>
             </Card>
             </Grid>
