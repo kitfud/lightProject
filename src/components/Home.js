@@ -20,7 +20,7 @@ import { setProductList } from '../features/product';
 import { setStatus } from '../features/connection';
 
 
-const Home = ({ handleAlerts, updateGeneratorList }) => {
+const Home = ({ setNewTransaction, connection, handleAlerts, updateGeneratorList }) => {
 
   const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
@@ -49,6 +49,23 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
   const [previousTxHash, setPreviousTxHash] = useState(undefined)
   const [currentTxHash, setCurrentTxHash] = useState(undefined)
   const [ETHUSDConversionRate, setETHUSDConversionRate] = useState(undefined)
+  const [rgbString, setRGBString] = useState(undefined)
+
+  const formatRGBVal = (color) => {
+
+    const r = color.r
+    const g = color.g
+    const b = color.b
+
+    const rgb_string = `${r},${g},${b}`
+    setRGBString(rgb_string)
+  }
+
+  useEffect(() => {
+    if (currentColorSelectRGB) {
+      formatRGBVal(currentColorSelectRGB)
+    }
+  }, [currentColorSelectRGB])
 
   const checkIfValidUrl = async () => {
     if (refAddress) {
@@ -139,6 +156,10 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
    
   }
 
+  useEffect(()=>{
+    console.log("connection", connection)
+  },[connection])
+
   useEffect(() => {
     if (port && rgbColor) {
       // sendData()
@@ -188,8 +209,24 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
         const tx_hash = event.transactionHash
 
         if (currentTxHash !== tx_hash) {
+          console.log("NEW PAYMENT", connection)
+          setNewTransaction(currentTxHash)
           setPreviousTxHash(currentTxHash)
           setCurrentTxHash(tx_hash)
+          //setting new transaction hash to trigger lights in app.js
+          console.log("RGB string:", currentColorSelectRGB)
+          let testdata = "255,0,0"
+          if(connection){
+            connection.send("paymentMade",testdata)
+          }
+        
+      
+          
+          // console.log("CONNECTION IS:",connection)
+          // if(connection){
+          //   let mockData = '255,0,0'
+          //   connection.send("paymentMade",mockData)
+          // }
         }
       })
 
@@ -285,9 +322,9 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
             currentColorSelectHex={currentColorSelectHex}
             setCurrentColorSelectHex={setCurrentColorSelectHex} />
         </center>
-        <HardwareConnect
+        {/* <HardwareConnect
           handleAlerts={handleAlerts}
-        />
+        /> */}
         <Box>
           {nftNameSelected ? ("NFT name: " + nftNameSelected) : ("NFT name: --")}
         </Box>

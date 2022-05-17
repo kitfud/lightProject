@@ -1,6 +1,13 @@
-import React, { useRef, useEffect } from 'react'
+import React, { useRef, useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
-
+import {connect} from "simple-web-serial";
+import {
+  Box,
+  Typography,
+ Button, 
+ Card,
+  Grid
+} from '@mui/material';
 const LightBulb = ({
   currentColorSelectHex,
   bulbColor,
@@ -12,9 +19,16 @@ const LightBulb = ({
   sendData
 }) => {
 
+ 
+ 
+  const connectionRef = useRef(undefined)
   const canvasRef = useRef(null)
   const { port } = useSelector(state => state.connection.value)
   const rgbColor = useSelector(state => state.rgbColor.value)
+
+//  const [connectionStatus, setConnectionStatus] = useState(false)
+//  const [connection, setConnection] = useState(undefined)
+//  const [buttonColor, setButtonColor] = useState("primary")
 
   const draw = (ctx) => {
     //This is the upper part of the light bulb -------------------------------------------------------------------
@@ -75,6 +89,12 @@ const LightBulb = ({
 
   }
 
+  // useEffect(()=>{
+  //   if(connectionRef.current){
+  //     setConnection(connectionRef.current)
+  //   }
+  // },[])
+
   const generateGraphic = () => {
     let canvas = canvasRef.current
     let context = canvas.getContext('2d')
@@ -83,13 +103,68 @@ const LightBulb = ({
     draw(context)
   }
 
+  // const handleConnect = ()=>{
+  //   // connectionRef.current = connect(57600)
+  //   setConnection(connect(57600))
+  //   setConnectionStatus(true)
+  //   setButtonColor("success")
+    
+  // }
+
+  // const handleDisconnect = ()=>{
+  //   setButtonColor("primary")
+  //   setConnectionStatus(false)
+  //   window.location.reload(false)
+  //   }
+
+//     useEffect(()=>{
+// console.log("MADE CONNECTION", connection)
+//     },[connection])
+
+//   const ConnectButton = ()=>{
+//     return( 
+//          <Box>
+//         <Button variant="contained" color="primary" onClick={handleConnect}>
+//         CONNECT HARDWARE
+//         </Button>
+//            </Box>    
+//     )
+//   }
+
+//   const DisconnectButton= ()=>{
+//     return (
+//       <>
+    
+//     <Box>
+//     <Button 
+//     variant="contained" 
+//     color="error"
+//     sx={{marginTop:"2px", marginBottom:"10px"}}
+//     onClick={handleDisconnect}
+//     >
+//       Disconnect Machine
+//     </Button>
+//     </Box>
+      
+//       </>
+//     )
+//   }
+
   useEffect(() => {
     if (previousTxHash !== currentTxHash) {
+      // console.log("CONNECTION IS: ",connection)
+      // if(connection){
+      //   console.log("SENDING TO HARDWARE")
+      //   let mockData = '255,0,0'
+      //   connection.send("paymentMade",mockData)
+      // }
       setPreviousTxHash(currentTxHash)
       setBulbColor(currentColorSelectHex)
-      if (port && rgbColor) {
-        sendData()
-      }
+    
+     
+      // if (port && rgbColor) {
+      //   sendData()
+      // }
     }
   }, [currentTxHash])
 
@@ -98,7 +173,12 @@ const LightBulb = ({
   }, [bulbColor])
 
   return (
-    <canvas ref={canvasRef} />
+<>
+<canvas ref={canvasRef} />
+
+</>
+       
+
   )
 }
 

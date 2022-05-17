@@ -6,7 +6,20 @@ import { Routes, Route } from 'react-router-dom'
 import Shop from './components/Shop'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress } from '@mui/material'
+import { 
+  createTheme, 
+  ThemeProvider, 
+  Card, 
+  Snackbar, 
+  Slide, 
+  Alert, 
+  IconButton, 
+  CircularProgress,
+  Box,
+  Typography,
+  Grid,
+  Button
+ } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useState } from "react"
 import { getFactoryContract, getGeneratorContract, getProductContract } from "./utils"
@@ -16,6 +29,7 @@ import { setProductList } from './features/product'
 import { setUserAddress } from './features/userAddress'
 import { setAlerts } from './features/alerts'
 import { ethers } from "ethers"
+import {connect} from "simple-web-serial";
 
 let themeLightMode = createTheme({
 
@@ -63,10 +77,31 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("dark")
   const [sumProductBalances, setSumProductBalances] = useState(undefined)
+  const [connection, setConnection] = useState(false);
+  const [buttoncolor, setButtonColor] = useState("primary")
+  const [connectionStatus, setConnectionStatus] = useState(false)
+
+  const [newtransaction, setNewTransaction] = useState(undefined)
+  const [oldtransaction, setOldTransaction] = useState(undefined)
 
   const handleAlerts = (msg, severity, loading = false) => {
     dispatch(setAlerts([true, msg, severity, loading]))
   }
+
+  useEffect(()=>{
+    console.log("last transaction:",newtransaction)
+    if(connection && newtransaction!== oldtransaction){
+      setOldTransaction(newtransaction)
+      let data ='255,0,0'
+      connection.send("paymentMade",data)
+    }
+  },[])
+
+  useEffect(()=>{
+    if(connection){
+  console.log("APP CONNECTION", connection)
+    }
+  },[connection])
 
   const handleCloseAlerts = (event, reason) => {
     if (reason === 'clickaway') {
@@ -184,10 +219,62 @@ function App() {
   }, [alerts])
 
 
+
+  const handleConnect = ()=>{
+    setConnection(connect(57600))
+    setConnectionStatus(true)
+    setButtonColor("success")  
+  }
+
+  const handleDisconnect = ()=>{
+    setButtonColor("primary")
+    setConnectionStatus(false)
+    window.location.reload(false)
+    }
+
+    const ConnectButton = ()=>{
+      return( 
+           <Box>
+          <Button variant="contained" color="primary" onClick={handleConnect}>
+          CONNECT Vending Machine
+          </Button>
+             </Box>    
+      )
+    }
+  
+    const DisconnectButton= ()=>{
+      return (
+        <>    
+      <Box>
+      <Button 
+      variant="contained" 
+      color="error"
+      sx={{marginTop:"2px", marginBottom:"10px"}}
+      onClick={handleDisconnect}
+      >
+        Disconnect Machine
+      </Button>
+      </Box>  
+        </>
+      )
+    }
+
   return (
     <>
       <ThemeProvider theme={colorMode === "dark" ? themeDarkMode : themeLightMode}>
+      {
 
+connectionStatus === false? 
+        <ConnectButton/>:
+            <Grid sx={{alignItems:"center",display:'flex', flexDirection:'column'}}>
+            <Card sx={{width:1/2, backgroundColor: '#84ffff' }}>
+                <Typography component="span">Hardware Connected</Typography>
+                <DisconnectButton/>
+            </Card>
+            </Grid>
+
+
+}
         <Header
           setColorMode={setColorMode}
           setUserAddress={setUserAddress}
@@ -203,11 +290,15 @@ function App() {
           <Routes>
             <Route path='/' element={
               <Home
+                setNewTransaction={setNewTransaction}
+                connection = {connection}
                 handleAlerts={handleAlerts}
                 updateGeneratorList={updateGeneratorList}
               />} />
             <Route path='/home' element={
               <Home
+                setNewTransaction={setNewTransaction}
+                connection = {connection}
                 handleAlerts={handleAlerts}
                 updateGeneratorList={updateGeneratorList}
               />} />
