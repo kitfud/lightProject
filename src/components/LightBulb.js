@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import { setRGBColor } from "../features/rgbColor"
 
 const LightBulb = ({
+  connection,
   currentColorSelectHex,
   currentColorSelectRGB,
   setCurrentColorSelectRGB,
@@ -88,11 +89,20 @@ const LightBulb = ({
       setBulbColor(currentColorSelectHex)
       dispatch(setRGBColor(currentColorSelectRGB))
       setCurrentColorSelectRGB(undefined)
+      if(connection){
+        connection.send('paymentMade',currentColorSelectRGB)
+      }
     }
   }, [currentTxHash, currentColorSelectRGB])
 
   useEffect(() => {
+    console.log(currentColorSelectRGB)
+    console.log("BULB CONNECTION: ", connection)
     generateGraphic()
+    // if(connection){
+    //   connection.send('paymentMade',currentColorSelectRGB)
+    // }
+   
   }, [bulbColor])
 
   return (

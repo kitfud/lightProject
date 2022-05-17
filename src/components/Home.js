@@ -20,7 +20,7 @@ import { setRefAddress } from '../features/refAddress';
 import HardwareConnect from './HardwareConnect';
 import rgbColor from '../features/rgbColor';
 
-const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
+const Home = ({ setPayment, setRGBString, rgbString, connection, handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
@@ -65,6 +65,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
       }
     }
   }
+
+  useEffect(()=>{
+   console.log("IN HOME COMPONENT:", rgbString)
+  },[rgbString])
 
   // const updateProductList = async () => {
   //   if (generatorList) {
@@ -129,7 +133,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   }
 
   useEffect(() => {
-    console.log("in home component " + currentColorSelectHex)
+    // console.log("in home component " + currentColorSelectHex)
   }, [currentColorSelectHex])
 
   useEffect(() => {
@@ -163,21 +167,33 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     }
   }, [nftSelected])
 
+ const runListener=()=>{
+  if (selectedProductContract !== undefined && firstTimeListener) {
+    selectedProductContract.on("Deposit", (payee, value, time, currentContractBalance, event) => {
+
+      const tx_hash = event.transactionHash
+
+      if (currentTxHash !== tx_hash) {
+        setPreviousTxHash(currentTxHash)
+        setCurrentTxHash(tx_hash)
+        console.log("connection:",connection)
+        console.log("rgbString",rgbString)
+        console.log("currenctSelect", currentColorSelectRGB)
+        console.log(currentTxHash)
+          setPayment(currentTxHash)
+          // console.log("SENDING TO HARDWARE", data)
+          // connection.send('paymentMade',data)
+        
+      }
+    })
+
+    firstTimeListener.current = false
+  }
+ }
+
   useEffect(() => {
-
-    if (selectedProductContract !== undefined && firstTimeListener) {
-      selectedProductContract.on("Deposit", (payee, value, time, currentContractBalance, event) => {
-
-        const tx_hash = event.transactionHash
-
-        if (currentTxHash !== tx_hash) {
-          setPreviousTxHash(currentTxHash)
-          setCurrentTxHash(tx_hash)
-        }
-      })
-
-      firstTimeListener.current = false
-    }
+ runListener()
+ 
   }, [selectedProductContract])
 
   const UserSelectNFT = () => {
@@ -249,6 +265,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <h1>Crypto Lights</h1>
         <center>
           <LightBulb
+            connection = {connection}
             currentColorSelectHex={currentColorSelectHex}
             previousTxHash={previousTxHash}
             currentTxHash={currentTxHash}
@@ -258,12 +275,13 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
             currentColorSelectRGB={currentColorSelectRGB}
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
           />
-          <HardwareConnect handleAlerts={handleAlerts}/>
+          {/* <HardwareConnect handleAlerts={handleAlerts}/> */}
          
         </center>
 
         <center>
           <LightPicker
+            setRGBString = {setRGBString}
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
             currentColorSelectHex={currentColorSelectHex}
             setCurrentColorSelectHex={setCurrentColorSelectHex}
