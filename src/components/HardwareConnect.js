@@ -1,85 +1,68 @@
 import React, { useState, useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
 import { Button, Box, Typography, Card, Grid } from "@mui/material"
-import { setConnection } from '../features/connection';
-import { connect } from "simple-web-serial";
+import { setPort, setStatus } from '../features/connection';
 
-const HardwareConnect = ({ colorData }) => {
+const HardwareConnect = ({ handleAlerts }) => {
 
   const dispatch = useDispatch()
-  const connection = useSelector((state) => state.connection.value)
+  const { port, status } = useSelector((state) => state.connection.value)
 
   const [buttoncolor, setButtonColor] = useState("primary")
   const [connectionStatus, setConnectionStatus] = useState(false)
 
-  const handleConnect = () => {
-    dispatch(setConnection(connect(57600)))
-    setConnectionStatus(true)
-    setButtonColor("success")
+  const handleConnect = async () => {
+    if ("serial" in navigator) {
+      const new_port = await navigator.serial.requestPort()
+      dispatch(setPort(new_port))
+      await new_port.open({ baudRate: 57600 })
+    } else {
+      handleAlerts("Web serial API is not supported by the browser", "warning")
+    }
+  }
+
+  const readData = async () => {
+    const reader = port.readable.getReader();
+
+    // Listen to data coming from the serial device.
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) {
+        // Allow the serial port to be closed later.
+        reader.releaseLock();
+        break;
+      }
+      // value is a Uint8Array.
+      console.log(value);
+    }
+  }
+
+  const handleDisconnect = async () => {
+    await port.close()
+    dispatch(setStatus(false))
+    dispatch(setPort(undefined))
   }
 
   useEffect(() => {
-
-    if (colorData !== null) {
-      console.log("COLOR DATA: " + JSON.stringify(colorData))
-      if (connectionStatus === true && connection !== null) {
-        console.log("COLOR SELECTION + PAYMENT MADE! MACHINE TRIGGERED")
-        connection.send("paymentMade", colorData)
-      }
+    if (port) {
+      readData()
     }
-
-  }, [colorData])
-
-
-  const handleDisconnect = () => {
-    setButtonColor("primary")
-    setConnectionStatus(false)
-    console.log("disonnect")
-    window.location.reload(false)
-  }
-
-
-  const ConnectButton = () => {
-    return (
-      <Box>
-        <Button variant="contained" color="primary" onClick={handleConnect}>
-          CONNECT Light Generator
-        </Button>
-      </Box>
-    )
-  }
-
-  const Disconnect = () => {
-    return (
-      <>
-
-        <Box>
-          <Button
-            variant="contained"
-            color="error"
-            sx={{ marginTop: "2px", marginBottom: "10px" }}
-            onClick={handleDisconnect}
-          >
-            Disconnect Machine
-          </Button>
-        </Box>
-
-      </>
-    )
-  }
+  }, [port])
 
   return (
     <>
-      {
-        connectionStatus === false ?
-          <ConnectButton /> :
-          <Grid sx={{ alignItems: "center", display: 'flex', flexDirection: 'column' }}>
-            <Card sx={{ width: 1 / 2, backgroundColor: '#84ffff' }}>
-              <Typography component="span">Light Generator Connected</Typography>
-              <Disconnect />
-            </Card>
-          </Grid>
-      }
+      <Box>
+        {status ? (
+          <Button variant="contained" color="primary" onClick={handleDisconnect}>
+            DISCONNECT Light Generator
+          </Button>
+        ) : (
+          <Button variant="contained" color="primary" onClick={handleConnect}>
+            CONNECT Light Generator
+          </Button>
+        )}
+
+      </Box>
     </>
   )
 }

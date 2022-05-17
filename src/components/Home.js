@@ -2,7 +2,6 @@ import React, { useEffect, useState, useRef } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
 import {
   Box,
-  Button,
   Typography,
   FormControl,
   InputLabel,
@@ -13,15 +12,20 @@ import {
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 import LightBulb from './LightBulb';
+import HardwareConnect from './HardwareConnect';
 import { useSearchParams } from 'react-router-dom';
 import { ethers } from 'ethers';
 import { getProductContract } from '../utils';
 import { setProductList } from '../features/product';
+import { setStatus } from '../features/connection';
+
 
 const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
+  const { port } = useSelector(state => state.connection.value)
+  const rgbColor = useSelector(state => state.rgbColor.value)
 
   // Global Variables  
   const productList = useSelector((state) => state.product.value)
@@ -32,21 +36,19 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
   const [refAddress, setRefAddress] = useState(undefined)
   const [nftSelected, setNFTSelected] = useState(undefined)
   const [generatorContract, setGeneratorContract] = useState(undefined)
-  const [generatorAddress, setGeneratorAddress] = useState(undefined)
   const [nftNameSelected, setNFTNameSelected] = useState(undefined)
   const [productSelected, setProductSelected] = useState(undefined)
-  const [productSelectedAddress, setProductSelectedAddress] = useState(null)
-  const [productSelectedName, setProductSelectedName] = useState(null)
-  const [productSelectedPrice, setProductSelectedPrice] = useState(null)
-  const [currentColorSelectHex, setCurrentColorSelectHex] = useState('#FFFFFF')
-  const [currentColorSelectRGB, setCurrentColorSelectRGB] = useState('0,0,0')
-  const [paymentData, setPaymentData] = useState(undefined)
-  const [bulbColor, setBulbColor] = useState("#000000")
-  const [datastream, setDataStream] = useState(null)
+  const [productSelectedAddress, setProductSelectedAddress] = useState(undefined)
+  const [productSelectedName, setProductSelectedName] = useState(undefined)
+  const [productSelectedPrice, setProductSelectedPrice] = useState(undefined)
+  const [currentColorSelectHex, setCurrentColorSelectHex] = useState(undefined)
+  const [currentColorSelectRGB, setCurrentColorSelectRGB] = useState(undefined)
+  const [bulbColor, setBulbColor] = useState(undefined)
   const firstTimeListener = useRef(true)
   const [selectedProductContract, setSelectedProductContract] = useState(undefined)
   const [previousTxHash, setPreviousTxHash] = useState(undefined)
   const [currentTxHash, setCurrentTxHash] = useState(undefined)
+  const [ETHUSDConversionRate, setETHUSDConversionRate] = useState(undefined)
 
   const checkIfValidUrl = async () => {
     if (refAddress) {
@@ -56,6 +58,8 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
       } else {
         await updateGeneratorList(refAddress)
       }
+      const conversion_rate = await factoryContract.getETHUSDConversionRate()
+      setETHUSDConversionRate(ethers.utils.formatEther(conversion_rate))
     }
   }
 
@@ -93,13 +97,12 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   const handleResetNFT = (event) => {
     event.preventDefault()
-    setGeneratorAddress(undefined)
     setNFTSelected(undefined)
     setNFTNameSelected(undefined)
     setGeneratorContract(undefined)
     setProductSelected(undefined)
-    setProductSelectedAddress(null)
-    setProductSelectedName(null)
+    setProductSelectedAddress(undefined)
+    setProductSelectedName(undefined)
 
   }
 
@@ -110,7 +113,6 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
   const setGeneratorContractData = () => {
     setNFTNameSelected(generatorList[nftSelected].name)
-    setGeneratorAddress(generatorList[nftSelected].address)
     setGeneratorContract(generatorList[nftSelected].contract)
   }
 
@@ -122,6 +124,21 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
     setProductSelectedPrice(productList[nftSelected][new_selected_product].priceUSD)
     setSelectedProductContract(productList[nftSelected][new_selected_product].contract)
   }
+
+  const sendData = async () => {
+    dispatch(setStatus(true))
+    // eslint-disable-next-line no-undef
+    const textEncoder = new TextEncoderStream()
+    const writableStreamClosed = textEncoder.readable.pipeTo(port.writable)
+    const writer = port.writable.getWriter()
+    await writer.write(rgbColor)
+  }
+
+  useEffect(() => {
+    if (port && rgbColor) {
+      sendData()
+    }
+  }, [port])
 
   useEffect(() => {
     console.log("in home component " + currentColorSelectHex)
@@ -149,12 +166,6 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
   }, [])
 
   useEffect(() => {
-    if (productSelected) {
-      setProductSelectedAddress()
-    }
-  }, [productSelected])
-
-  useEffect(() => {
     setNFTNameSelected(nftNameSelected)
   }, [generatorContract])
 
@@ -168,25 +179,12 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
 
     if (selectedProductContract !== undefined && firstTimeListener) {
       selectedProductContract.on("Deposit", (payee, value, time, currentContractBalance, event) => {
-        let dataInternal = {
-          payee: payee,
-          value: value.toString(),
-          time: time.toString(),
-          currentContractBalance: currentContractBalance.toString(),
-          event: event
-        }
 
         const tx_hash = event.transactionHash
 
         if (currentTxHash !== tx_hash) {
           setPreviousTxHash(currentTxHash)
           setCurrentTxHash(tx_hash)
-        }
-        let stringDataInternal = JSON.stringify(dataInternal)
-
-        if (stringDataInternal !== datastream) {
-          setDataStream(stringDataInternal)
-          setPaymentData(stringDataInternal)
         }
       })
 
@@ -263,43 +261,42 @@ const Home = ({ handleAlerts, updateGeneratorList }) => {
         <h1>Crypto Lights</h1>
         <center>
           <LightBulb
-            paymentData={paymentData}
-            currentColorSelect={currentColorSelectHex}
+            currentColorSelectHex={currentColorSelectHex}
             previousTxHash={previousTxHash}
             currentTxHash={currentTxHash}
             setBulbColor={setBulbColor}
             bulbColor={bulbColor}
             setPreviousTxHash={setPreviousTxHash}
             currentColorSelectRGB={currentColorSelectRGB}
+            sendData={sendData}
           />
         </center>
 
         <center>
           <LightPicker
-            setPaymentData={setPaymentData}
             productSelectedAddress={productSelectedAddress}
             currentColorSelectRGB={currentColorSelectRGB}
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
             currentColorSelectHex={currentColorSelectHex}
             setCurrentColorSelectHex={setCurrentColorSelectHex} />
         </center>
-        <Button variant="contained" color="error" onClick={handleResetNFT}>Select New NFT</Button>
+        <HardwareConnect
+          handleAlerts={handleAlerts}
+        />
         <Box>
-          {"NFT name: " + nftNameSelected}
+          {nftNameSelected ? ("NFT name: " + nftNameSelected) : ("NFT name: --")}
         </Box>
         <Box>
-          {"Product name: " + productSelectedName}
+          {productSelectedName ? ("Product name: " + productSelectedName) : ("Product name: --")}
         </Box>
         <Box>
-          {"Product address: " + productSelectedAddress}
+          {productSelectedAddress ? ("Product address: " + productSelectedAddress) : ("Product address: --")}
         </Box>
 
         <Box>
-          {"Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / 1) + ")"}
+          {productSelectedPrice ? ("Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / ETHUSDConversionRate) + ")") :
+            ("Product price: $-- (ETH --)")}
         </Box>
-
-
-
         <br />
         <br />
         <QR_Code
