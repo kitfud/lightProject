@@ -15,6 +15,9 @@ import { setWallet } from '../features/wallet'
 import { setFactoryContract } from '../features/factoryContract'
 import { setUserAddress } from '../features/userAddress'
 import { setNetwork } from '../features/network'
+import { setProvider } from '../features/provider'
+import { setGeneratorList } from '../features/generator'
+import { setProductList } from '../features/product'
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -96,6 +99,8 @@ const Header = ({
   const factoryContract = useSelector((state) => state.factoryContract.value)
   const userAddress = useSelector((state) => state.userAddress.value)
   const wrongNetwork = useSelector((state) => state.network.value.wrongNetwork)
+  const provider = useSelector((state) => state.provider.value)
+  const refAddress = useSelector((state) => state.refAddress.value)
 
   // Local Variables
   const [anchorElNav, setAnchorElNav] = useState(null);
@@ -114,6 +119,48 @@ const Header = ({
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
+
+  const getProvider = async () => {
+    if (!provider) {
+      const new_provider = new ethers.providers.Web3Provider(window.ethereum)
+      dispatch(setProvider(new_provider))
+
+      const new_contract = getFactoryContract()
+
+      dispatch(setFactoryContract(new_contract))
+
+      if (refAddress) {
+        await updateGeneratorList(refAddress)
+        await updateProductList()
+        handleAlerts("Data from address collected!", "info")
+      }
+
+    } else if (provider && wrongNetwork) {
+      const req = await provider.provider.request({
+        method: 'wallet_switchEthereumChain',
+        params: [{ chainId: "0x" + Number(CHAIN_ID).toString(16) }],
+      })
+
+      const new_provider = new ethers.providers.Web3Provider(window.ethereum)
+
+      const new_contract = getFactoryContract()
+
+      dispatch(setFactoryContract(new_contract))
+
+      dispatch(setProvider(new_provider))
+
+      await getChainId()
+
+      if (refAddress) {
+        await updateGeneratorList(refAddress)
+        await updateProductList()
+        handleAlerts("Data from address collected!", "info")
+      }
+    } else {
+      dispatch(setGeneratorList(undefined))
+      dispatch(setProductList(undefined))
+    }
+  }
 
   const connectWallet = async () => {
     if (!wallet) {
@@ -137,10 +184,12 @@ const Header = ({
 
       setRefLink(window.location.origin + "?ref=" + new_user_address)
     } else if (wallet && wrongNetwork) {
-      await wallet.provider.provider.request({
+      await wallet.provider.request({
         method: 'wallet_switchEthereumChain',
         params: [{ chainId: "0x" + Number(CHAIN_ID).toString(16) }],
       })
+
+      await getChainId()
 
       await updateGeneratorList()
       await updateProductList()
@@ -156,8 +205,31 @@ const Header = ({
     }
   }
 
+  const getChainId = async () => {
+    let chain_Id
+    if (wallet) {
+      const { chainId } = await wallet.provider.getNetwork()
+      chain_Id = chainId
+    } else if (provider) {
+      const { chainId } = await provider.getNetwork()
+      chain_Id = chainId
+    }
+
+    if (wallet && CHAIN_ID === chain_Id) {
+      setButtonColor("success")
+    } else if (provider && CHAIN_ID !== chain_Id) {
+      dispatch(setGeneratorList(undefined))
+      dispatch(setProductList(undefined))
+    }
+    dispatch(setNetwork({
+      chainId: chain_Id,
+      wrongNetwork: !(CHAIN_ID === chain_Id)
+    }))
+  }
+
+
   useEffect(() => {
-    if (window.ethereum && first) {
+    if ((window.ethereum && first) && (pathname === "/Admin" || pathname === "/Shop")) {
       window.ethereum.on('chainChanged', function () {
         connectWallet()
       });
@@ -166,28 +238,24 @@ const Header = ({
         connectWallet()
       });
       first = false
+    } else if (window.ethereum && first && !(pathname === "/Admin" || pathname === "/Shop")) {
+      window.ethereum.on('chainChanged', function () {
+        getProvider()
+      });
     }
   }, [])
 
   useEffect(() => {
-    if (wallet) {
-      const chainId_hex = wallet.provider.provider.chainId
-      const chainId = parseInt(chainId_hex, 16)
-      const contract_chainIds = CHAIN_ID
-      setButtonColor("success")
-      if (contract_chainIds === chainId) {
-        dispatch(setNetwork({
-          chainId,
-          wrongNetwork: false
-        }))
-      } else {
-        dispatch(setNetwork({
-          chainId,
-          wrongNetwork: true
-        }))
+    if (wallet || provider) {
+      getChainId()
+      if (provider) {
+        getProvider()
       }
     }
-  }, [wallet])
+    if (!provider) {
+      getProvider()
+    }
+  }, [wallet, provider])
 
   return (
 
@@ -269,14 +337,18 @@ const Header = ({
                 />
               </Tooltip>) : (<ins></ins>)}
 
-            {pathname === "/Admin" || pathname === "/Shop" ? (wallet && wrongNetwork ? (
+            {(pathname === "/Admin" || pathname === "/Shop") ? (wallet && wrongNetwork ? (
               <Button className={errorPulseClass.pulse} onClick={connectWallet} variant="contained" color={"error"}>
-                Wrong network
+                Switch network
               </Button>) :
               (<Button className={buttonColor === "warning" ? warningPulseClass.pulse : ""} color={buttonColor} onClick={connectWallet} variant="contained">
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
               </Button>)
-            ) : (<ins></ins>)}
+            ) : (
+              (provider && wrongNetwork) ? (<Button className={errorPulseClass.pulse} onClick={getProvider} variant="contained" color={"error"}>
+                Switch network
+              </Button>) : (<ins></ins>)
+            )}
           </Box>
         </Toolbar>
       </Container>

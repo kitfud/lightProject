@@ -1,24 +1,48 @@
-import React, { useState, useEffect } from 'react'
-import { useDispatch, useSelector } from 'react-redux';
-import { Button, Box, Typography, Card, Grid } from "@mui/material"
-import { setPort, setStatus } from '../features/connection';
+import React, { useEffect, useState } from 'react'
+import { Button, Box } from "@mui/material"
+import { useSelector } from 'react-redux'
 
 const HardwareConnect = ({ handleAlerts }) => {
 
-  const dispatch = useDispatch()
-  const { port, status } = useSelector((state) => state.connection.value)
+  const rgbColor = useSelector(state => state.rgbColor.value)
+  const [status, setStatus] = useState(false)
+  const [port, setPort] = useState(undefined)
 
-  const [buttoncolor, setButtonColor] = useState("primary")
-  const [connectionStatus, setConnectionStatus] = useState(false)
+  const handleConnect = () => {
+    connectDevice()
+  }
 
-  const handleConnect = async () => {
+  const handleDisconnect = () => {
+    disconnectDevice()
+  }
+
+  const connectDevice = async () => {
     if ("serial" in navigator) {
       const new_port = await navigator.serial.requestPort()
-      dispatch(setPort(new_port))
       await new_port.open({ baudRate: 57600 })
+      setPort(new_port)
+      setStatus(true)
+      handleAlerts("Port connected", "info")
     } else {
       handleAlerts("Web serial API is not supported by the browser", "warning")
     }
+  }
+
+  const disconnectDevice = async () => {
+    await port.close()
+    setPort(undefined)
+    setStatus(false)
+    handleAlerts("Port disconnected", "info")
+  }
+
+  const sendData = async () => {
+    // eslint-disable-next-line no-undef
+    const encoder = new TextEncoderStream();
+    const outputDone = encoder.readable.pipeTo(port.writable)
+    const outputStream = encoder.writable
+    const writer = outputStream.getWriter()
+    await writer.write(encoder.encode(rgbColor))
+    writer.releaseLock()
   }
 
   const readData = async () => {
@@ -37,17 +61,11 @@ const HardwareConnect = ({ handleAlerts }) => {
     }
   }
 
-  const handleDisconnect = async () => {
-    await port.close()
-    dispatch(setStatus(false))
-    dispatch(setPort(undefined))
-  }
-
   useEffect(() => {
-    if (port) {
-      readData()
+    if (port && rgbColor) {
+      sendData()
     }
-  }, [port])
+  }, [rgbColor])
 
   return (
     <>

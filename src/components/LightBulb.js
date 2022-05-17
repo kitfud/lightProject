@@ -1,20 +1,21 @@
 import React, { useRef, useEffect } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
+import { setRGBColor } from "../features/rgbColor"
 
 const LightBulb = ({
   currentColorSelectHex,
+  currentColorSelectRGB,
+  setCurrentColorSelectRGB,
   bulbColor,
   setBulbColor,
   previousTxHash,
   currentTxHash,
   setPreviousTxHash,
-  currentColorSelectRGB,
-  sendData
 }) => {
 
+  const dispatch = useDispatch()
+
   const canvasRef = useRef(null)
-  const { port } = useSelector(state => state.connection.value)
-  const rgbColor = useSelector(state => state.rgbColor.value)
 
   const draw = (ctx) => {
     //This is the upper part of the light bulb -------------------------------------------------------------------
@@ -84,14 +85,13 @@ const LightBulb = ({
   }
 
   useEffect(() => {
-    if (previousTxHash !== currentTxHash) {
+    if (previousTxHash !== currentTxHash && currentColorSelectRGB) {
       setPreviousTxHash(currentTxHash)
       setBulbColor(currentColorSelectHex)
-      if (port && rgbColor) {
-        sendData()
-      }
+      dispatch(setRGBColor(currentColorSelectRGB))
+      setCurrentColorSelectRGB(undefined)
     }
-  }, [currentTxHash])
+  }, [currentTxHash, currentColorSelectRGB])
 
   useEffect(() => {
     generateGraphic()

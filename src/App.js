@@ -59,6 +59,7 @@ function App() {
   const wallet = useSelector((state) => state.wallet.value)
   const generatorList = useSelector((state) => state.generator.value)
   const alerts = useSelector((state) => state.alerts.value)
+  const provider = useSelector((state) => state.provider.value)
 
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("dark")
@@ -86,7 +87,7 @@ function App() {
   }
 
   const updateGeneratorList = async (refAddress = undefined) => {
-    if ((wallet && userAddress) || refAddress) {
+    if ((wallet && userAddress) || (refAddress && provider)) {
       handleAlerts("Fetching NFTs owned by address...", "info", true)
       let use_address
       if (refAddress) {
@@ -127,7 +128,7 @@ function App() {
   }
 
   const updateProductList = async () => {
-    if (generatorList && wallet) {
+    if (generatorList && (wallet || provider)) {
       handleAlerts("Fetching products registered per NFT...", "info", true)
       let objOfProducts_perGenerator = {}
       let totalBalances = {}
@@ -141,7 +142,16 @@ function App() {
         for (let ii = 0; ii < products_num; ii++) {
           const product = await generatorContract.idToProduct(ii)
           const product_id = parseInt(product.id, 16)
-          const product_balance_BN = await wallet.provider.getBalance(product.contractAddress)
+
+          let product_contract
+          let product_balance_BN
+          if (wallet) {
+            product_contract = getProductContract(product.contractAddress, wallet.signer)
+            product_balance_BN = await wallet.provider.getBalance(product.contractAddress)
+          } else if (provider) {
+            product_contract = getProductContract(product.contractAddress)
+            product_balance_BN = await provider.getBalance(product.contractAddress)
+          }
           const product_balance = parseFloat(ethers.utils.formatEther(product_balance_BN))
 
           objOfProducts_fromGenerator[product_id] = {
@@ -150,7 +160,7 @@ function App() {
             address: product.contractAddress,
             selected: false,
             balance: product_balance,
-            contract: getProductContract(product.contractAddress, wallet.signer)
+            contract: product_contract
 
           }
 
@@ -205,11 +215,13 @@ function App() {
               <Home
                 handleAlerts={handleAlerts}
                 updateGeneratorList={updateGeneratorList}
+                updateProductList={updateProductList}
               />} />
             <Route path='/home' element={
               <Home
                 handleAlerts={handleAlerts}
                 updateGeneratorList={updateGeneratorList}
+                updateProductList={updateProductList}
               />} />
             <Route path='/shop' element={<Shop />} />
             <Route path='/admin' element={

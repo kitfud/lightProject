@@ -9,7 +9,7 @@ import { useDispatch } from "react-redux"
 
 const NFTOwnerCard = ({ sumProductBalances, generatorId, size, getGeneratorInfo, generatorList, generatorAddress,
     copyToClipboard, ETHUSDConversionRate, withdrawBalance, withdrawAndDelete, loading, renameNFT, setSelectedProduct,
-    handleNewName, newNFTName, productList, selectedAll, setSelectedAll }) => {
+    handleNewName, newNFTName, productList, selectedAll, setSelectedAll, handleAlerts }) => {
 
     const dispatch = useDispatch()
 
@@ -94,7 +94,7 @@ const NFTOwnerCard = ({ sumProductBalances, generatorId, size, getGeneratorInfo,
                             </Tooltip>
                         </FormControl>
                     </FormControl>
-                    <HardwareConnect />
+                    <HardwareConnect handleAlerts={handleAlerts} />
                     <FormControl sx={{ padding: 1, marginBottom: 1 }}>
                         {productList && generatorId ? (Object.keys(productList[generatorId]).map(productKey => (
                             <Grid container key={productKey}>
