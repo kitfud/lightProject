@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Box } from "@mui/material"
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import {connect} from "simple-web-serial";
+import {setPort} from '../features/connection'
+
 
 const HardwareConnect = ({ handleAlerts }) => {
-
+  const {port} = useSelector((state)=>state.connection.value)
   const rgbColor = useSelector(state => state.rgbColor.value)
   const [status, setStatus] = useState(false)
-  const [port, setPort] = useState(undefined)
+
+  const dispatch = useDispatch()
 
   const handleConnect = () => {
     connectDevice()
@@ -20,7 +24,8 @@ const HardwareConnect = ({ handleAlerts }) => {
     if ("serial" in navigator) {
       const new_port = await navigator.serial.requestPort()
       await new_port.open({ baudRate: 57600 })
-      setPort(new_port)
+      // const new_port = connect(57600)
+      dispatch(setPort(new_port))
       setStatus(true)
       handleAlerts("Port connected", "info")
     } else {
@@ -36,13 +41,18 @@ const HardwareConnect = ({ handleAlerts }) => {
   }
 
   const sendData = async () => {
+    console.log("port", port)
+    console.log("rgb", rgbColor)
     // eslint-disable-next-line no-undef
     const encoder = new TextEncoderStream();
     const outputDone = encoder.readable.pipeTo(port.writable)
     const outputStream = encoder.writable
     const writer = outputStream.getWriter()
-    await writer.write(encoder.encode(rgbColor))
+    await writer.write(rgbColor)
     writer.releaseLock()
+   
+    // port.send('paymentMade', rgbColor)
+    
   }
 
   const readData = async () => {
@@ -62,6 +72,10 @@ const HardwareConnect = ({ handleAlerts }) => {
   }
 
   useEffect(() => {
+    console.log("SENDING RGB color")
+    console.log("port",port)
+    console.log("rgbColor",rgbColor)
+
     if (port && rgbColor) {
       sendData()
     }

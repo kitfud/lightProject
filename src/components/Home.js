@@ -7,6 +7,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+ 
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
@@ -16,6 +17,8 @@ import { ethers } from 'ethers';
 import { getProductContract } from '../utils';
 import { setProductList } from '../features/product';
 import { setRefAddress } from '../features/refAddress';
+import HardwareConnect from './HardwareConnect';
+import rgbColor from '../features/rgbColor';
 
 const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
@@ -255,6 +258,8 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
             currentColorSelectRGB={currentColorSelectRGB}
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
           />
+          <HardwareConnect handleAlerts={handleAlerts}/>
+         
         </center>
 
         <center>
