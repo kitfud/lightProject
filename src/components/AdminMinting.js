@@ -1,84 +1,66 @@
 import React, { useState, useEffect } from 'react'
-import { Grid, Snackbar, IconButton, Alert, Slide } from '@mui/material'
-import CloseIcon from '@mui/icons-material/Close'
+import { useSelector, useDispatch } from 'react-redux'
+import { Grid } from '@mui/material'
 import { ethers } from 'ethers'
-import { getProductContract, getGeneratorContract } from "../utils"
+import { getGeneratorContract } from "../utils"
 import NFTMintCard from './NFTMintCard'
 import NFTOwnerCard from './NFTOwnerCard'
 import NFTProductsCard from './NFTProductsCard'
-import { parseEther } from 'ethers/lib/utils'
+import { setProductList } from "../features/product"
+import { setGeneratorList } from '../features/generator'
+
 
 const AdminMinting = ({
-  wallet,
-  contract,
   loading,
   setLoading,
-  userAddress,
-  setSelectGeneratorAddress,
-  setSelectedProduct,
-  setSelectProductPrice,
-  setOwnedNFTs
+  updateGeneratorList,
+  updateProductList,
+  sumProductBalances,
+  handleAlerts,
+  copyToClipboard
 }) => {
 
+  // Dispatch
+  const dispatch = useDispatch()
+
   // General
-  const [alerts, setAlerts] = useState([false])
+  const userAddress = useSelector((state) => state.userAddress.value)
+  const wallet = useSelector((state) => state.wallet.value)
+  const alerts = useSelector((state) => state.alerts.value)
+
   const [useAutoName, setUseAutoName] = useState(true)
   const [size, setSize] = useState([100, 100])
 
   // Regarding Factory Contract
+  const factoryContract = useSelector((state) => state.factoryContract.value)
+  const wrongNetwork = useSelector((state) => state.network.value.wrongNetwork)
+
   const [ETHUSDConversionRate, setETHUSDConversionRate] = useState(undefined)
   const [nftPrice, setNFTPrice] = useState(undefined)
   const [nftNameInput, setNftNameInput] = useState("")
 
   // Regarding Generator Contract
+  const generatorList = useSelector((state) => state.generator.value)
+  const productList = useSelector((state) => state.product.value)
+
+  const [newNFTName, setNewNFTName] = useState(undefined)
   const [generatorContract, setGeneratorContract] = useState(undefined)
   const [generatorAddress, setGeneratorAddress] = useState(undefined)
-  const [productList, setProductList] = useState([])
+  const [generatorId, setGeneratorId] = useState(undefined)
   const [productId, setProductId] = useState(undefined)
   const [prodCurrentPrice, setProdCurrentPrice] = useState(undefined)
-  const [nftList, setNftList] = useState([])
-  const [nftId, setNftId] = useState(undefined)
-  const [productNewPrice, setProductNewPrice] = useState(undefined)
-  const [generatorBalance, setGeneratorBalance] = useState(undefined)
-  const [newNFTName, setNewNFTName] = useState(undefined)
+  const [selectedProduct, setSelectedProduct] = useState(false)
 
   // Regarding Product Contract
   const [productAddress, setProductAddress] = useState(undefined)
   const [newProductName, setNewProductName] = useState(undefined)
   const [newProductPrice, setNewProducPrice] = useState(undefined)
-  const [sumProductBalances, setSumProductBalances] = useState(0)
-
-  const getProductContractBalanceSum = async () => {
-    let sumBalance = 0
-    for (let x = 0; x < productList.length; x++) {
-      let bigNumBalance = await wallet.provider.getBalance(productList[x].address)
-      let numBalance = parseFloat(ethers.utils.formatEther(bigNumBalance))
-      sumBalance += numBalance
-    }
-    setSumProductBalances(sumBalance)
-  }
-
-  useEffect(() => {
-    // if (sumProductBalances !== 0) {
-    //   console.log("SUM PRODUCT " + sumProductBalances)
-    // }
-  }, [sumProductBalances])
-
-  const handleAlerts = (msg, severity) => {
-    setAlerts([true, msg, severity])
-  }
-
-  const handleCloseAlerts = (event, reason) => {
-    if (reason === 'clickaway') {
-      return
-    }
-
-    setAlerts([false])
-  };
+  const [productNewPrice, setProductNewPrice] = useState(undefined)
+  const [selectedAll, setSelectedAll] = useState(false)
 
   // NFT Mint Card
   const mintNFT = async () => {
-    if (!loading) {
+    if (!loading && wallet && !wrongNetwork) {
       setLoading(true)
       let nftName
       if (useAutoName) {
@@ -91,10 +73,14 @@ const AdminMinting = ({
 
       await getETHUSDConversionRate()
       try {
-        let tx = await contract.mintGenerator(
+        let tx = await factoryContract.mintGenerator(
           nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConversionRate}`) }
         )
         await tx.wait(1)
+
+        await updateGeneratorList()
+        await updateProductList()
+
         handleAlerts("NFT minted!", "success")
       } catch (error) {
         if (error.code === 4001) {
@@ -109,6 +95,10 @@ const AdminMinting = ({
       }
     } else if (loading) {
       handleAlerts("Loading... Cannot execute while loading", "warning")
+    } else if (!wallet) {
+      handleAlerts("Please, first connect your crypto wallet (click on the top right orange button)", "warning")
+    } else if (wrongNetwork) {
+      handleAlerts("Please, change to the right network (click on the top right red button)", "warning")
     }
 
     setLoading(false)
@@ -117,7 +107,7 @@ const AdminMinting = ({
   const getNFTPrice = async () => {
     try {
       await getETHUSDConversionRate()
-      const nft_price_BN = await contract.currentNFTPriceInUSD()
+      const nft_price_BN = await factoryContract.currentNFTPriceInUSD()
       const nft_price = ethers.utils.formatEther(nft_price_BN)
       setNFTPrice(parseFloat(nft_price).toFixed(2))
     } catch (error) {
@@ -129,64 +119,22 @@ const AdminMinting = ({
     setNftNameInput(evt.target.value)
   }
 
-  // NFT Owner Card
-  const checkIfTokenOwner = async () => {
-    const isOwner = await contract.checkIfTokenHolder(userAddress)
-    let tokensOwned
-    if (isOwner) {
-      tokensOwned = await contract.addressToTokenID(userAddress)
-      let new_tokensOwned_arr = []
-      for (let ii = 0; ii < tokensOwned.length; ii++) {
-        if (tokensOwned[ii] === true) {
-          const generator_address = await contract.tokenIDToGenerator(ii)
-
-          const gen_contract = getGeneratorContract(generator_address, wallet.signer)
-          const gen_name = await gen_contract.generatorName()
-
-          new_tokensOwned_arr.push({ id: ii, address: generator_address, name: gen_name })
-        }
-      }
-      setNftList(new_tokensOwned_arr)
-
-      //passing owned NFT state to top level App.js
-      setOwnedNFTs(new_tokensOwned_arr)
-
-      if (new_tokensOwned_arr.length === 1) {
-        setNftId(new_tokensOwned_arr[0].id)
-        setGeneratorAddress(new_tokensOwned_arr[0].address)
-
-        const gen_contract = getGeneratorContract(new_tokensOwned_arr[0].address, wallet.signer)
-        setGeneratorContract(gen_contract)
-
-        const gen_balance = await wallet.provider.getBalance(new_tokensOwned_arr[0].address)
-        setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
-      }
-    }
-  }
-
-  const getNFTInfo = async (event = undefined) => {
+  // NFT Owner Card 
+  const getGeneratorInfo = async (event = undefined) => {
     let nft_id
     if (typeof event === "undefined") {
-      nft_id = nftId
+      nft_id = generatorId
     } else {
       nft_id = event.target.value
     }
-    setNftId(nft_id)
+    setGeneratorId(nft_id)
 
     if (typeof nft_id !== "undefined") {
-      for (let ii = 0; ii < nftList.length; ii++) {
-        if (nftList[ii].id === nft_id) {
-          const nft_address = nftList[ii].address
-          setGeneratorAddress(nft_address)
+      const nft_address = generatorList[nft_id].address
+      setGeneratorAddress(nft_address)
 
-          const gen_contract = getGeneratorContract(nft_address, wallet.signer)
-          setGeneratorContract(gen_contract)
-
-          const gen_balance = await wallet.provider.getBalance(gen_contract.address)
-          setGeneratorBalance(parseFloat(ethers.utils.formatEther(gen_balance * ETHUSDConversionRate)))
-          break
-        }
-      }
+      const gen_contract = getGeneratorContract(nft_address, wallet.signer)
+      setGeneratorContract(gen_contract)
     }
   }
 
@@ -196,17 +144,38 @@ const AdminMinting = ({
 
   const withdrawBalance = async () => {
     try {
-      if (generatorBalance > 0 && !loading) {
+      if (!loading && generatorId && selectedProduct) {
         setLoading(true)
-        const tx = await generatorContract.withdraw()
-        await tx.wait(1)
-        const gen_balance = await wallet.provider.getBalance(generatorContract.address)
-        setGeneratorBalance(gen_balance)
-        handleAlerts("Withdrawed successfully", "success")
-      } else if (generatorBalance <= 0) {
-        handleAlerts("Not enough balance", "warning")
+
+        let there_is_product_selected = false
+        let products_str = ""
+        let tx = undefined
+        const products = Object.keys(productList[generatorId])
+        for (let ii = 0; ii < products.length; ii++) {
+          if (productList[generatorId][products[ii]].selected) {
+            there_is_product_selected = true
+            if (productList[generatorId][products[ii]].balance > 0) {
+              tx = await productList[generatorId][products[ii]].contract.withdraw()
+
+              products_str += products[ii] + ", "
+            }
+          }
+        }
+        if (tx) {
+          await tx.wait(1)
+        }
+
+        if (there_is_product_selected) {
+          handleAlerts("Withdrawed successfully from products (IDs): " + products_str.substr(0, products_str.length - 2), "success")
+        } else {
+          handleAlerts("No product selected!", "warning")
+        }
+        await updateProductList()
+
       } else if (loading) {
         handleAlerts("Loading... Cannot execute while loading", "info")
+      } else if (!selectedProduct) {
+        handleAlerts("No product is selected", "warning")
       }
     } catch (error) {
       if (error.code === 4001) {
@@ -219,25 +188,72 @@ const AdminMinting = ({
         handleAlerts("An unknown error occurred", "error")
       }
     }
+
     setLoading(false)
   }
 
-  const renameNFT = async (evt) => {
+  const withdrawAndDelete = async () => {
     try {
-      if (!loading) {
+      if (!loading && generatorId && selectedProduct) {
+        setLoading(true)
+
+        let products_str = ""
+        let tx = undefined
+        const products = Object.keys(productList[generatorId])
+        for (let ii = 0; ii < products.length; ii++) {
+          if (productList[generatorId][products[ii]].selected) {
+            tx = await productList[generatorId][products[ii]].contract.destroy()
+
+            products_str += products[ii] + ", "
+          }
+        }
+
+        if (tx) {
+          await tx.wait(1)
+        }
+
+        await updateProductList()
+
+        handleAlerts("Successfully deleted products (IDs): " + products_str.substr(0, products_str.length - 2), "success")
+
+      } else if (loading) {
+        handleAlerts("Loading... Cannot execute while loading", "info")
+      } else if (!selectedProduct) {
+        handleAlerts("No product is selected", "warning")
+      }
+    } catch (error) {
+      if (error.code === 4001) {
+        handleAlerts("Transaction cancelled", "warning")
+      } else if (error.code === "INSUFFICIENT_FUNDS") {
+        handleAlerts("Insufficient funds for gas * price + value", "warning")
+      } else if (error.code === -32602 || error.code === -32603) {
+        handleAlerts("Internal error", "error")
+      } else {
+        handleAlerts("An unknown error occurred", "error")
+      }
+    }
+
+    setLoading(false)
+  }
+
+  const renameNFT = async () => {
+    try {
+      if (!loading && newNFTName) {
         setLoading(true)
         const tx = await generatorContract.changeName(newNFTName)
         await tx.wait(1)
 
-        for (let ii = 0; ii < nftList.length; ii++) {
-          if (nftList[ii].id === nftId) {
-            nftList[ii].name = newNFTName
-            setNftList(nftList)
+        for (let ii = 0; ii < generatorList.length; ii++) {
+          if (generatorList[ii].id === generatorId) {
+            generatorList[ii].name = newNFTName
+            dispatch(setGeneratorList(generatorList))
             break
           }
         }
+        handleAlerts("NFT renamed successfully", "success")
+      } else if (!newNFTName) {
+        handleAlerts("NFT new name must not be blank", "warning")
       }
-      handleAlerts("NFT renamed successfully", "success")
     } catch (error) {
       if (error.code === 4001) {
         handleAlerts("Transaction cancelled", "warning")
@@ -253,34 +269,9 @@ const AdminMinting = ({
     setNewNFTName(undefined)
   }
 
-  // NFT Products Card
-  const updateProducts = async () => {
-    if (generatorContract) {
-      const products_num = await generatorContract.productCount()
-      let listOfProducts = []
-      for (let ii = 0; ii < products_num; ii++) {
-        const product = await generatorContract.idToProduct(ii)
-        const product_obj = {
-          id: parseInt(product.id, 16),
-          name: product.name,
-          priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
-          address: product.contractAddress
-        }
-        listOfProducts.push(product_obj)
-      }
-      setProductList(listOfProducts)
-      if (listOfProducts.length === 1) {
-        setProductId(listOfProducts[0].id)
-        setProductAddress(listOfProducts[0].address)
-        if (listOfProducts[0].id !== undefined) {
-          setSelectedProduct(listOfProducts[0].id)
-        }
-      }
-    }
-  }
-
+  // NFT Products Card 
   const addNewProduct = async () => {
-    if (!loading) {
+    if (!loading && newProductName && newProductPrice >= 0 && newProductPrice) {
       try {
         setLoading(true)
         const tx = await generatorContract.addProduct(
@@ -289,6 +280,7 @@ const AdminMinting = ({
         await tx.wait(1)
         setNewProducPrice(undefined)
         setNewProductName(undefined)
+        await updateProductList()
         handleAlerts("New product added successfully", "success")
       } catch (error) {
         if (error.code === 4001) {
@@ -303,12 +295,16 @@ const AdminMinting = ({
       }
     } else if (loading) {
       handleAlerts("Loading... Cannot execute while loading", "warning")
+    } else if (!newProductName) {
+      handleAlerts("New product name must not be blank", "warning")
+    } else if (newProductPrice < 0 || !newProductPrice) {
+      handleAlerts("New product price must be zero or positive", "warning")
     }
     setLoading(false)
   }
 
   const setNewProductPrice = async () => {
-    if (!loading) {
+    if (!loading && generatorId && productNewPrice >= 0 && !productNewPrice === "") {
       setLoading(true)
       try {
         const tx = await generatorContract.changeProductPrice(
@@ -316,13 +312,8 @@ const AdminMinting = ({
         )
         await tx.wait(1)
         // const product = await generatorContract.idToProduct(productId)
-        const new_product_list = productList
-        for (let ii = 0; ii < new_product_list.length; ii++) {
-          if (new_product_list[ii].id === productId) {
-            new_product_list[ii].priceUSD = productNewPrice
-            break
-          }
-        }
+        await updateProductList()
+
         setProdCurrentPrice(productNewPrice)
         setProductNewPrice(undefined)
         handleAlerts("Product price changed successfully", "success")
@@ -339,6 +330,8 @@ const AdminMinting = ({
       }
     } else if (loading) {
       handleAlerts("Loading... Cannot execute while loading", "warning")
+    } else if (productNewPrice < 0 || !productNewPrice) {
+      handleAlerts("New price must be zero or positive", "warning")
     }
     setLoading(false)
   }
@@ -358,95 +351,97 @@ const AdminMinting = ({
   const handleProductList = (evt) => {
     const prod_id = evt.target.value
     setProductId(prod_id)
-    for (let ii = 0; ii < productList.length; ii++) {
-      if (productList[ii].id === prod_id) {
-        setProductAddress(productList[ii].address)
-        break
-      }
-    }
+
+    const prod_address = productList[generatorId][prod_id].address
+    setProductAddress(prod_address)
+
+    const prod_current_price = productList[generatorId][prod_id].priceUSD
+    setProdCurrentPrice(prod_current_price)
   }
 
   // General
   async function getETHUSDConversionRate() {
-    if (contract) {
-      const conversion_rate = await contract.getETHUSDConversionRate()
+    if (factoryContract) {
+      const conversion_rate = await factoryContract.getETHUSDConversionRate()
       setETHUSDConversionRate(ethers.utils.formatEther(conversion_rate))
-    }
-  }
-
-  const copyToClipboard = async () => {
-    // const text = evt.target.value
-    if ('clipboard' in navigator) {
-      return await navigator.clipboard.writeText(generatorAddress);
-    } else {
-      return document.execCommand('copy', true, generatorAddress);
     }
   }
 
   const resetAllFields = () => {
     setGeneratorContract(undefined)
     setGeneratorAddress(undefined)
-    setProductList([])
+    dispatch(setProductList(undefined))
     setProductId(undefined)
     setProdCurrentPrice(undefined)
-    setNftList([])
-    setNftId(undefined)
+    dispatch(setGeneratorList(undefined))
+    setGeneratorId(undefined)
     setProductNewPrice(undefined)
     setNewNFTName(undefined)
+    setSelectedAll(false)
+    setProductAddress(undefined)
   }
 
   // useEffects
   useEffect(() => {
-    if (generatorAddress !== undefined) {
-      setSelectGeneratorAddress(generatorAddress)
-    }
-  }, [generatorAddress])
-
-  useEffect(() => {
-    if (productId !== undefined) {
-      setSelectedProduct(productId)
-      for (let ii = 0; ii < productList.length; ii++) {
-        if (productList[ii].id == productId) {
-          setProdCurrentPrice(productList[ii].priceUSD)
-          setSelectProductPrice(productList[ii].priceUSD)
-          break
-        }
-      }
+    if (productId !== undefined && generatorId) {
+      setProdCurrentPrice(productList[generatorId][productId].priceUSD)
       setProductId(productId)
-      getProductContractBalanceSum()
     }
   }, [productId])
 
   useEffect(() => {
-    if (wallet && contract) {
-      checkIfTokenOwner()
+    const updtProdList = async () => {
+      await updateProductList()
+    }
+    if (wallet && !loading) {
+      if (!generatorId && generatorList) {
+        const generatorIds_arr = Object.keys(generatorList)
+        if (generatorIds_arr.length === 1) {
+          setGeneratorId(generatorIds_arr[0])
+          setGeneratorAddress(generatorList[generatorIds_arr[0]].address)
+          setGeneratorContract(generatorList[generatorIds_arr[0]].contract)
+        }
+      }
+      if (!productList && generatorList) {
+        updtProdList()
+      }
+    } else if (!generatorList) {
+      setGeneratorAddress(undefined)
+    }
+  }, [wallet, generatorList])
+
+  useEffect(() => {
+    if (wallet && !loading) {
+      if (!productId && productList && generatorId) {
+        const productIds_arr = Object.keys(productList[generatorId])
+        if (productIds_arr.length === 1) {
+          setProductId(productIds_arr[0])
+          setProductAddress(productList[generatorId][productIds_arr[0]].address)
+          setProdCurrentPrice(productList[generatorId][productIds_arr[0]].priceUSD)
+        }
+      }
+    }
+  }, [wallet, productList, generatorId])
+
+  useEffect(() => {
+    if (wallet && factoryContract) {
+      updateGeneratorList()
     }
     if (!wallet) {
       resetAllFields()
     }
+    setSelectedAll(false)
     getETHUSDConversionRate()
   }, [wallet, loading])
 
   useEffect(() => {
-    if (wallet && contract) {
-      checkIfTokenOwner()
+    if (wallet && factoryContract) {
+      updateGeneratorList()
     }
-    if (contract) {
+    if (factoryContract) {
       getNFTPrice()
     }
-  }, [contract])
-
-  useEffect(() => {
-    if (generatorContract) {
-      updateProducts()
-    }
-  }, [generatorContract, loading, prodCurrentPrice])
-
-  useEffect(() => {
-    if (alerts[0]) {
-      setTimeout(handleCloseAlerts, 3000)
-    }
-  }, [alerts])
+  }, [factoryContract])
 
   return (
     <>
@@ -463,17 +458,17 @@ const AdminMinting = ({
           wallet={wallet}
           loading={loading}
           mintNFT={mintNFT}
+          handleAlerts={handleAlerts}
         />
         <NFTOwnerCard
           sumProductBalances={sumProductBalances}
           wallet={wallet}
-          nftId={nftId}
+          generatorId={generatorId}
           size={size}
-          getNFTInfo={getNFTInfo}
-          nftList={nftList}
+          getGeneratorInfo={getGeneratorInfo}
+          generatorList={generatorList}
           generatorAddress={generatorAddress}
           copyToClipboard={copyToClipboard}
-          generatorBalance={generatorBalance}
           ETHUSDConversionRate={ETHUSDConversionRate}
           withdrawBalance={withdrawBalance}
           loading={loading}
@@ -481,6 +476,11 @@ const AdminMinting = ({
           handleNewName={handleNewName}
           newNFTName={newNFTName}
           productList={productList}
+          selectedAll={selectedAll}
+          setSelectedAll={setSelectedAll}
+          withdrawAndDelete={withdrawAndDelete}
+          setSelectedProduct={setSelectedProduct}
+          handleAlerts={handleAlerts}
         />
         <NFTProductsCard
           size={size}
@@ -501,32 +501,9 @@ const AdminMinting = ({
           productAddress={productAddress}
           setNewProductPrice={setNewProductPrice}
           newProductName={newProductName}
+          generatorId={generatorId}
         />
       </Grid>
-      <Snackbar
-        TransitionComponent={Slide}
-        onClick={handleCloseAlerts}
-        autoHideDuration={6000}
-        open={alerts[0]}
-      >
-        <Alert
-          onClick={handleCloseAlerts}
-          elevation={6}
-          variant="filled"
-          severity={alerts[2]}
-          sx={{ width: '100%' }}
-        >
-          {alerts[1]}
-          <IconButton
-            size="small"
-            aria-label="close"
-            color="inherit"
-            onClick={handleCloseAlerts}
-          >
-            <CloseIcon fontSize="small" />
-          </IconButton>
-        </Alert>
-      </Snackbar>
     </>
   );
 }

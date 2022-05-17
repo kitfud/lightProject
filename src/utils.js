@@ -32,6 +32,7 @@ const getFactoryContract = (signer = undefined) => {
         } else {
             factoryContract = new ethers.Contract(factoryAddress, factoryABI, provider)
         }
+
         return factoryContract
 
     } else {
@@ -55,7 +56,7 @@ const getGeneratorContract = (generatorAddress, signer = undefined) => {
     }
 }
 
-const getProductContract = (productAddress, signer = undefined)=>{
+const getProductContract = (productAddress, signer = undefined) => {
     if (window.ethereum) {
         const provider = new ethers.providers.Web3Provider(window.ethereum)
         const productABI = ProductContractABI

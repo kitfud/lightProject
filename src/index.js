@@ -2,22 +2,47 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
 import App from './App';
-import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from "react-router-dom"
+import { configureStore } from '@reduxjs/toolkit';
+import { Provider } from 'react-redux';
+import walletReducer from "./features/wallet"
+import factoryContractReducer from "./features/factoryContract"
+import userAddressReducer from "./features/userAddress"
+import productReducer from "./features/product"
+import generatorReducer from "./features/generator"
+import alertsReducer from "./features/alerts"
+import networkReducer from "./features/network"
+import connectionReducer from "./features/connection"
+import rgbColorReducer from "./features/rgbColor"
 
+const store = configureStore({
+  reducer: {
+    wallet: walletReducer,
+    factoryContract: factoryContractReducer,
+    userAddress: userAddressReducer,
+    product: productReducer,
+    generator: generatorReducer,
+    alerts: alertsReducer,
+    network: networkReducer,
+    connection: connectionReducer,
+    rgbColor: rgbColorReducer
+  },
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
+})
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
 
     <BrowserRouter>
-      <App />
+      <Provider store={store}>
+        <App />
+      </Provider>
     </BrowserRouter>
 
   </React.StrictMode>
 );
 
-// If you want to start measuring performance in your app, pass a function
-// to log results (for example: reportWebVitals(console.log))
-// or send to an analytics endpoint. Learn more: https://bit.ly/CRA-vitals
-reportWebVitals();

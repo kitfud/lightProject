@@ -1,44 +1,47 @@
 import React, { useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux';
 import { SketchPicker } from 'react-color';
-import HardwareConnect from './HardwareConnect';
+import { setRGBColor } from '../features/rgbColor';
 
-const LightPicker = ({setCurrentColorSelect}) => {
-  const [projectColor, setProjectColor] = useState("#FFFFFF");
-  const [rgbData, setRGBData] = useState(null)
-  const [hardwareData, setHardwareData]= useState(null)
+const LightPicker = ({
+  setCurrentColorSelectRGB,
+  currentColorSelectRGB,
+  currentColorSelectHex,
+  setCurrentColorSelectHex,
+}) => {
+
+  const dispatch = useDispatch()
 
   const handleChangeComplete = (color) => {
-    setProjectColor(color.hex)
-    setCurrentColorSelect(color.hex)
-    setRGBData(color.rgb)
+    setCurrentColorSelectHex(color.hex)
+    setCurrentColorSelectRGB(color.rgb)
   }
 
   const formatRGBVal = (color) => {
-    let r = color.r
-    let g = color.g
-    let b = color.b
 
-   let hardwareData = `${r},${g},${b}`
-   setHardwareData(hardwareData)
- 
+    const r = color.r
+    const g = color.g
+    const b = color.b
+
+    const rgb_string = `${r},${g},${b}`
+    dispatch(setRGBColor(rgb_string))
   }
 
-useEffect(()=>{
-if (rgbData){
-formatRGBVal(rgbData)
-}
-  },[rgbData])
+  useEffect(() => {
+    if (currentColorSelectRGB) {
+      formatRGBVal(currentColorSelectRGB)
+    }
+  }, [currentColorSelectRGB])
 
   return (
     <div className="p-4">
       <SketchPicker
-        color={projectColor}
-        onChangeComplete={(c) => handleChangeComplete(c)}
+        color={currentColorSelectHex}
+        onChangeComplete={(e) => handleChangeComplete(e)}
       />
       <div>
-        {projectColor}
+        {currentColorSelectHex}
       </div>
-    <HardwareConnect colorData={hardwareData}/>
     </div>
   )
 }

@@ -21,7 +21,7 @@ import { Theme as MuiTheme } from '@mui/material/styles'
 
 const ModeSwitcher = ({setColorMode}) => {
 
-    const [mode,setMode] = useState("light")
+    const [mode,setMode] = useState("dark")
   
     return (
         <Button
@@ -38,7 +38,7 @@ const ModeSwitcher = ({setColorMode}) => {
             }
             }
         >
-        {mode === "light" ? <DarkModeIcon sx={{ color: "white"}}/> : <LightModeIcon sx={{ color: "white"}}/>}
+        {mode === "dark" ? <LightModeIcon sx={{ color: "white"}}/> : <DarkModeIcon sx={{ color: "white"}}/>}
     
         </Button>
     );

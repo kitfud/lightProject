@@ -1,4 +1,4 @@
-import React, { useEffect } from "react"
+import React from "react"
 import {
     Card, Button, Typography, Box, Grid, CircularProgress, Tooltip, Chip, FormControl,
     InputLabel, Select, MenuItem, TextField, InputAdornment
@@ -6,14 +6,14 @@ import {
 
 const NFTProductsCard = ({ size, handleProductList, productId, productList, copyToClipboard, prodCurrentPrice,
     ETHUSDConversionRate, handleProductChangePrice, setNewProductPrice, loading, handleNewProductName, newProductName,
-    handleNewProductPrice, addNewProduct, productNewPrice, newProductPrice, productAddress }) => {
+    handleNewProductPrice, addNewProduct, productNewPrice, newProductPrice, productAddress, generatorId }) => {
 
     return (
         <Grid>
             <Box style={{ display: "flex", justifyContent: 'center' }}>
                 <Card sx={{
                     alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1,
-                    padding: 3, minWidth: size[0], minHeight: size[1]
+                    padding: 3, minWidth: size[0], minHeight: size[1], bgcolor: "primary.main"
                 }}>
                     <Typography gutterBottom variant="h5" component="div">
                         NFT Products
@@ -25,17 +25,18 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             id="product-id"
                             label="Product"
                             onChange={handleProductList}
-                            value={productId !== undefined ? productId : ""}
+                            value={productId ? productId : ""}
                             disabled={productList ? false : true}
                         >
-                            {productList.map(product => (
+                            {productList && generatorId ? (Object.keys(productList[generatorId]).map(productKey => (
                                 <MenuItem
-                                    value={product.id}
-                                    key={product.id}
+                                    sx={{ color: "black" }}
+                                    value={productKey}
+                                    key={productKey}
                                 >
-                                    {product.id + " - " + product.name}
+                                    {productKey + " - " + productList[generatorId][productKey].name}
                                 </MenuItem>
-                            ))}
+                            ))) : (<div></div>)}
                         </Select>
                     </FormControl>
                     <FormControl sx={{ m: 1, minWidth: 300 }}>
@@ -100,7 +101,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             id="filled-product-name"
                             label="Name"
                             variant="filled"
-                            onChange={(e)=>handleNewProductName(e.target.value)}
+                            onChange={(e) => handleNewProductName(e.target.value)}
                             value={newProductName !== undefined ? newProductName : ""}
                         />
                         <TextField
