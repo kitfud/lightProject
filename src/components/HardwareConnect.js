@@ -1,16 +1,13 @@
 import React, { useEffect, useState } from 'react'
 import { Button, Box } from "@mui/material"
 import { useDispatch, useSelector } from 'react-redux'
-import {connect} from "simple-web-serial";
-import {setPort} from '../features/connection'
-
-
-const HardwareConnect = ({ handleAlerts }) => {
-  const {port} = useSelector((state)=>state.connection.value)
-  const rgbColor = useSelector(state => state.rgbColor.value)
-  const [status, setStatus] = useState(false)
+import { setPort, setConnected, sendData } from "../features/connection"
 
   const dispatch = useDispatch()
+
+  const rgbColor = useSelector(state => state.rgbColor.value)
+  const { port, connected } = useSelector(state => state.connection.value)
+  const baudRate = 9600
 
   const handleConnect = () => {
     connectDevice()
@@ -22,12 +19,15 @@ const HardwareConnect = ({ handleAlerts }) => {
 
   const connectDevice = async () => {
     if ("serial" in navigator) {
-      const new_port = await navigator.serial.requestPort()
-      await new_port.open({ baudRate: 57600 })
-      // const new_port = connect(57600)
-      dispatch(setPort(new_port))
-      setStatus(true)
-      handleAlerts("Port connected", "info")
+      try {
+        const new_port = await navigator.serial.requestPort()
+        await new_port.open({ baudRate })
+        dispatch(setPort(new_port))
+        dispatch(setConnected(true))
+        handleAlerts("Port connected", "success")
+      } catch (error) {
+        handleAlerts("Failed to open serial port", "error")
+      }
     } else {
       handleAlerts("Web serial API is not supported by the browser", "warning")
     }
@@ -35,27 +35,16 @@ const HardwareConnect = ({ handleAlerts }) => {
 
   const disconnectDevice = async () => {
     await port.close()
-    setPort(undefined)
-    setStatus(false)
+    dispatch(setPort(undefined))
+    dispatch(setConnected(false))
     handleAlerts("Port disconnected", "info")
   }
 
-  const sendData = async () => {
-    console.log("port", port)
-    console.log("rgb", rgbColor)
-    // eslint-disable-next-line no-undef
-    const encoder = new TextEncoderStream();
-    const outputDone = encoder.readable.pipeTo(port.writable)
-    const outputStream = encoder.writable
-    const writer = outputStream.getWriter()
-    await writer.write(rgbColor)
-    writer.releaseLock()
-   
-    // port.send('paymentMade', rgbColor)
-    
+  const sendDataFunc = () => {
+    dispatch(sendData(rgbColor))
   }
 
-  const readData = async () => {
+  const readDataFunc = async () => {
     const reader = port.readable.getReader();
 
     // Listen to data coming from the serial device.
@@ -77,14 +66,14 @@ const HardwareConnect = ({ handleAlerts }) => {
     console.log("rgbColor",rgbColor)
 
     if (port && rgbColor) {
-      sendData()
+      sendDataFunc()
     }
   }, [rgbColor])
 
   return (
     <>
       <Box>
-        {status ? (
+        {connected ? (
           <Button variant="contained" color="primary" onClick={handleDisconnect}>
             DISCONNECT Light Generator
           </Button>

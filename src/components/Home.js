@@ -18,21 +18,8 @@ import { getProductContract } from '../utils';
 import { setProductList } from '../features/product';
 import { setRefAddress } from '../features/refAddress';
 import HardwareConnect from './HardwareConnect';
-import rgbColor from '../features/rgbColor';
 
-const Home = ({
-  disconnecting, 
-  previousTxHash, 
-  setPreviousTxHash, 
-  setCurrentTxHash, 
-  currentTxHash, 
-  setPayment, 
-  setRGBString, 
-  rgbString, 
-  connection, 
-  handleAlerts, 
-  updateGeneratorList, 
-  updateProductList }) => {
+const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
@@ -288,8 +275,8 @@ const Home = ({
             currentColorSelectRGB={currentColorSelectRGB}
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
           />
-          {/* <HardwareConnect handleAlerts={handleAlerts}/> */}
-         
+          
+          <HardwareConnect handleAlerts={handleAlerts} />
         </center>
 
         <center>
