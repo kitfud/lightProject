@@ -77,15 +77,13 @@ const LightBulb = () => {
 
   useEffect(() => {
     if (previousTxHash !== currentTxHash && HexColor) {
-      // if (currentColorSelectRGB) {      
-      console.log(HexColor)
+      // if (currentColorSelectRGB) {
       dispatch(setHexBulbColor(HexColor))
       dispatch(setRGBColorString(HexColor))
     }
   }, [currentTxHash, HexColor])
 
   useEffect(() => {
-    console.log(HexBulbColor)
     generateGraphic()
   }, [HexBulbColor])
 
