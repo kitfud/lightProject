@@ -14,9 +14,12 @@ export const sendData = createAsyncThunk("connection/sendData", async (rgbColor,
     const states = thunkAPI.getState()
     const port = states.connection.value.port
     if (port) {
-        const encoder = new TextEncoder();
+        const event = ["paymentMade", rgbColor]
+        const stringified = JSON.stringify(event);
+        const encoder = new TextEncoder("utf-8");
         const writer = await port.writable.getWriter();
-        await writer.write(encoder.encode(rgbColor));
+        await writer.write(encoder.encode(stringified + "\r\n"));
+        // await writer.write(stringified + "\r\n");
         writer.releaseLock();
     }
 })

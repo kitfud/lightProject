@@ -18,7 +18,6 @@ import { setNetwork } from '../features/network'
 import { setProvider } from '../features/provider'
 import { setGeneratorList } from '../features/generator'
 import { setProductList } from '../features/product'
-import { setSendDataProcess } from '../features/connection';
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -86,7 +85,7 @@ const errorPulse = makeStyles((theme) => ({
 }))
 
 
-const pages = ['Admin', 'Shop'];
+const pages = ['admin', 'shop'];
 
 let first = true
 
@@ -107,11 +106,10 @@ const Header = ({
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [buttonColor, setButtonColor] = useState("warning")
   const [refLink, setRefLink] = useState(undefined)
+  const [pathname, setPathname] = useState(undefined)
   const classes = useStyles()
   const warningPulseClass = warningPulse()
   const errorPulseClass = errorPulse()
-
-  const pathname = window.location.pathname
 
   const handleOpenNavMenu = (event) => {
     setAnchorElNav(event.currentTarget);
@@ -230,7 +228,8 @@ const Header = ({
 
 
   useEffect(() => {
-    if ((window.ethereum && first) && (pathname === "/Admin" || pathname === "/Shop")) {
+    setPathname(window.location.pathname)
+    if ((window.ethereum && first) && (pathname === "/admin" || pathname === "/shop")) {
       window.ethereum.on('chainChanged', function () {
         connectWallet()
       });
@@ -239,7 +238,7 @@ const Header = ({
         connectWallet()
       });
       first = false
-    } else if (window.ethereum && first && !(pathname === "/Admin" || pathname === "/Shop")) {
+    } else if (window.ethereum && first && !(pathname === "/admin" || pathname === "/shop")) {
       window.ethereum.on('chainChanged', function () {
         getProvider()
       });
@@ -320,7 +319,7 @@ const Header = ({
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pathname === "/Admin" || pathname === "/Shop" ? pages.map((page) => (
+            {pathname === "/admin" || pathname === "/shop" ? pages.map((page) => (
               <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page}
               </Link>
@@ -332,7 +331,7 @@ const Header = ({
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {pathname === "/Admin" || pathname === "/Shop" ? (
+            {pathname === "/admin" || pathname === "/shop" ? (
               <Tooltip title="copy to clipboard">
                 <Chip
                   label={refLink ? refLink : "Referral link"}
@@ -341,7 +340,7 @@ const Header = ({
                 />
               </Tooltip>) : (<ins></ins>)}
 
-            {(pathname === "/Admin" || pathname === "/Shop") ? (wallet && wrongNetwork ? (
+            {(pathname === "/admin" || pathname === "/shop") ? (wallet && wrongNetwork ? (
               <Button className={errorPulseClass.pulse} onClick={connectWallet} variant="contained" color={"error"}>
                 Switch network
               </Button>) :

@@ -2,7 +2,8 @@ import { createSlice } from "@reduxjs/toolkit"
 
 const initialStateValue = {
     HexColor: undefined,
-    RGBColorString: undefined
+    RGBColorString: undefined,
+    HexBulbColor: undefined
 }
 
 export const colorSlice = createSlice({
@@ -31,10 +32,13 @@ export const colorSlice = createSlice({
         setHexColor: (state, action) => {
             state.value.HexColor = action.payload
         },
+        setHexBulbColor: (state, action) => {
+            state.value.HexBulbColor = action.payload
+        },
     }
 }
 )
 
-export const { setHexColor, setRGBColorString } = colorSlice.actions
+export const { setHexColor, setRGBColorString, setHexBulbColor } = colorSlice.actions
 
 export default colorSlice.reducer

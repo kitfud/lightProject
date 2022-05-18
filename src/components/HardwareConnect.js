@@ -12,7 +12,7 @@ const HardwareConnect = ({ handleAlerts }) => {
   const { RGBColorString } = useSelector(state => state.color.value)
   const { port, connected } = useSelector(state => state.connection.value)
   const { previousTxHash, currentTxHash } = useSelector(state => state.paymentData.value)
-  const baudRate = 9600
+  const baudRate = 57600
 
   const handleConnect = () => {
     connectDevice()
@@ -66,8 +66,9 @@ const HardwareConnect = ({ handleAlerts }) => {
   }
 
   useEffect(() => {
-    if (port && RGBColorString && previousTxHash !== currentTxHash) {
-      console.log("useEffect HardwareConnect")
+    // if (port && RGBColorString && previousTxHash !== currentTxHash) {
+    if (port && RGBColorString) {
+      console.log("here")
       sendDataFunc()
       dispatch(setPreviousTxHash(currentTxHash))
       dispatch(setRGBColorString(undefined))

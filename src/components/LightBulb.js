@@ -1,15 +1,14 @@
 import React, { useRef, useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { setRGBColorString } from "../features/color"
+import { setRGBColorString, setHexBulbColor } from "../features/color"
 
 const LightBulb = () => {
 
   const dispatch = useDispatch()
   const { previousTxHash, currentTxHash } = useSelector((state) => state.paymentData.value)
-  const { HexColor } = useSelector(state => state.color.value)
+  const { HexColor, HexBulbColor } = useSelector(state => state.color.value)
 
   const canvasRef = useRef(null)
-  const [bulbColor, setBulbColor] = useState(undefined)
 
   const draw = (ctx) => {
     //This is the upper part of the light bulb -------------------------------------------------------------------
@@ -17,7 +16,7 @@ const LightBulb = () => {
     ctx.beginPath();
     ctx.arc(30, 23.5, 22.5, 0, 2 * Math.PI);
     //circule color "bulb" light color is the line below
-    ctx.fillStyle = bulbColor
+    ctx.fillStyle = HexBulbColor
     ctx.stroke();
     ctx.fill();
 
@@ -77,16 +76,16 @@ const LightBulb = () => {
   }
 
   useEffect(() => {
-    if (previousTxHash !== currentTxHash && HexColor) {
-      // if (currentColorSelectRGB) {      
-      setBulbColor(HexColor)
+    // if (previousTxHash !== currentTxHash && HexColor) {
+    if (HexColor) {
+      dispatch(setHexBulbColor(HexColor))
       dispatch(setRGBColorString(HexColor))
     }
   }, [currentTxHash, HexColor])
 
   useEffect(() => {
     generateGraphic()
-  }, [bulbColor])
+  }, [HexBulbColor])
 
   return (
     <canvas ref={canvasRef} />
