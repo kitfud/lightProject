@@ -18,6 +18,9 @@ import Container from '@mui/material/Container';
 import img_arduino from '../img/arduino_uno_200.jpg';
 import img_led from '../img/led_strip200.jpg';
 import img_raspberry from '../img/raspberry_pi_zero_200.jpg';
+import { setPathname } from '../features/pathname';
+import { useEffect, useState } from 'react';
+import { useDispatch } from 'react-redux';
 
 const tiers = [
   {
@@ -26,7 +29,7 @@ const tiers = [
     description: [
       'a microcontroller board'
     ],
-    image:img_arduino,
+    image: img_arduino,
     buttonText: 'Buy now',
     buttonVariant: 'outlined',
   },
@@ -37,7 +40,7 @@ const tiers = [
     description: [
       'LED Strip - tunable white'
     ],
-    image:img_led,
+    image: img_led,
     buttonText: 'Buy now',
     buttonVariant: 'contained',
   },
@@ -47,7 +50,7 @@ const tiers = [
     description: [
       'A tiny single-board computer'
     ],
-    image:img_raspberry,
+    image: img_raspberry,
     buttonText: 'Buy now',
     buttonVariant: 'outlined',
   },
@@ -55,19 +58,23 @@ const tiers = [
 
 function PricingContent() {
 
-    const [num, setNum] = React.useState(0);
+  const dispatch = useDispatch()
+  const [num, setNum] = useState(0);
 
-    const changeNum = () => {
-      let number = num;
-      number++;
-      setNum(number);
-      console.log(num)
-      console.log('Soon this will get you to the store...')
-    };
+  const changeNum = () => {
+    let number = num;
+    number++;
+    setNum(number);
+    console.log(num)
+    console.log('Soon this will get you to the store...')
+  };
 
+  useEffect(() => {
+    dispatch(setPathname(window.location.pathname))
+  }, [])
 
   return (
-      <React.Fragment>
+    <React.Fragment>
       <GlobalStyles styles={{ ul: { margin: 0, padding: 0, listStyle: 'none' } }} />
       <CssBaseline />
       {/* Hero unit */}
@@ -128,14 +135,14 @@ function PricingContent() {
                   <img src={tier.image} />
                   <ul>
                     {tier.description.map((line) => (
-                        <Typography
-                          component="li"
-                          variant="subtitle1"
-                          align="center"
-                          key={line}
-                        >
-                          {line}
-                        </Typography>
+                      <Typography
+                        component="li"
+                        variant="subtitle1"
+                        align="center"
+                        key={line}
+                      >
+                        {line}
+                      </Typography>
                     ))}
                   </ul>
                 </CardContent>

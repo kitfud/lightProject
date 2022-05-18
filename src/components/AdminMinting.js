@@ -8,6 +8,7 @@ import NFTOwnerCard from './NFTOwnerCard'
 import NFTProductsCard from './NFTProductsCard'
 import { setProductList } from "../features/product"
 import { setGeneratorList } from '../features/generator'
+import { setPathname } from '../features/pathname'
 
 
 const AdminMinting = ({
@@ -382,6 +383,10 @@ const AdminMinting = ({
   }
 
   // useEffects
+  useEffect(() => {
+    dispatch(setPathname(window.location.pathname))
+  }, [])
+
   useEffect(() => {
     if (productId !== undefined && generatorId) {
       setProdCurrentPrice(productList[generatorId][productId].priceUSD)

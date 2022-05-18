@@ -18,6 +18,7 @@ import { setProductList } from '../features/product';
 import { setRefAddress } from '../features/refAddress';
 import { setPreviousTxHash, setCurrentTxHash } from "../features/paymentData"
 import { setSendDataProcess } from '../features/connection';
+import { setPathname } from "../features/pathname"
 import HardwareConnect from './HardwareConnect';
 
 const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
@@ -137,6 +138,8 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   }, [refAddress])
 
   useEffect(() => {
+    dispatch(setPathname(window.location.pathname))
+
     const ref_address = searchParams.get('ref')
     dispatch(setRefAddress(ref_address))
 

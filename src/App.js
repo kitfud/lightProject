@@ -16,6 +16,7 @@ import { setProductList } from './features/product'
 import { setUserAddress } from './features/userAddress'
 import { setAlerts } from './features/alerts'
 import { ethers } from "ethers"
+import { LandingPage } from './components/LandingPage'
 
 let themeLightMode = createTheme({
 
@@ -64,6 +65,7 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("dark")
   const [sumProductBalances, setSumProductBalances] = useState(undefined)
+  const [pathname, setPathname] = useState(undefined)
 
   const handleAlerts = (msg, severity, loading = false) => {
     dispatch(setAlerts([true, msg, severity, loading]))
@@ -212,11 +214,7 @@ function App() {
         <Card sx={{ bgcolor: "secondary.main" }}>
           <Routes>
             <Route path='/' element={
-              <Home
-                handleAlerts={handleAlerts}
-                updateGeneratorList={updateGeneratorList}
-                updateProductList={updateProductList}
-              />} />
+              <LandingPage />} />
             <Route path='/home' element={
               <Home
                 handleAlerts={handleAlerts}
