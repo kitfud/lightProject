@@ -7,6 +7,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+ 
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
@@ -61,6 +62,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
       }
     }
   }
+
+  useEffect(()=>{
+   console.log("IN HOME COMPONENT:", rgbString)
+  },[rgbString])
 
   // const updateProductList = async () => {
   //   if (generatorList) {
@@ -155,13 +160,25 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     }
   }, [nftSelected])
 
-  useEffect(() => {
+ const runListener=()=>{
+  if (selectedProductContract !== undefined && firstTimeListener) {
+    selectedProductContract.on("Deposit", (payee, value, time, currentContractBalance, event) => {
 
-    if (selectedProductContract !== undefined && firstTimeListener) {
-      selectedProductContract.on("Deposit", (payee, value, time, currentContractBalance, event) => {
+      const tx_hash = event.transactionHash
 
-        const tx_hash = event.transactionHash
-
+      if (currentTxHash !== tx_hash) {
+        setPreviousTxHash(currentTxHash)
+        setCurrentTxHash(tx_hash)
+        console.log("connection:",connection)
+        console.log("rgbString",rgbString)
+        console.log("currenctSelect", currentColorSelectRGB)
+        console.log(currentTxHash)
+          setPayment(currentTxHash)
+          // console.log("SENDING TO HARDWARE", data)
+          // connection.send('paymentMade',data)
+        
+      }
+    })
         if (currentTxHash !== tx_hash) {
           dispatch(setPreviousTxHash(currentTxHash))
           dispatch(setCurrentTxHash(tx_hash))
@@ -169,8 +186,9 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         }
       })
 
-      firstTimeListener.current = false
-    }
+  useEffect(() => {
+ runListener()
+ 
   }, [selectedProductContract])
 
   const UserSelectNFT = () => {
@@ -183,7 +201,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         </InputLabel>
         <Select
           disabled={generatorList ? false : true}
-          sx={{ bgcolor: "white" }}
+          sx={{ bgcolor: "white", color: "black" }}
           labelId="nft-id"
           id="nft-id"
           label="NFT"
@@ -215,7 +233,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         </InputLabel>
         <Select
           disabled={productList ? false : true}
-          sx={{ bgcolor: "white" }}
+          sx={{ bgcolor: "white", color: "black" }}
           labelId="product-id"
           id="product-id"
           label="PRODUCT"

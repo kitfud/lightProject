@@ -5,8 +5,6 @@ import { setPort, setConnected, sendData, setSendDataProcess } from "../features
 import { setRGBColorString, setHexColor } from '../features/color'
 import { setPreviousTxHash } from "../features/paymentData"
 
-const HardwareConnect = ({ handleAlerts }) => {
-
   const dispatch = useDispatch()
 
   const { RGBColorString } = useSelector(state => state.color.value)

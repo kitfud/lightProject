@@ -6,7 +6,19 @@ import { Routes, Route } from 'react-router-dom'
 import Shop from './components/Shop'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress } from '@mui/material'
+import {
+  Box, 
+  Grid,
+  Typography,
+  createTheme, 
+  ThemeProvider, 
+  Card, 
+  Snackbar, 
+  Slide, 
+  Alert, 
+  IconButton, 
+  CircularProgress, 
+  Button } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useState } from "react"
 import { getFactoryContract, getGeneratorContract, getProductContract } from "./utils"
@@ -16,6 +28,7 @@ import { setProductList } from './features/product'
 import { setUserAddress } from './features/userAddress'
 import { setAlerts } from './features/alerts'
 import { ethers } from "ethers"
+import {connect} from "simple-web-serial";
 
 let themeLightMode = createTheme({
 
@@ -64,6 +77,74 @@ function App() {
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("dark")
   const [sumProductBalances, setSumProductBalances] = useState(undefined)
+
+  const [connection, setConnection] = useState(false);
+  const [buttoncolor, setButtonColor] = useState("primary")
+  const [connectionStatus, setConnectionStatus] = useState(false)
+
+  const [rgbString, setRGBString] = useState('0,0,0')
+  const [payment, setPayment] = useState(undefined)
+  const [oldpayment, setOldPayment] = useState(undefined)
+
+  const [currentTxHash, setCurrentTxHash] = useState(undefined)
+  const [previousTxHash, setPreviousTxHash] = useState(undefined)
+  const [disconnecting, setDisconnecting] = useState(false)
+
+  useEffect(()=>{
+console.log("RGBString", rgbString)
+  },[rgbString])
+
+  useEffect(()=>{
+   if(payment !== oldpayment){
+    console.log("PAYMENT RECIEVED TO APP.js")
+   }
+    
+    },[payment])
+
+  const handleConnect = ()=>{
+    setDisconnecting(false)
+    setConnection(connect(57600))
+    setConnectionStatus(true)
+    setButtonColor("success")
+  }
+
+  const handleDisconnect = ()=>{
+    setDisconnecting(true)
+    setButtonColor("primary")
+    setConnectionStatus(false)
+    setCurrentTxHash(undefined)
+    setPreviousTxHash(undefined)
+    window.location.reload(false)
+    }
+
+  const ConnectButton = ()=>{
+    return( 
+      <Box>
+     <Button variant="contained" color="primary" onClick={handleConnect}>
+     CONNECT HARDWARE
+     </Button>
+        </Box>    
+ )
+}
+
+const Disconnect= ()=>{
+ return (
+   <>
+ 
+ <Box>
+ <Button 
+ variant="contained" 
+ color="error"
+ sx={{marginTop:"2px", marginBottom:"10px"}}
+ onClick={handleDisconnect}
+ >
+   Disconnect Machine
+ </Button>
+ </Box>
+   
+   </>
+ )
+}
 
   const handleAlerts = (msg, severity, loading = false) => {
     dispatch(setAlerts([true, msg, severity, loading]))
@@ -197,8 +278,21 @@ function App() {
   return (
     <>
       <ThemeProvider theme={colorMode === "dark" ? themeDarkMode : themeLightMode}>
+      {
 
+connectionStatus === false? 
+        <ConnectButton/>:
+            <Grid sx={{alignItems:"center",display:'flex', flexDirection:'column'}}>
+            <Card sx={{width:1/2, backgroundColor: '#84ffff' }}>
+                <Typography component="span">Hardware Connected</Typography>
+                <Disconnect/>
+            </Card>
+            </Grid>
+
+
+}
         <Header
+          
           setColorMode={setColorMode}
           setUserAddress={setUserAddress}
           userAddress={userAddress}
@@ -213,12 +307,30 @@ function App() {
           <Routes>
             <Route path='/' element={
               <Home
+              disconnecting = {disconnecting}
+                previousTxHash = {previousTxHash}
+                setPreviousTxHash = {setPreviousTxHash}
+                currentTxHash={currentTxHash}
+                setCurrentTxHash={setCurrentTxHash}
+                setPayment={setPayment}
+                setRGBString = {setRGBString}
+                rgbString = {rgbString}
+                connection= {connection}
                 handleAlerts={handleAlerts}
                 updateGeneratorList={updateGeneratorList}
                 updateProductList={updateProductList}
               />} />
             <Route path='/home' element={
               <Home
+              disconnecting = {disconnecting}
+              previousTxHash = {previousTxHash}
+              setPreviousTxHash = {setPreviousTxHash}
+                currentTxHash={currentTxHash}
+                setCurrentTxHash={setCurrentTxHash}
+                setPayment={setPayment}
+                setRGBString = {setRGBString}
+                rgbString = {rgbString}
+                connection ={connection}
                 handleAlerts={handleAlerts}
                 updateGeneratorList={updateGeneratorList}
                 updateProductList={updateProductList}
