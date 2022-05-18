@@ -17,8 +17,6 @@ import { ethers } from 'ethers';
 import { getProductContract } from '../utils';
 import { setProductList } from '../features/product';
 import { setRefAddress } from '../features/refAddress';
-import { setPreviousTxHash, setCurrentTxHash } from "../features/paymentData"
-import { setSendDataProcess } from '../features/connection';
 import HardwareConnect from './HardwareConnect';
 
 const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
@@ -31,7 +29,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   const factoryContract = useSelector((state) => state.factoryContract.value)
   const generatorList = useSelector((state) => state.generator.value)
   const refAddress = useSelector((state) => state.refAddress.value)
-  const { currentTxHash } = useSelector((state) => state.paymentData.value)
 
   // Local Variables
   const [nftSelected, setNFTSelected] = useState(undefined)
@@ -41,8 +38,13 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   const [productSelectedAddress, setProductSelectedAddress] = useState(undefined)
   const [productSelectedName, setProductSelectedName] = useState(undefined)
   const [productSelectedPrice, setProductSelectedPrice] = useState(undefined)
+  const [currentColorSelectHex, setCurrentColorSelectHex] = useState(undefined)
+  const [currentColorSelectRGB, setCurrentColorSelectRGB] = useState(undefined)
+  const [bulbColor, setBulbColor] = useState(undefined)
   const firstTimeListener = useRef(true)
   const [selectedProductContract, setSelectedProductContract] = useState(undefined)
+
+  
   const [ETHUSDConversionRate, setETHUSDConversionRate] = useState(undefined)
 
   const checkIfValidUrl = async () => {
@@ -130,6 +132,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   }
 
   useEffect(() => {
+    // console.log("in home component " + currentColorSelectHex)
+  }, [currentColorSelectHex])
+
+  useEffect(() => {
     if (generatorList) {
       updateProductList()
     }
@@ -179,12 +185,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         
       }
     })
-        if (currentTxHash !== tx_hash) {
-          dispatch(setPreviousTxHash(currentTxHash))
-          dispatch(setCurrentTxHash(tx_hash))
-          dispatch(setSendDataProcess("initialized"))
-        }
-      })
+
+    firstTimeListener.current = false
+  }
+ }
 
   useEffect(() => {
  runListener()
@@ -259,12 +263,29 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
       <Box textAlign='center'>
         <h1>Crypto Lights</h1>
         <center>
-          <LightBulb />
+          <LightBulb
+            disconnecting = {disconnecting}
+            connection = {connection}
+            currentColorSelectHex={currentColorSelectHex}
+            previousTxHash={previousTxHash}
+            currentTxHash={currentTxHash}
+            setBulbColor={setBulbColor}
+            bulbColor={bulbColor}
+            setPreviousTxHash={setPreviousTxHash}
+            currentColorSelectRGB={currentColorSelectRGB}
+            setCurrentColorSelectRGB={setCurrentColorSelectRGB}
+          />
+          
           <HardwareConnect handleAlerts={handleAlerts} />
         </center>
 
         <center>
-          <LightPicker />
+          <LightPicker
+            setRGBString = {setRGBString}
+            setCurrentColorSelectRGB={setCurrentColorSelectRGB}
+            currentColorSelectHex={currentColorSelectHex}
+            setCurrentColorSelectHex={setCurrentColorSelectHex}
+          />
         </center>
         <Box>
           {nftNameSelected ? ("NFT name: " + nftNameSelected) : ("NFT name: --")}

@@ -13,10 +13,9 @@ import generatorReducer from "./features/generator"
 import alertsReducer from "./features/alerts"
 import networkReducer from "./features/network"
 import connectionReducer from "./features/connection"
-import colorReducer from "./features/color"
+import rgbColorReducer from "./features/rgbColor"
 import providerReducer from "./features/provider"
 import refAddressReducer from "./features/refAddress"
-import paymentDataReducer from "./features/paymentData"
 
 const store = configureStore({
   reducer: {
@@ -28,10 +27,9 @@ const store = configureStore({
     alerts: alertsReducer,
     network: networkReducer,
     connection: connectionReducer,
-    color: colorReducer,
+    rgbColor: rgbColorReducer,
     provider: providerReducer,
-    refAddress: refAddressReducer,
-    paymentData: paymentDataReducer
+    refAddress: refAddressReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
