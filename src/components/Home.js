@@ -82,37 +82,7 @@ const Home = ({
    console.log("IN HOME COMPONENT:", rgbString)
   },[rgbString])
 
-  // const updateProductList = async () => {
-  //   if (generatorList) {
-  //     handleAlerts("Fetching products registered per NFT...", "info", true)
-  //     let objOfProducts_perGenerator = {}
-  //     const generatorList_KeysArr = Object.keys(generatorList)
-  //     for (let jj = 0; jj < generatorList_KeysArr.length; jj++) {
-  //       const generatorKey = generatorList_KeysArr[jj]
-  //       const generatorContract = generatorList[generatorKey].contract
-  //       const products_num = await generatorContract.productCount()
-  //       let objOfProducts_fromGenerator = {}
-  //       for (let ii = 0; ii < products_num; ii++) {
-  //         const product = await generatorContract.idToProduct(ii)
-  //         const product_id = parseInt(product.id, 16)
 
-  //         objOfProducts_fromGenerator[product_id] = {
-  //           name: product.name,
-  //           priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
-  //           address: product.contractAddress,
-  //           contract: getProductContract(product.contractAddress)
-  //         }
-  //       }
-  //       objOfProducts_perGenerator[generatorKey] = objOfProducts_fromGenerator
-  //     }
-
-  //     dispatch(setProductList(objOfProducts_perGenerator))
-  //     handleAlerts("Products per NFT collected!", "info")
-
-  //   } else {
-  //     dispatch(setProductList(undefined))
-  //   }
-  // }
 
   const handleResetNFT = (event) => {
     event.preventDefault()
@@ -218,7 +188,7 @@ const Home = ({
         </InputLabel>
         <Select
           disabled={generatorList ? false : true}
-          sx={{ bgcolor: "white" }}
+          sx={{ bgcolor: "white", color:"black" }}
           labelId="nft-id"
           id="nft-id"
           label="NFT"
@@ -250,7 +220,7 @@ const Home = ({
         </InputLabel>
         <Select
           disabled={productList ? false : true}
-          sx={{ bgcolor: "white" }}
+          sx={{ bgcolor: "white", color:"black" }}
           labelId="product-id"
           id="product-id"
           label="PRODUCT"
@@ -259,11 +229,11 @@ const Home = ({
         >
           {productList && typeof nftSelected !== "undefined" ? (Object.keys(productList[nftSelected]).map(productKey => (
             <MenuItem
-              sx={{ color: "black" }}
+              sx={{ color: "black", color:"black" }}
               value={productKey}
               key={productKey}
             >
-              {productKey + " - " + productList[nftSelected][productKey].name}
+              <Typography sx={{color:'black'}}>{productKey + " - " + productList[nftSelected][productKey].name}</Typography>
             </MenuItem>
           ))) : (<div></div>)}
         </Select>
