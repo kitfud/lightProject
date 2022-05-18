@@ -1,38 +1,27 @@
 import React from 'react'
 import { SketchPicker } from 'react-color';
+import { useDispatch, useSelector } from 'react-redux';
+import { setHexColor } from '../features/color';
 
-const LightPicker = ({
-  setRGBString,
-  currentColorSelectHex,
-  setCurrentColorSelectHex,
-  setCurrentColorSelectRGB
-}) => {
+const LightPicker = () => {
+
+  const dispatch = useDispatch()
+  const { HexColor } = useSelector(state => state.color.value)
+  const { sendDataProcess } = useSelector(state => state.connection.value)
 
   const handleChangeComplete = (color) => {
-    setCurrentColorSelectHex(color.hex)
-    const rgb_string = formatRGBVal(color.rgb)
-    setRGBString(rgb_string)
-    setCurrentColorSelectRGB(rgb_string)
-  }
-
-  const formatRGBVal = (color) => {
-
-    const r = color.r
-    const g = color.g
-    const b = color.b
-
-    const rgb_string = `${r},${g},${b}`
-    return rgb_string
+    dispatch(setHexColor(color.hex))
   }
 
   return (
     <div className="p-4">
       <SketchPicker
-        color={currentColorSelectHex}
+        disabled={sendDataProcess === "finished" ? false : true}
+        color={HexColor}
         onChangeComplete={(e) => handleChangeComplete(e)}
       />
       <div>
-        {currentColorSelectHex ? currentColorSelectHex : "---"}
+        {HexColor ? HexColor : "---"}
       </div>
     </div>
   )

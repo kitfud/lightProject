@@ -18,6 +18,7 @@ import { setNetwork } from '../features/network'
 import { setProvider } from '../features/provider'
 import { setGeneratorList } from '../features/generator'
 import { setProductList } from '../features/product'
+import { setSendDataProcess } from '../features/connection';
 
 const useStyles = makeStyles((theme) => ({
   navlinks: {
@@ -250,6 +251,9 @@ const Header = ({
       getChainId()
       if (provider) {
         getProvider()
+        // provider.on("pending", (tx) => {
+        //   dispatch(setSendDataProcess("initializdd"))
+        // });
       }
     }
     if (!provider) {

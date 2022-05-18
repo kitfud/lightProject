@@ -1,23 +1,14 @@
-import React, { useRef, useEffect } from 'react'
-import { useDispatch } from 'react-redux'
-import { setRGBColor } from "../features/rgbColor"
+import React, { useRef, useEffect, useState } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import { setRGBColorString } from "../features/color"
 
-const LightBulb = ({
-  disconnecting,
-  connection,
-  currentColorSelectHex,
-  currentColorSelectRGB,
-  setCurrentColorSelectRGB,
-  bulbColor,
-  setBulbColor,
-  previousTxHash,
-  currentTxHash,
-  setPreviousTxHash,
-}) => {
-
+const LightBulb = () => {
   const dispatch = useDispatch()
+  const { previousTxHash, currentTxHash } = useSelector((state) => state.paymentData.value)
+  const { HexColor } = useSelector(state => state.color.value)
 
   const canvasRef = useRef(null)
+  const [bulbColor, setBulbColor] = useState(undefined)
 
   const draw = (ctx) => {
     //This is the upper part of the light bulb -------------------------------------------------------------------
@@ -85,17 +76,12 @@ const LightBulb = ({
   }
 
   useEffect(() => {
-    // if (previousTxHash !== currentTxHash && currentColorSelectRGB) {
-    if (currentColorSelectRGB) {
-      setPreviousTxHash(currentTxHash)
-      setBulbColor(currentColorSelectHex)
-      dispatch(setRGBColor(currentColorSelectRGB))
-      setCurrentColorSelectRGB(undefined)
-      if(connection){
-        connection.send('paymentMade',currentColorSelectRGB)
-      }
+    if (previousTxHash !== currentTxHash && HexColor) {
+      // if (currentColorSelectRGB) {      
+      setBulbColor(HexColor)
+      dispatch(setRGBColorString(HexColor))
     }
-  }, [currentTxHash])
+  }, [currentTxHash, HexColor])
 
   useEffect(() => {
     console.log(currentColorSelectRGB)
