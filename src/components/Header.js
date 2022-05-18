@@ -85,7 +85,8 @@ const errorPulse = makeStyles((theme) => ({
 }))
 
 
-const pages = ['Admin', 'Shop'];
+const pages_text = ['Admin', 'Shop'];
+const pages = ["admin", "shop"]
 
 let first = true
 
@@ -181,7 +182,7 @@ const Header = ({
       await updateGeneratorList()
       await updateProductList()
 
-      setRefLink(window.location.origin + "?ref=" + new_user_address)
+      setRefLink(window.location.origin + "/home?ref=" + new_user_address)
     } else if (wallet && wrongNetwork) {
       await wallet.provider.request({
         method: 'wallet_switchEthereumChain',
@@ -302,7 +303,7 @@ const Header = ({
               }}            >
               {pages.map((page) => (
                 <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                  <Typography textAlign="center">{page.charAt(0).toUpperCase() + page.slice}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -319,7 +320,7 @@ const Header = ({
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pathname === "/admin" || pathname === "/shop" ? pages.map((page) => (
               <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
-                {page}
+                {page.charAt(0).toUpperCase() + page.slice(1)}
               </Link>
             )) : (<ins></ins>)}
           </Box>
