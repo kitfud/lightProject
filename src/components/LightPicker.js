@@ -2,6 +2,7 @@ import React from 'react'
 import { SketchPicker } from 'react-color';
 
 const LightPicker = ({
+  setRGBString,
   currentColorSelectHex,
   setCurrentColorSelectHex,
   setCurrentColorSelectRGB
@@ -10,6 +11,7 @@ const LightPicker = ({
   const handleChangeComplete = (color) => {
     setCurrentColorSelectHex(color.hex)
     const rgb_string = formatRGBVal(color.rgb)
+    setRGBString(rgb_string)
     setCurrentColorSelectRGB(rgb_string)
   }
 

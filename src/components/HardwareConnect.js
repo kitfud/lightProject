@@ -3,8 +3,6 @@ import { Button, Box } from "@mui/material"
 import { useDispatch, useSelector } from 'react-redux'
 import { setPort, setConnected, sendData } from "../features/connection"
 
-const HardwareConnect = ({ handleAlerts }) => {
-
   const dispatch = useDispatch()
 
   const rgbColor = useSelector(state => state.rgbColor.value)
@@ -63,6 +61,10 @@ const HardwareConnect = ({ handleAlerts }) => {
   }
 
   useEffect(() => {
+    console.log("SENDING RGB color")
+    console.log("port",port)
+    console.log("rgbColor",rgbColor)
+
     if (port && rgbColor) {
       sendDataFunc()
     }
