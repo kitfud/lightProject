@@ -5,14 +5,12 @@ import {
   Typography,
   Card,
   Grid,
-  Modal,
-  CircularProgress
+  Modal
 } from '@mui/material'
 import { makeStyles } from "@mui/styles"
 import QrCode2Icon from '@mui/icons-material/QrCode2';
 import QRCode from "react-qr-code";
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   qRPic: {
@@ -34,10 +32,6 @@ const theme = createTheme({
 });
 
 const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }) => {
-
-  const { HexColor } = useSelector(state => state.color.value)
-  const { sendDataProcess } = useSelector(state => state.connection.value)
-
   const classes = useStyles()
   const howToQR = "Select a color, then click the button below."
   const [open, setOpen] = React.useState(false);
@@ -50,15 +44,14 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }
         <Box>
           {howToQR}
           <br /><br />
-          {typeof productSelected !== "undefined" && typeof HexColor !== "undefined" ? (
+          {typeof productSelected !== "undefined" ? (
             <Button
               variant="contained"
               size="large"
               color="primary"
               endIcon={<QrCode2Icon />}
               onClick={handleOpen}>
-              {sendDataProcess === "initialized" ? (
-                <CircularProgress color="inherit" />) : ("Get QR")}
+              Get QR
             </Button>) :
             (<Button
               variant="contained"
@@ -66,7 +59,7 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }
               color="primary"
               endIcon={<QrCode2Icon />}
             >
-              {typeof productSelected === "undefined" ? "Select product" : "Select color"}
+              Select product
             </Button>)}
           <Modal
             open={open}

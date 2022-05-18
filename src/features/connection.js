@@ -4,7 +4,6 @@ const initialStateValue = {
     port: undefined,
     connected: false,
     sendDataStatus: undefined,
-    sendDataProcess: "finished",
     receiveDataStatus: undefined,
     lastSentData: undefined,
     lastReceivedData: undefined
@@ -30,10 +29,7 @@ export const connectionSlice = createSlice({
         },
         setConnected: (state, action) => {
             state.value.connected = action.payload
-        },
-        setSendDataProcess: (state, action) => {
-            state.value.sendDataProcess = action.payload
-        },
+        }
     },
     extraReducers: {
         [sendData.pending]: (state, action) => {
@@ -49,6 +45,6 @@ export const connectionSlice = createSlice({
     }
 })
 
-export const { setPort, setConnected, setSendDataProcess } = connectionSlice.actions
+export const { setPort, setConnected } = connectionSlice.actions
 
 export default connectionSlice.reducer

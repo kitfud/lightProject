@@ -1,15 +1,12 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, Box } from "@mui/material"
 import { useDispatch, useSelector } from 'react-redux'
-import { setPort, setConnected, sendData, setSendDataProcess } from "../features/connection"
-import { setRGBColorString, setHexColor } from '../features/color'
-import { setPreviousTxHash } from "../features/paymentData"
+import { setPort, setConnected, sendData } from "../features/connection"
 
   const dispatch = useDispatch()
 
-  const { RGBColorString } = useSelector(state => state.color.value)
+  const rgbColor = useSelector(state => state.rgbColor.value)
   const { port, connected } = useSelector(state => state.connection.value)
-  const { previousTxHash, currentTxHash } = useSelector(state => state.paymentData.value)
   const baudRate = 9600
 
   const handleConnect = () => {
@@ -44,7 +41,7 @@ import { setPreviousTxHash } from "../features/paymentData"
   }
 
   const sendDataFunc = () => {
-    dispatch(sendData(RGBColorString))
+    dispatch(sendData(rgbColor))
   }
 
   const readDataFunc = async () => {
@@ -64,15 +61,14 @@ import { setPreviousTxHash } from "../features/paymentData"
   }
 
   useEffect(() => {
-    if (port && RGBColorString && previousTxHash !== currentTxHash) {
-      console.log("useEffect HardwareConnect")
+    console.log("SENDING RGB color")
+    console.log("port",port)
+    console.log("rgbColor",rgbColor)
+
+    if (port && rgbColor) {
       sendDataFunc()
-      dispatch(setPreviousTxHash(currentTxHash))
-      dispatch(setRGBColorString(undefined))
-      dispatch(setHexColor(undefined))
-      dispatch(setSendDataProcess("finished"))
     }
-  }, [RGBColorString])
+  }, [rgbColor])
 
   return (
     <>
