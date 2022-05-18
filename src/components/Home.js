@@ -16,6 +16,7 @@ import { ethers } from 'ethers';
 import { getProductContract } from '../utils';
 import { setProductList } from '../features/product';
 import { setRefAddress } from '../features/refAddress';
+import HardwareConnect from './HardwareConnect';
 
 const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
@@ -255,6 +256,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
             currentColorSelectRGB={currentColorSelectRGB}
             setCurrentColorSelectRGB={setCurrentColorSelectRGB}
           />
+          <HardwareConnect handleAlerts={handleAlerts} />
         </center>
 
         <center>
