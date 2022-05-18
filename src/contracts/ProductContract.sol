@@ -1,15 +1,17 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import './ILightGenerator.sol';
+import "./ILightGenerator.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
 
 //  add a lottery
 
 contract ProductContract {
     uint256 public immutable id;
+    uint256 public immutable tokenId;
+    address public immutable factoryAddress;
     string public productName;
     uint256 public productPrice;
-    address payable public owner;
     address payable public linkedGenerator;
 
     event ProductSold(
@@ -21,17 +23,18 @@ contract ProductContract {
     event Deposit(address indexed payee, uint256 value, uint256 time, uint256 currentContractBalance);
     event Withdraw(uint256 time, uint256 amount, address indexed owner);
 
-    constructor(uint256 _id, string memory _name, uint256 _price, address _owner) payable {
+    constructor(uint256 _id, string memory _name, uint256 _price, uint256 _tokenId, address _factoryAddress) payable {
         id = _id;
+        tokenId = _tokenId; // the owner remains the NFT holder
+        factoryAddress = _factoryAddress;
         productName = _name;
         productPrice = _price;
         linkedGenerator = payable(msg.sender);
-        owner = payable(_owner);
     }
 
     // Remove and replace by a delegatecall ?
     modifier onlyOwner(address _entity) {
-        require(msg.sender == _entity, 'Only owner');
+        require(msg.sender == _entity, "Only owner");
         _;
     }
 
@@ -52,20 +55,21 @@ contract ProductContract {
     // }
 
     function withdraw() external {
+        address owner = IERC721(factoryAddress).ownerOf(tokenId);
         require(msg.sender == owner || msg.sender == linkedGenerator, "not allowed");
         uint256 contractBalance = address(this).balance;
-        (bool sent,) = owner.call{value:address(this).balance}("");
-        require(sent, 'Failed to Send Ether To Owner');
+        (bool sent,) = owner.call{value:contractBalance}("");
+        require(sent, "Failed to Send Ether To Owner");
         emit Withdraw(block.timestamp, contractBalance, owner);
     }
 
     function destroy() external onlyOwner(linkedGenerator) {
+        address owner = IERC721(factoryAddress).ownerOf(tokenId);
         selfdestruct(payable(owner));
     }
 
     receive() external payable {
         require(msg.value >= getProductPriceInETH(), "amount sent too low");
-
         emit Deposit(msg.sender, msg.value,block.timestamp, address(this).balance);
     }
 }

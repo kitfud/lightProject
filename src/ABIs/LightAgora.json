@@ -2,9 +2,9 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "_agora",
-				"type": "address"
+				"internalType": "uint256",
+				"name": "initialSupply",
+				"type": "uint256"
 			},
 			{
 				"internalType": "address",
@@ -27,42 +27,17 @@
 			{
 				"indexed": true,
 				"internalType": "address",
-				"name": "approved",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "Approval",
-		"type": "event"
-	},
-	{
-		"anonymous": false,
-		"inputs": [
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "owner",
-				"type": "address"
-			},
-			{
-				"indexed": true,
-				"internalType": "address",
-				"name": "operator",
+				"name": "spender",
 				"type": "address"
 			},
 			{
 				"indexed": false,
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
+				"internalType": "uint256",
+				"name": "value",
+				"type": "uint256"
 			}
 		],
-		"name": "ApprovalForAll",
+		"name": "Approval",
 		"type": "event"
 	},
 	{
@@ -81,9 +56,9 @@
 				"type": "address"
 			},
 			{
-				"indexed": true,
+				"indexed": false,
 				"internalType": "uint256",
-				"name": "tokenId",
+				"name": "value",
 				"type": "uint256"
 			}
 		],
@@ -91,13 +66,24 @@
 		"type": "event"
 	},
 	{
-		"inputs": [],
-		"name": "NFT_URI",
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "owner",
+				"type": "address"
+			},
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			}
+		],
+		"name": "allowance",
 		"outputs": [
 			{
-				"internalType": "string",
+				"internalType": "uint256",
 				"name": "",
-				"type": "string"
+				"type": "uint256"
 			}
 		],
 		"stateMutability": "view",
@@ -107,49 +93,23 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "toSearch",
-				"type": "address"
-			}
-		],
-		"name": "addressToTokenID",
-		"outputs": [
-			{
-				"internalType": "bool[]",
-				"name": "",
-				"type": "bool[]"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "agoraAddress",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "to",
+				"name": "spender",
 				"type": "address"
 			},
 			{
 				"internalType": "uint256",
-				"name": "tokenId",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
 		"name": "approve",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
 	},
@@ -157,7 +117,7 @@
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "owner",
+				"name": "account",
 				"type": "address"
 			}
 		],
@@ -175,113 +135,61 @@
 	{
 		"inputs": [
 			{
-				"internalType": "address",
-				"name": "toSearch",
-				"type": "address"
-			}
-		],
-		"name": "checkIfTokenHolder",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
 				"internalType": "uint256",
-				"name": "tokenId",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
-		"name": "checkTokenOwnerById",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "currentNFTPriceInUSD",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "getApproved",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getETHUSDConversionRate",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [],
-		"name": "getNFTPriceInETH",
-		"outputs": [
-			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"stateMutability": "view",
+		"name": "burn",
+		"outputs": [],
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
 		"inputs": [
 			{
 				"internalType": "address",
-				"name": "owner",
+				"name": "account",
 				"type": "address"
 			},
 			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "burnFrom",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
 				"internalType": "address",
-				"name": "operator",
+				"name": "account",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "amount",
+				"type": "uint256"
+			}
+		],
+		"name": "burnTokens",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
 				"type": "address"
 			}
 		],
-		"name": "isApprovedForAll",
+		"name": "canBurn",
 		"outputs": [
 			{
 				"internalType": "bool",
@@ -295,14 +203,165 @@
 	{
 		"inputs": [
 			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "canMint",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "checkIfOnGoingVote",
+		"outputs": [
+			{
 				"internalType": "string",
-				"name": "_name",
+				"name": "",
 				"type": "string"
 			}
 		],
-		"name": "mintGenerator",
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "decimals",
+		"outputs": [
+			{
+				"internalType": "uint8",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "subtractedValue",
+				"type": "uint256"
+			}
+		],
+		"name": "decreaseAllowance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "factoryAddress",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "getBalance",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "spender",
+				"type": "address"
+			},
+			{
+				"internalType": "uint256",
+				"name": "addedValue",
+				"type": "uint256"
+			}
+		],
+		"name": "increaseAllowance",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "isVoter",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "lightFactory",
+		"outputs": [
+			{
+				"internalType": "contract LightFactory",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "generatorAddress",
+				"type": "address"
+			}
+		],
+		"name": "mintTokens",
 		"outputs": [],
-		"stateMutability": "payable",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -322,120 +381,26 @@
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "tokenId",
+				"name": "_amount",
 				"type": "uint256"
 			}
 		],
-		"name": "ownerOf",
-		"outputs": [
-			{
-				"internalType": "address",
-				"name": "",
-				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			}
-		],
-		"name": "safeTransferFrom",
+		"name": "receivePayment",
 		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "from",
-				"type": "address"
-			},
-			{
-				"internalType": "address",
-				"name": "to",
-				"type": "address"
-			},
-			{
-				"internalType": "uint256",
-				"name": "tokenId",
-				"type": "uint256"
-			},
-			{
-				"internalType": "bytes",
-				"name": "_data",
-				"type": "bytes"
-			}
-		],
-		"name": "safeTransferFrom",
-		"outputs": [],
-		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "address",
-				"name": "operator",
-				"type": "address"
-			},
-			{
-				"internalType": "bool",
-				"name": "approved",
-				"type": "bool"
-			}
-		],
-		"name": "setApprovalForAll",
-		"outputs": [],
-		"stateMutability": "nonpayable",
+		"stateMutability": "payable",
 		"type": "function"
 	},
 	{
 		"inputs": [
 			{
 				"internalType": "uint256",
-				"name": "price",
+				"name": "_newPrice",
 				"type": "uint256"
 			}
 		],
-		"name": "setNFTPrice",
+		"name": "suggestNFTPriceChange",
 		"outputs": [],
 		"stateMutability": "nonpayable",
-		"type": "function"
-	},
-	{
-		"inputs": [
-			{
-				"internalType": "bytes4",
-				"name": "interfaceId",
-				"type": "bytes4"
-			}
-		],
-		"name": "supportsInterface",
-		"outputs": [
-			{
-				"internalType": "bool",
-				"name": "",
-				"type": "bool"
-			}
-		],
-		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -453,7 +418,7 @@
 	},
 	{
 		"inputs": [],
-		"name": "tokenCount",
+		"name": "totalSupply",
 		"outputs": [
 			{
 				"internalType": "uint256",
@@ -467,39 +432,25 @@
 	{
 		"inputs": [
 			{
-				"internalType": "uint256",
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"name": "tokenIDToGenerator",
-		"outputs": [
-			{
-				"internalType": "contract LightGenerator",
-				"name": "",
+				"internalType": "address",
+				"name": "to",
 				"type": "address"
-			}
-		],
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"inputs": [
+			},
 			{
 				"internalType": "uint256",
-				"name": "tokenId",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
-		"name": "tokenURI",
+		"name": "transfer",
 		"outputs": [
 			{
-				"internalType": "string",
+				"internalType": "bool",
 				"name": "",
-				"type": "string"
+				"type": "bool"
 			}
 		],
-		"stateMutability": "view",
+		"stateMutability": "nonpayable",
 		"type": "function"
 	},
 	{
@@ -516,13 +467,74 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "tokenId",
+				"name": "amount",
 				"type": "uint256"
 			}
 		],
 		"name": "transferFrom",
-		"outputs": [],
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
 		"stateMutability": "nonpayable",
 		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "vote_state",
+		"outputs": [
+			{
+				"internalType": "enum LightAgora.VOTE_STATE",
+				"name": "",
+				"type": "uint8"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"name": "voterDidVote",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"name": "voters",
+		"outputs": [
+			{
+				"internalType": "address",
+				"name": "",
+				"type": "address"
+			}
+		],
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"stateMutability": "payable",
+		"type": "receive"
 	}
 ]
