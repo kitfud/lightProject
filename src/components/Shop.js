@@ -22,6 +22,7 @@ import { setPathname } from '../features/pathname';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
+
 const tiers = [
   {
     title: 'Arduino Uno',
@@ -31,11 +32,11 @@ const tiers = [
     ],
     image: img_arduino,
     buttonText: 'Buy now',
-    buttonVariant: 'outlined',
+    buttonVariant: 'contained',
+    vendorURL: 'https://amzn.to/3LsZVzI'
   },
   {
     title: 'Led Strip',
-    subheader: 'Most popular',
     price: '11',
     description: [
       'LED Strip - tunable white'
@@ -43,16 +44,18 @@ const tiers = [
     image: img_led,
     buttonText: 'Buy now',
     buttonVariant: 'contained',
+    vendorURL: 'https://amzn.to/3wzXbLm'
   },
   {
-    title: 'Raspberry Pi Zero',
+    title: 'Jumper Wires',
     price: '5',
     description: [
-      'A tiny single-board computer'
+      'Wire your LED lights to Arduino'
     ],
     image: img_raspberry,
     buttonText: 'Buy now',
-    buttonVariant: 'outlined',
+    buttonVariant: 'contained',
+    vendorURL: 'https://amzn.to/3aaveSW'
   },
 ];
 
@@ -120,18 +123,7 @@ function PricingContent() {
                   }}
                 />
                 <CardContent>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'center',
-                      alignItems: 'baseline',
-                      mb: 2,
-                    }}
-                  >
-                    <Typography component="h2" variant="h3" color="text.primary">
-                      ${tier.price}
-                    </Typography>
-                  </Box>
+               
                   <img src={tier.image} />
                   <ul>
                     {tier.description.map((line) => (
@@ -146,11 +138,18 @@ function PricingContent() {
                     ))}
                   </ul>
                 </CardContent>
-                <CardActions>
-                  <Button fullWidth variant={tier.buttonVariant} onClick={changeNum}>
+              
+             
+                    <a target="_blank" href={tier.vendorURL}>
+                    <Button color="success" fullWidth variant={tier.buttonVariant} >
                     {tier.buttonText}
                   </Button>
-                </CardActions>
+                    </a>
+                
+             
+               
+                
+             
               </Card>
             </Grid>
           ))}
