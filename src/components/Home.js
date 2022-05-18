@@ -20,7 +20,19 @@ import { setRefAddress } from '../features/refAddress';
 import HardwareConnect from './HardwareConnect';
 import rgbColor from '../features/rgbColor';
 
-const Home = ({ setPayment, setRGBString, rgbString, connection, handleAlerts, updateGeneratorList, updateProductList }) => {
+const Home = ({
+  disconnecting, 
+  previousTxHash, 
+  setPreviousTxHash, 
+  setCurrentTxHash, 
+  currentTxHash, 
+  setPayment, 
+  setRGBString, 
+  rgbString, 
+  connection, 
+  handleAlerts, 
+  updateGeneratorList, 
+  updateProductList }) => {
 
   const [searchParams] = useSearchParams()
   const dispatch = useDispatch()
@@ -44,8 +56,8 @@ const Home = ({ setPayment, setRGBString, rgbString, connection, handleAlerts, u
   const [bulbColor, setBulbColor] = useState(undefined)
   const firstTimeListener = useRef(true)
   const [selectedProductContract, setSelectedProductContract] = useState(undefined)
-  const [previousTxHash, setPreviousTxHash] = useState(undefined)
-  const [currentTxHash, setCurrentTxHash] = useState(undefined)
+
+  
   const [ETHUSDConversionRate, setETHUSDConversionRate] = useState(undefined)
 
   const checkIfValidUrl = async () => {
@@ -265,6 +277,7 @@ const Home = ({ setPayment, setRGBString, rgbString, connection, handleAlerts, u
         <h1>Crypto Lights</h1>
         <center>
           <LightBulb
+            disconnecting = {disconnecting}
             connection = {connection}
             currentColorSelectHex={currentColorSelectHex}
             previousTxHash={previousTxHash}

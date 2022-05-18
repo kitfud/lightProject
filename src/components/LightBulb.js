@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux'
 import { setRGBColor } from "../features/rgbColor"
 
 const LightBulb = ({
+  disconnecting,
   connection,
   currentColorSelectHex,
   currentColorSelectRGB,
@@ -87,7 +88,7 @@ const LightBulb = ({
     console.log("previousTxHash", previousTxHash)
     console.log("currentTxHash", currentTxHash)
     console.log("colorSelected: ", currentColorSelectRGB)
-    if (previousTxHash !== currentTxHash && currentColorSelectRGB) {
+    if (previousTxHash !== currentTxHash && currentColorSelectRGB && !disconnecting) {
       setPreviousTxHash(currentTxHash)
       setBulbColor(currentColorSelectHex)
       dispatch(setRGBColor(currentColorSelectRGB))
@@ -96,7 +97,7 @@ const LightBulb = ({
         connection.send('paymentMade',currentColorSelectRGB)
       }
     }
-  }, [currentTxHash, currentColorSelectRGB])
+  }, [currentTxHash])
 
   useEffect(() => {
     console.log(currentColorSelectRGB)

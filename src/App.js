@@ -86,6 +86,10 @@ function App() {
   const [payment, setPayment] = useState(undefined)
   const [oldpayment, setOldPayment] = useState(undefined)
 
+  const [currentTxHash, setCurrentTxHash] = useState(undefined)
+  const [previousTxHash, setPreviousTxHash] = useState(undefined)
+  const [disconnecting, setDisconnecting] = useState(false)
+
   useEffect(()=>{
 console.log("RGBString", rgbString)
   },[rgbString])
@@ -98,14 +102,18 @@ console.log("RGBString", rgbString)
     },[payment])
 
   const handleConnect = ()=>{
+    setDisconnecting(false)
     setConnection(connect(57600))
     setConnectionStatus(true)
-    setButtonColor("success")   
+    setButtonColor("success")
   }
 
   const handleDisconnect = ()=>{
+    setDisconnecting(true)
     setButtonColor("primary")
     setConnectionStatus(false)
+    setCurrentTxHash(undefined)
+    setPreviousTxHash(undefined)
     window.location.reload(false)
     }
 
@@ -284,6 +292,7 @@ connectionStatus === false?
 
 }
         <Header
+          
           setColorMode={setColorMode}
           setUserAddress={setUserAddress}
           userAddress={userAddress}
@@ -298,6 +307,11 @@ connectionStatus === false?
           <Routes>
             <Route path='/' element={
               <Home
+              disconnecting = {disconnecting}
+                previousTxHash = {previousTxHash}
+                setPreviousTxHash = {setPreviousTxHash}
+                currentTxHash={currentTxHash}
+                setCurrentTxHash={setCurrentTxHash}
                 setPayment={setPayment}
                 setRGBString = {setRGBString}
                 rgbString = {rgbString}
@@ -308,6 +322,11 @@ connectionStatus === false?
               />} />
             <Route path='/home' element={
               <Home
+              disconnecting = {disconnecting}
+              previousTxHash = {previousTxHash}
+              setPreviousTxHash = {setPreviousTxHash}
+                currentTxHash={currentTxHash}
+                setCurrentTxHash={setCurrentTxHash}
                 setPayment={setPayment}
                 setRGBString = {setRGBString}
                 rgbString = {rgbString}
