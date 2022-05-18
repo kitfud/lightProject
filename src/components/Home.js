@@ -218,7 +218,7 @@ const Home = ({
         </InputLabel>
         <Select
           disabled={generatorList ? false : true}
-          sx={{ bgcolor: "white" }}
+          sx={{ bgcolor: "white", color: "black" }}
           labelId="nft-id"
           id="nft-id"
           label="NFT"
@@ -250,7 +250,7 @@ const Home = ({
         </InputLabel>
         <Select
           disabled={productList ? false : true}
-          sx={{ bgcolor: "white" }}
+          sx={{ bgcolor: "white", color: "black" }}
           labelId="product-id"
           id="product-id"
           label="PRODUCT"
