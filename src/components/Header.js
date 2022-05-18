@@ -84,12 +84,9 @@ const errorPulse = makeStyles((theme) => ({
   }
 }))
 
-
-const pages_text = ['Admin', 'Shop'];
 const pages = ["admin", "shop"]
 
 let first = true
-
 
 const Header = ({
   setColorMode, updateProductList, updateGeneratorList, handleAlerts, copyToClipboard

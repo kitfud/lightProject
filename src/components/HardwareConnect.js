@@ -66,8 +66,8 @@ const HardwareConnect = ({ handleAlerts }) => {
   }
 
   useEffect(() => {
-    // if (port && RGBColorString && previousTxHash !== currentTxHash) {
-    if (port && RGBColorString) {
+    if (port && RGBColorString && previousTxHash !== currentTxHash) {
+      // if (port && RGBColorString) {
       console.log("here")
       sendDataFunc()
       dispatch(setPreviousTxHash(currentTxHash))
