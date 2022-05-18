@@ -85,7 +85,7 @@ const errorPulse = makeStyles((theme) => ({
 }))
 
 
-const pages = ['admin', 'shop'];
+const pages = ['Admin', 'Shop'];
 
 let first = true
 
@@ -101,12 +101,12 @@ const Header = ({
   const wrongNetwork = useSelector((state) => state.network.value.wrongNetwork)
   const provider = useSelector((state) => state.provider.value)
   const refAddress = useSelector((state) => state.refAddress.value)
+  const pathname = useSelector(state => state.pathname.value)
 
   // Local Variables
   const [anchorElNav, setAnchorElNav] = useState(null);
   const [buttonColor, setButtonColor] = useState("warning")
   const [refLink, setRefLink] = useState(undefined)
-  const [pathname, setPathname] = useState(undefined)
   const classes = useStyles()
   const warningPulseClass = warningPulse()
   const errorPulseClass = errorPulse()
@@ -226,9 +226,7 @@ const Header = ({
     }))
   }
 
-
   useEffect(() => {
-    setPathname(window.location.pathname)
     if ((window.ethereum && first) && (pathname === "/admin" || pathname === "/shop")) {
       window.ethereum.on('chainChanged', function () {
         connectWallet()

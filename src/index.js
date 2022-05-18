@@ -17,6 +17,7 @@ import colorReducer from "./features/color"
 import providerReducer from "./features/provider"
 import refAddressReducer from "./features/refAddress"
 import paymentDataReducer from "./features/paymentData"
+import pathnameReducer from "./features/pathname"
 
 const store = configureStore({
   reducer: {
@@ -31,7 +32,8 @@ const store = configureStore({
     color: colorReducer,
     provider: providerReducer,
     refAddress: refAddressReducer,
-    paymentData: paymentDataReducer
+    paymentData: paymentDataReducer,
+    pathname: pathnameReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({
