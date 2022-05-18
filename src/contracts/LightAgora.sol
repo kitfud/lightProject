@@ -3,13 +3,20 @@ pragma solidity ^0.8.13;
 
 // import "@openzeppelin/contracts/access/AccessControl.sol";
 import "./ILightFactory.sol";
-import "./IAgora.sol";
+import "./LightFactory.sol";
+import "./ILightAgora.sol";
+import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
+import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
+
 
 // TO DO: Add the ERC20 token mechanics here? Add roles?
 
-contract Agora is IAgora {
-    // bytes32 public constant ADMIN_ROLE = keccak256("ADMIN_ROLE");
-    address public factoryAddress; // could change this to a container but not needed now.
+contract LightAgora is ILightAgora, ERC20Burnable {
+    // bytes32 public constant MINTER_ROLE = keccak256("MINTER_ROLE");
+    // bytes32 public constant BURNER_ROLE = keccak256("BURNER_ROLE");
+
+    address public immutable factoryAddress; // could change this to a container but not needed now.
+    LightFactory public lightFactory; // change to immutable?
 
     uint256 votesCount;
     uint256 cumulativeCount;
@@ -18,6 +25,8 @@ contract Agora is IAgora {
     mapping(address => bool) public voterDidVote;
     // mapping(address => bool) public voterDidAgree; // no need for now
     // mapping(address => uint256) public voterToNewPrice; // no need for now
+    mapping(address => bool) public canMint;
+    mapping(address => bool) public canBurn;
 
     enum VOTE_STATE {
         ONGOING,
@@ -25,17 +34,28 @@ contract Agora is IAgora {
     }
     VOTE_STATE public vote_state;
 
-    constructor() {
-        // voters = [
-        //     msg.sender,
-        //     0xa97e80DF47220afaD2D017a10b023B55FDB86293,
-        //     0x8BDD43Eb657847d2dC730eb45e1288eb3f588A04,
-        //     0xa65AA8747Fa0934d51315082336938696E80136E,
-        //     0x9466b7430eC51c81e1F43dDCf69278878B559382
-        // ];
+    constructor(uint256 initialSupply, address _priceFeedAddress) ERC20('LiquidLight', 'LIQ'){
+        // _mint(msg.sender, initialSupply);
+// very simple behavior: mint tokens when a new generator is minted/deployed,
+//                       a fixed supply for that specific generator
+//                       when a user buys a product, the gen can send tokens
+//                       once tokens are all out, the generator gets the right to burn tokens?
 
-        for (uint i ; i< voters.length ; i++) {
+        lightFactory = new LightFactory(address(this), _priceFeedAddress);
+        factoryAddress = address(lightFactory);
+        canMint[factoryAddress] = true;
+
+        voters = [
+            msg.sender,
+            0xa97e80DF47220afaD2D017a10b023B55FDB86293,
+            0x8BDD43Eb657847d2dC730eb45e1288eb3f588A04,
+            0xa65AA8747Fa0934d51315082336938696E80136E,
+            0x9466b7430eC51c81e1F43dDCf69278878B559382
+        ];
+
+        for (uint i ; i<voters.length ; i++) {
             isVoter[voters[i]] = true;
+            _mint(voters[i], initialSupply);
         }
         vote_state = VOTE_STATE.SETTLED;
     }
@@ -45,8 +65,34 @@ contract Agora is IAgora {
         _;
     }
 
-    function addFactory(address _factoryAddress) external onlyVoter {
-        factoryAddress = _factoryAddress;
+    // change for an Access control mechanism?
+    modifier onlyMinter {
+        require(canMint[msg.sender] == true, "No minting rights");
+        _;
+    }
+
+    modifier onlyBurner {
+        require(canBurn[msg.sender] == true, "No minting rights");
+        _;
+    }
+
+    function decimals() public view virtual override returns (uint8) {
+        return 0;
+    }
+
+    // // could remove - check
+    // function addFactory(address _factoryAddress) external onlyVoter {
+    //     factoryAddress = _factoryAddress;
+    //     canMint[factoryAddress] = true;
+    // }
+
+    function mintTokens(address generatorAddress) external onlyMinter {
+        _mint(generatorAddress, 1000);
+    }
+
+    // Check burn in ERC20Burtnable.sol github - burn function and burnFrom
+    function burnTokens(address account, uint256 amount) external onlyBurner {
+        _burn(account, amount);
     }
 
     function suggestNFTPriceChange(uint256 _newPrice) public onlyVoter {

@@ -58,7 +58,7 @@ contract ProductContract {
         address owner = IERC721(factoryAddress).ownerOf(tokenId);
         require(msg.sender == owner || msg.sender == linkedGenerator, "not allowed");
         uint256 contractBalance = address(this).balance;
-        (bool sent,) = msg.sender.call{value:contractBalance}("");
+        (bool sent,) = owner.call{value:contractBalance}("");
         require(sent, "Failed to Send Ether To Owner");
         emit Withdraw(block.timestamp, contractBalance, owner);
     }

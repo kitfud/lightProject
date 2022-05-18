@@ -3,6 +3,7 @@ pragma solidity ^0.8.13;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./ProductContract.sol";
 import "./ILightGenerator.sol";
 
@@ -14,6 +15,7 @@ import "./ILightGenerator.sol";
 
 contract LightGenerator is ILightGenerator {
     address public immutable factoryAddress;
+    address public immutable agoraAddress;
     uint256 public immutable tokenId;
     uint256 public productCount;
     string public generatorName;
@@ -50,6 +52,7 @@ contract LightGenerator is ILightGenerator {
     event Withdraw(uint256 time, uint256 amount, address indexed owner);
 
     constructor(
+        address _agoraAddress,
         address _factoryAddress,
         uint256 id,
         string memory _name,
@@ -58,6 +61,7 @@ contract LightGenerator is ILightGenerator {
         // ethusd price feed address on rinkeby : 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         factoryAddress = _factoryAddress; // create an interface - should lower the gas
+        agoraAddress = _agoraAddress;
         tokenId = id;
         generatorName = _name;
     }
@@ -135,7 +139,7 @@ contract LightGenerator is ILightGenerator {
     // should not work though because people could exhaust the account
     // by changing the product selection wityhout buying
     function selectProduct(uint256 _productId) external {
-        require(canSelectProduct, "An operation is already ongoin");
+        require(canSelectProduct, "An operation is already ongoing");
         require(_productId < productCount, "Product not listed");
         selectedProductId = _productId;
     }
@@ -192,6 +196,11 @@ contract LightGenerator is ILightGenerator {
         productCount = 0;
     }
 
+    // can withdraw LIQ tokens to owner(only)
+    function withdrawLIQTokens(uint256 amount) public onlyOwner {
+        IERC20(agoraAddress).transfer(IERC721(factoryAddress).ownerOf(tokenId), amount);
+    }
+
     // function getAllAvailableProducts() public view returns(bool[] memory){
     //     bool[] memory productList;
     //     for (uint i=0 ; i<productCount ; i++){
@@ -215,3 +224,6 @@ contract LightGenerator is ILightGenerator {
         );
     }
 }
+
+
+// add Agora address --> to transfer the erc20 to owner

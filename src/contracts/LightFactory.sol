@@ -3,9 +3,8 @@ pragma solidity ^0.8.13;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
-// import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
-import "./IAgora.sol";
+import "./ILightAgora.sol";
 import "./LightGenerator.sol";
 import "./ILightFactory.sol";
 
@@ -69,11 +68,13 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
         _safeMint(msg.sender, newTokenId);
         _setTokenURI(newTokenId, NFT_URI);
         LightGenerator generator = new LightGenerator(
+            agoraAddress,
             address(this),
             tokenCount,
             _name,
             priceFeedAddress
         );
+        ILightAgora(agoraAddress).mintTokens(address(generator));
         tokenIDToGenerator[tokenCount] = generator;
         tokenCount++;
     }
