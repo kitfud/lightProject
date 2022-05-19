@@ -84,7 +84,7 @@ const errorPulse = makeStyles((theme) => ({
   }
 }))
 
-const pages = ["admin", "shop"]
+const pages = ["admin", "shop", "agora"]
 
 let first = true
 
@@ -225,7 +225,7 @@ const Header = ({
   }
 
   useEffect(() => {
-    if ((window.ethereum && first) && (pathname === "/admin" || pathname === "/shop")) {
+    if ((window.ethereum && first) && (pathname === "/admin" || pathname === "/shop" || pathname==="/agora")) {
       window.ethereum.on('chainChanged', function () {
         connectWallet()
       });
@@ -234,7 +234,7 @@ const Header = ({
         connectWallet()
       });
       first = false
-    } else if (window.ethereum && first && !(pathname === "/admin" || pathname === "/shop")) {
+    } else if (window.ethereum && first && !(pathname === "/admin" || pathname === "/shop"|| pathname==="/agora")) {
       window.ethereum.on('chainChanged', function () {
         getProvider()
       });
@@ -315,7 +315,7 @@ const Header = ({
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-            {pathname === "/admin" || pathname === "/shop" ? pages.map((page) => (
+            {pathname === "/admin" || pathname === "/shop" || pathname ==="/agora" ? pages.map((page) => (
               <Link key={page} to={page} onClick={handleCloseNavMenu} className={classes.link}>
                 {page.charAt(0).toUpperCase() + page.slice(1)}
               </Link>
@@ -327,7 +327,7 @@ const Header = ({
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {pathname === "/admin" || pathname === "/shop" ? (
+            {pathname === "/admin" || pathname === "/shop" || pathname==="/agora" ? (
               <Tooltip title="copy to clipboard">
                 <Chip
                   label={refLink ? refLink : "Referral link"}
@@ -336,7 +336,7 @@ const Header = ({
                 />
               </Tooltip>) : (<ins></ins>)}
 
-            {(pathname === "/admin" || pathname === "/shop") ? (wallet && wrongNetwork ? (
+            {(pathname === "/admin" || pathname === "/shop" || pathname==="/agora") ? (wallet && wrongNetwork ? (
               <Button className={errorPulseClass.pulse} onClick={connectWallet} variant="contained" color={"error"}>
                 Switch network
               </Button>) :

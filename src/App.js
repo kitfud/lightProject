@@ -17,6 +17,7 @@ import { setUserAddress } from './features/userAddress'
 import { setAlerts } from './features/alerts'
 import { ethers } from "ethers"
 import { LandingPage } from './components/LandingPage'
+import Agora from './components/Agora'
 
 let themeLightMode = createTheme({
 
@@ -232,7 +233,7 @@ function App() {
                 handleAlerts={handleAlerts}
                 copyToClipboard={copyToClipboard}
               />} />
-
+            <Route path='/agora' element = {<Agora/>}/>
           </Routes>
         </Card>
         <Snackbar
