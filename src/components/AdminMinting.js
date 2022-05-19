@@ -75,7 +75,7 @@ const AdminMinting = ({
       await getETHUSDConversionRate()
       try {
         let tx = await factoryContract.mintGenerator(
-          nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConversionRate}`+ 1000000) }
+          nftName, { "value": ethers.utils.parseEther(`${(nftPrice / ETHUSDConversionRate)+0.000000000001}`) }
         )
         await tx.wait(1)
 
