@@ -16,8 +16,10 @@ import GlobalStyles from '@mui/material/GlobalStyles';
 import Container from '@mui/material/Container';
 
 import img_arduino from '../img/arduino_uno_200.jpg';
+import img_wires from '../img/JumperWires.jpg';
 import img_led from '../img/led_strip200.jpg';
-import img_raspberry from '../img/raspberry_pi_zero_200.jpg';
+import circuit_diagram from '../img/CryptoLightsCircuit.png'
+
 import { setPathname } from '../features/pathname';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
@@ -52,7 +54,7 @@ const tiers = [
     description: [
       'Wire your LED lights to Arduino'
     ],
-    image: img_raspberry,
+    image: img_wires,
     buttonText: 'Buy now',
     buttonVariant: 'contained',
     vendorURL: 'https://amzn.to/3aaveSW'
@@ -167,11 +169,136 @@ function PricingContent() {
       >
         <Grid container spacing={4} justifyContent="space-evenly">
         </Grid>
+
+        <Typography
+          component="h1"
+          variant="h3"
+          align="center"
+          color="text.primary"
+          gutterBottom
+        >
+         Wire the Components: 
+        </Typography>
+        
+       
       </Container>
+      <center>
+        <Box>
+        <img src={circuit_diagram} />
+        </Box>
+      </center>
+    
+      <Typography
+          marginTop={3}
+          component="h1"
+          variant="h3"
+          align="center"
+          color="text.primary"
+          gutterBottom
+        >
+        Code The Arduino: 
+        </Typography>
+        <Grid sx={{alignItems:"center",display:'flex', flexDirection:'column'}}>
+        <Box align="center">
+        <pre>
+        <code>{
+        `
+        #include <List.hpp>
+        #include <Adafruit_NeoPixel.h>
+        #include <SimpleWebSerial.h>
+        SimpleWebSerial WebSerial;
+        
+        #ifdef __AVR__
+         #include <avr/power.h> // Required for 16 MHz Adafruit Trinket
+        #endif
+        
+        #define LED_PIN    6
+        
+        #define LED_COUNT 100
+        
+        // Declare our NeoPixel strip object:
+        Adafruit_NeoPixel strip(LED_COUNT, LED_PIN, NEO_GRB + NEO_KHZ800);
+        
+        String color;
+        String lastColor;
+        String colorData[3];
+        
+        void setup() {
+        WebSerial.on("paymentMade", handlePayment);
+        #if defined(__AVR_ATtiny85__) && (F_CPU == 16000000)
+          clock_prescale_set(clock_div_1);
+        #endif
+          // END of Trinket-specific code.
+         Serial.begin(57600);
+          strip.begin();           // INITIALIZE NeoPixel strip object (REQUIRED)
+          strip.show();            // Turn OFF all pixels ASAP
+          strip.setBrightness(50); // Set BRIGHTNESS to about 1/5 (max = 255)  
+        }
+        
+        void handlePayment(JSONVar data) {
+         color = data;
+        }
+        
+        void processColor(){
+            int commaCount = 0;
+            String StringRed;
+            String StringGreen;
+            String StringBlue;
+          for (int i = 0; i <= color.length(); i++) {
+          
+            if(color[i]==','){
+              commaCount++;
+              continue;
+            }
+        
+            if(commaCount ==0){
+             StringRed += color[i];
+            }
+            if (commaCount ==1){
+             StringGreen +=color[i];    
+            }
+            if (commaCount ==2){
+             StringBlue +=color[i];
+            }
+          }
+        
+          int red = StringRed.toInt();
+          int green = StringGreen.toInt();
+          int blue = StringBlue.toInt();
+        
+          colorWipe(strip.Color(red,   green,   blue)); 
+        
+          Serial.print(red);
+          Serial.print(green);
+          Serial.println(blue);
+        }
+        
+        void loop() {
+        WebSerial.check();
+        Serial.println(color);
+        delay(10);
+        while (color != lastColor){
+          lastColor = color;
+          processColor();
+        }
+        
+        }
+        void colorWipe(uint32_t color) {
+          for(int i=0; i<strip.numPixels(); i++) { // For each pixel in strip...
+            strip.setPixelColor(i, color);         //  Set pixel's color (in RAM)
+            strip.show();                          //  Update strip to match
+        
+          }
+        }`
+        }
+        </code>
+        </pre>
+        </Box>
+       </Grid>
     </React.Fragment>
 
   );
-  console.log(num)
+
 }
 
 export default function Pricing() {
