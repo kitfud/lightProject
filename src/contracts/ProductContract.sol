@@ -14,6 +14,11 @@ contract ProductContract {
     uint256 public productPrice;
     address payable public linkedGenerator;
 
+    // uint256 public requestCounter;
+    // mapping(uint256 => address) public requestQueue;
+    // mapping(uint256 => bool) public requestFulfilled;
+    // mapping(address => string[3]) public userToRequest;
+
     event ProductSold(
         uint256 indexed _id,
         address buyer,
@@ -64,6 +69,12 @@ contract ProductContract {
             msg.value >= priceETH,
             "Not Enough ETH to buy the product."
         );
+
+        // requestQueue[requestCounter] = msg.sender;
+        // userToRequest[requestCounter] = rgbString;
+        // requestCounter = requestCounter + 1;
+        // // and deal with the requestFulfilled mapping once the lights are changed
+
         emit Deposit(
             msg.sender,
             msg.value,
