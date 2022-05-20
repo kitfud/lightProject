@@ -22,9 +22,8 @@ def handle_user_request(json_data):
     address = json_data["address"]
     user_sid[address] = request.sid
 
-    # emit("request status", "server-received", room=user_sid[address])
+    emit("request status", "server-received", room=user_sid[address])
     owner_session_id = owners[address]
-    print(address)
     emit("user request", req_data, room=owner_session_id)
 
 

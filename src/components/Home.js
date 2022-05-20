@@ -33,7 +33,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   const factoryContract = useSelector((state) => state.factoryContract.value)
   const generatorList = useSelector((state) => state.generator.value)
   const refAddress = useSelector((state) => state.refAddress.value)
-  const { currentTxHash } = useSelector((state) => state.paymentData.value)
+  const { currentTxHash, previousTxHash } = useSelector((state) => state.paymentData.value)
   const { socket, status } = useSelector((state) => state.webSocket.value)
   const { port } = useSelector(state => state.connection.value)
   const { RGBColorString } = useSelector(state => state.color.value)
@@ -129,8 +129,8 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   }, [socket])
 
   useEffect(() => {
-    // if (RGBColorString && previousTxHash !== currentTxHash) {
-    if (RGBColorString) {
+    if (RGBColorString && previousTxHash !== currentTxHash) {
+      // if (RGBColorString) {
       console.log("Home useEffect: RGBColorString")
       sendDataFunc()
       dispatch(setPreviousTxHash(currentTxHash))
