@@ -148,7 +148,7 @@ contract LightGenerator is ILightGenerator {
         uint256 priceETH = getProductPriceInETH(productId);
         require(
             msg.value >= priceETH,
-            "Not Enough ETH to purchase the product."
+            "Not Enough ETH to buy the product."
         );
         emit Deposit(
             msg.sender,
