@@ -207,6 +207,7 @@ function App() {
 
     new_socket.on('disconnect', () => {
       dispatch(setSocketConnected(false))
+      new_socket
     })
     return () => {
       new_socket.off("connect")
