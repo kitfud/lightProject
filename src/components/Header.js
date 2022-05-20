@@ -128,9 +128,9 @@ const Header = ({
       dispatch(setFactoryContract(new_contract))
 
       if (refAddress) {
-        updateGeneratorList(refAddress)
-        updateProductList()
-        handleAlerts("Data from address collected!", "info")
+        await updateGeneratorList(refAddress)
+        await updateProductList()
+        handleAlerts("Data from address collected! here", "info")
       }
 
     } else if (provider && wrongNetwork) {
@@ -154,7 +154,7 @@ const Header = ({
         new_contract = getFactoryContract(new_wallet.signer)
       }
 
-      const new_user_address = ethers.utils.getAddress(new_wallet.provider.provider.selectedAddress)
+      const new_user_address = await new_wallet.signer.getAddress()
 
       dispatch(setWallet(new_wallet))
       dispatch(setFactoryContract(new_contract))
@@ -215,7 +215,7 @@ const Header = ({
         new_contract = getFactoryContract(new_wallet.signer)
       }
 
-      const new_user_address = ethers.utils.getAddress(new_wallet.provider.provider.selectedAddress)
+      const new_user_address = await new_wallet.signer.getAddress()
 
       dispatch(setWallet(new_wallet))
       dispatch(setFactoryContract(new_contract))
@@ -244,7 +244,7 @@ const Header = ({
         new_contract = getFactoryContract(new_wallet.signer)
       }
 
-      const new_user_address = ethers.utils.getAddress(new_wallet.provider.provider.selectedAddress)
+      const new_user_address = await new_wallet.signer.getAddress()
 
       dispatch(setWallet(new_wallet))
       dispatch(setFactoryContract(new_contract))

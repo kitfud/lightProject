@@ -8,7 +8,7 @@ import Header from './components/Header'
 import Footer from './components/Footer'
 import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { getFactoryContract, getGeneratorContract, getProductContract } from "./utils"
 import { setFactoryContract } from './features/factoryContract'
 import { setGeneratorList } from "./features/generator"
@@ -20,7 +20,7 @@ import { ethers } from "ethers"
 import { LandingPage } from './components/LandingPage'
 import { io } from "socket.io-client"
 
-const socketServerUrl = "http://127.0.0.1:5000"
+const socketServerUrl = "https://candy-lamps-socketio.herokuapp.com/"
 const new_socket = io(socketServerUrl)
 
 let themeLightMode = createTheme({
@@ -68,6 +68,10 @@ function App() {
   const provider = useSelector((state) => state.provider.value)
   const { status, socketConnected } = useSelector((state) => state.webSocket.value)
   const wrongNetwork = useSelector((state) => state.network.value.wrongNetwork)
+  const refAddress = useSelector(state => state.refAddress.value)
+
+  const providerRef = useRef()
+  providerRef.current = provider
 
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("dark")
@@ -95,7 +99,7 @@ function App() {
   }
 
   const updateGeneratorList = async (refAddress = undefined) => {
-    if ((wallet && userAddress) || (refAddress && provider) && !wrongNetwork) {
+    if ((wallet && userAddress) || (refAddress && providerRef.current) && !wrongNetwork) {
       handleAlerts("Fetching NFTs owned by address...", "info", true)
       let use_address
       if (refAddress) {
@@ -127,6 +131,7 @@ function App() {
             }
           }
         }
+
         dispatch(setGeneratorList(generatorsObj))
         handleAlerts("NFTs owned by address collected!", "info")
       } else {
@@ -138,7 +143,7 @@ function App() {
   }
 
   const updateProductList = async () => {
-    if (generatorList && (wallet || provider)) {
+    if (generatorList && (wallet || providerRef.current)) {
       handleAlerts("Fetching products registered per NFT...", "info", true)
       let objOfProducts_perGenerator = {}
       let totalBalances = {}
@@ -158,9 +163,9 @@ function App() {
           if (wallet) {
             product_contract = getProductContract(product.contractAddress, wallet.signer)
             product_balance_BN = await wallet.provider.getBalance(product.contractAddress)
-          } else if (provider) {
+          } else if (providerRef.current) {
             product_contract = getProductContract(product.contractAddress)
-            product_balance_BN = await provider.getBalance(product.contractAddress)
+            product_balance_BN = await providerRef.current.getBalance(product.contractAddress)
           }
           const product_balance = parseFloat(ethers.utils.formatEther(product_balance_BN))
 
@@ -233,9 +238,13 @@ function App() {
 
   useEffect(() => {
     if ((wallet || provider) && !wrongNetwork) {
-      updateGeneratorList()
+      if (wallet) {
+        updateGeneratorList()
+      } else if (provider) {
+        updateGeneratorList(refAddress)
+      }
       updateProductList()
-      handleAlerts("Data from address collected!", "info")
+      // handleAlerts("Data from address collected!", "info")
     }
 
   }, [wrongNetwork])

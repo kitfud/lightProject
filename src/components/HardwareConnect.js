@@ -1,8 +1,9 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Button, Box } from "@mui/material"
 import { useDispatch, useSelector } from 'react-redux'
 import { setPort, setConnected } from "../features/connection"
 import { sendData } from '../features/connection'
+import { setUserAddress } from '../features/userAddress'
 
 const HardwareConnect = ({ handleAlerts }) => {
 
@@ -13,6 +14,11 @@ const HardwareConnect = ({ handleAlerts }) => {
   const userAddress = useSelector(state => state.userAddress.value)
   const refAddress = useSelector(state => state.refAddress.value)
   const baudRate = 57600
+
+  const userAddressRef = useRef()
+  userAddressRef.current = userAddress
+  const portRef = useRef()
+  portRef.current = port
 
   const handleConnect = () => {
     connectDevice()
@@ -72,9 +78,11 @@ const HardwareConnect = ({ handleAlerts }) => {
   }
 
   const handleUserRequestSocketEvent = async (data) => {
-    await socket.emit("request status", { status: "owner-received", address: userAddress })
-    dispatch(sendData(data))
-    await socket.emit("request status", { status: "owner-data processed", address: userAddress })
+    if (portRef.current) {
+      await socket.emit("request status", { status: "owner-received", address: userAddressRef.current })
+      dispatch(sendData(data))
+      await socket.emit("request status", { status: "owner-data processed", address: userAddressRef.current })
+    }
   }
 
   useEffect(() => {
@@ -85,6 +93,13 @@ const HardwareConnect = ({ handleAlerts }) => {
       }
     }
   }, [socket])
+
+  useEffect(() => {
+    if (userAddress) {
+      // dispatch(setUserAddress(userAddress))
+
+    }
+  }, [userAddress])
 
   return (
     <>

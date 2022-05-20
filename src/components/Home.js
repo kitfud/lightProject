@@ -100,7 +100,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const sendDataFunc = async () => {
     if (typeof port === "undefined" && socket && typeof status === "undefined") {
-      console.log("sendDataFunc - no port")
       await socket.emit("user request", { data: RGBColorString, address: refAddress })
     } else if (port) {
       dispatch(sendData(RGBColorString))
@@ -111,7 +110,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   useEffect(() => {
     if (socket) {
       socket.on("request status", (data) => {
-        console.log(data)
         let status_str
         if (data === "server-received") {
           status_str = "Data received by server"
@@ -129,9 +127,8 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   }, [socket])
 
   useEffect(() => {
-    if (RGBColorString && previousTxHash !== currentTxHash) {
-      // if (RGBColorString) {
-      console.log("Home useEffect: RGBColorString")
+    // if (RGBColorString && previousTxHash !== currentTxHash) {
+    if (RGBColorString) {
       sendDataFunc()
       dispatch(setPreviousTxHash(currentTxHash))
       dispatch(setRGBColorString(undefined))
@@ -143,7 +140,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   useEffect(() => {
     if (status) {
       if (status === "finished") {
-        handleAlerts(status, "info")
+        handleAlerts("Sent data successfully", "success")
       } else {
         handleAlerts(status, "info", true)
       }
