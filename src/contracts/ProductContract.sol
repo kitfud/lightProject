@@ -57,7 +57,7 @@ contract ProductContract {
 
     // payment can be sent durectly to this contract address to buy the product
     // But the user can also call this function to buy the product - here the RGB values
-    // selected are passed through the blockchain 
+    // selected are passed through the blockchain
     function buyProduct(string[3] memory rgbString) external payable {
         uint256 priceETH = getProductPriceInETH();
         require(
@@ -70,7 +70,7 @@ contract ProductContract {
             block.timestamp,
             address(this).balance
         );
-        emit ProductSold(productId, msg.sender, priceETH, block.timestamp, rgbString);
+        emit ProductSold(id, msg.sender, priceETH, block.timestamp, rgbString);
     }
 
     function withdraw() external {
