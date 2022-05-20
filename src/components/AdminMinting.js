@@ -10,7 +10,6 @@ import { setProductList } from "../features/product"
 import { setGeneratorList } from '../features/generator'
 import { setPathname } from '../features/pathname'
 
-
 const AdminMinting = ({
   loading,
   setLoading,
@@ -27,7 +26,8 @@ const AdminMinting = ({
   // General
   const userAddress = useSelector((state) => state.userAddress.value)
   const wallet = useSelector((state) => state.wallet.value)
-  const alerts = useSelector((state) => state.alerts.value)
+  const { socket } = useSelector((state) => state.webSocket.value)
+  const { port } = useSelector(state => state.connection.value)
 
   const [useAutoName, setUseAutoName] = useState(true)
   const [size, setSize] = useState([100, 100])
@@ -75,7 +75,7 @@ const AdminMinting = ({
       await getETHUSDConversionRate()
       try {
         let tx = await factoryContract.mintGenerator(
-          nftName, { "value": ethers.utils.parseEther(`${(nftPrice / ETHUSDConversionRate)+0.000000000001}`) }
+          nftName, { "value": ethers.utils.parseEther(`${(nftPrice / ETHUSDConversionRate) + 0.000000000001}`) }
         )
         await tx.wait(1)
 
@@ -429,7 +429,7 @@ const AdminMinting = ({
   }, [wallet, productList, generatorId])
 
   useEffect(() => {
-    if (wallet && factoryContract) {
+    if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
     if (!wallet) {
@@ -440,7 +440,7 @@ const AdminMinting = ({
   }, [wallet, loading])
 
   useEffect(() => {
-    if (wallet && factoryContract) {
+    if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
     if (factoryContract) {

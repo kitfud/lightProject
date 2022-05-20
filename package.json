@@ -26,6 +26,7 @@
     "react-scripts": "5.0.1",
     "redux": "^4.2.0",
     "simple-web-serial": "^0.0.8",
+    "socket.io-client": "^4.5.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

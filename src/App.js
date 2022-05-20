@@ -15,8 +15,13 @@ import { setGeneratorList } from "./features/generator"
 import { setProductList } from './features/product'
 import { setUserAddress } from './features/userAddress'
 import { setAlerts } from './features/alerts'
+import { setWebSocket, setStatus, setSocketConnected } from './features/webSocket'
 import { ethers } from "ethers"
 import { LandingPage } from './components/LandingPage'
+import { io } from "socket.io-client"
+
+const socketServerUrl = "http://127.0.0.1:5000"
+const new_socket = io(socketServerUrl)
 
 let themeLightMode = createTheme({
 
@@ -61,11 +66,12 @@ function App() {
   const generatorList = useSelector((state) => state.generator.value)
   const alerts = useSelector((state) => state.alerts.value)
   const provider = useSelector((state) => state.provider.value)
+  const { status, socketConnected } = useSelector((state) => state.webSocket.value)
+  const wrongNetwork = useSelector((state) => state.network.value.wrongNetwork)
 
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("dark")
   const [sumProductBalances, setSumProductBalances] = useState(undefined)
-  const [pathname, setPathname] = useState(undefined)
 
   const handleAlerts = (msg, severity, loading = false) => {
     dispatch(setAlerts([true, msg, severity, loading]))
@@ -89,7 +95,7 @@ function App() {
   }
 
   const updateGeneratorList = async (refAddress = undefined) => {
-    if ((wallet && userAddress) || (refAddress && provider)) {
+    if ((wallet && userAddress) || (refAddress && provider) && !wrongNetwork) {
       handleAlerts("Fetching NFTs owned by address...", "info", true)
       let use_address
       if (refAddress) {
@@ -123,6 +129,8 @@ function App() {
         }
         dispatch(setGeneratorList(generatorsObj))
         handleAlerts("NFTs owned by address collected!", "info")
+      } else {
+        handleAlerts("No NFTs owned by this address.", "info")
       }
     } else {
       dispatch(setGeneratorList(undefined))
@@ -182,10 +190,38 @@ function App() {
     }
   }
 
+  // SocketIO listeners
   useEffect(() => {
     const new_contract = getFactoryContract()
     dispatch(setFactoryContract(new_contract))
+
+    dispatch(setWebSocket(new_socket))
+    new_socket.on("connect", () => {
+      dispatch(setSocketConnected(true))
+    })
+
+    new_socket.on('disconnect', () => {
+      dispatch(setSocketConnected(false))
+    })
+    return () => {
+      new_socket.off("connect")
+      new_socket.off("disconnect")
+    }
   }, [])
+
+  useEffect(() => {
+    if (status === "finished") {
+      dispatch(setStatus(undefined))
+    }
+  }, [status])
+
+  useEffect(() => {
+    if (!socketConnected) {
+      handleAlerts("Connecting server...", "info", true)
+    } else {
+      handleAlerts("Server connected!", "success")
+    }
+  }, [socketConnected])
 
   useEffect(() => {
     if (alerts[0]) {
@@ -195,6 +231,14 @@ function App() {
     }
   }, [alerts])
 
+  useEffect(() => {
+    if ((wallet || provider) && !wrongNetwork) {
+      updateGeneratorList()
+      updateProductList()
+      handleAlerts("Data from address collected!", "info")
+    }
+
+  }, [wrongNetwork])
 
   return (
     <>
