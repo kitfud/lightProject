@@ -18,7 +18,8 @@ contract ProductContract {
         uint256 indexed _id,
         address buyer,
         uint256 price,
-        uint256 timestamp
+        uint256 timestamp,
+        string[3] data
     );
     event Deposit(address indexed payee, uint256 value, uint256 time, uint256 currentContractBalance);
     event Withdraw(uint256 time, uint256 amount, address indexed owner);
@@ -53,6 +54,24 @@ contract ProductContract {
     // function changeName(string memory newName) public onlyOwner(linkedGenerator) {
     //     productName = newName;
     // }
+
+    // payment can be sent durectly to this contract address to buy the product
+    // But the user can also call this function to buy the product - here the RGB values
+    // selected are passed through the blockchain
+    function buyProduct(string[3] memory rgbString) external payable {
+        uint256 priceETH = getProductPriceInETH();
+        require(
+            msg.value >= priceETH,
+            "Not Enough ETH to buy the product."
+        );
+        emit Deposit(
+            msg.sender,
+            msg.value,
+            block.timestamp,
+            address(this).balance
+        );
+        emit ProductSold(id, msg.sender, priceETH, block.timestamp, rgbString);
+    }
 
     function withdraw() external {
         address owner = IERC721(factoryAddress).ownerOf(tokenId);
