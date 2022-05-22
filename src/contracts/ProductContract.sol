@@ -13,11 +13,20 @@ contract ProductContract {
     string public productName;
     uint256 public productPrice;
     address payable public linkedGenerator;
-
+    // To deal with the incoming queue of requests for a product that takes physical time with a bottleneck
+    // like a device that generates light, we can go 2 routes:
+    //  - a boolean variable canOrderProduct that must be true for the function to go through
+    //    we can use a time like Gelato or use the block number/timestamp and a delta.
+    //    here we'll choose block.number
+    //  - a Queue of requests that we deal with over time.
+    // bool public canOrderProduct;
+    uint256 public blockNumLimit;
+    uint8 public serviceDuration; // specific to the lights proof of concept
     // uint256 public requestCounter;
     // mapping(uint256 => address) public requestQueue;
     // mapping(uint256 => bool) public requestFulfilled;
     // mapping(address => string[3]) public userToRequest;
+
 
     event ProductSold(
         uint256 indexed _id,
@@ -36,6 +45,7 @@ contract ProductContract {
         productName = _name;
         productPrice = _price;
         linkedGenerator = payable(msg.sender);
+        serviceDuration = 5; // specific to the lights proof of concept
     }
 
     // Remove and replace by a delegatecall ?
@@ -44,12 +54,13 @@ contract ProductContract {
         _;
     }
 
-    // could change the price while someone is buying but it would be reverted if higher
-    // so it shouldn't be a problem
-    // Maybe just create a new Product contract
-    // Or add a marker that only allows a pricechange when certain conditions are met?
     function changePrice(uint256 newUSDPrice) external onlyOwner(linkedGenerator) {
         productPrice = newUSDPrice;
+    }
+
+    function changeDuration(uint8 _numBlocks) external {
+        require(msg.sender == IERC721(factoryAddress).ownerOf(tokenId), "Only owner");
+        serviceDuration = _numBlocks;
     }
 
     function getProductPriceInETH() public view returns(uint256){
@@ -64,23 +75,22 @@ contract ProductContract {
     // But the user can also call this function to buy the product - here the RGB values
     // selected are passed through the blockchain
     function buyProduct(string[3] memory rgbString) external payable {
+        require(block.number > blockNumLimit, "Processing... Please try again");
         uint256 priceETH = getProductPriceInETH();
-        require(
-            msg.value >= priceETH,
-            "Not Enough ETH to buy the product."
-        );
+        require(msg.value >= priceETH, "Not enough ETH to buy the item");
 
+        blockNumLimit = block.number + serviceDuration;
         // requestQueue[requestCounter] = msg.sender;
         // userToRequest[requestCounter] = rgbString;
-        // requestCounter = requestCounter + 1;
+        // requestCounter++;
         // // and deal with the requestFulfilled mapping once the lights are changed
 
-        emit Deposit(
-            msg.sender,
-            msg.value,
-            block.timestamp,
-            address(this).balance
-        );
+        // emit Deposit(
+        //     msg.sender,
+        //     msg.value,
+        //     block.timestamp,
+        //     address(this).balance
+        // );
         emit ProductSold(id, msg.sender, priceETH, block.timestamp, rgbString);
     }
 
@@ -99,7 +109,10 @@ contract ProductContract {
     }
 
     receive() external payable {
+        // Same as in the buyProduct function - we may need 2 mechanisms
+        require(block.number > blockNumLimit, "Processing... Please try again");
         require(msg.value >= getProductPriceInETH(), "amount sent too low");
+        blockNumLimit = block.number + serviceDuration;
         emit Deposit(msg.sender, msg.value,block.timestamp, address(this).balance);
     }
 }
