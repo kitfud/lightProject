@@ -52,8 +52,8 @@ contract LightAgora is ILightAgora, ERC20Burnable {
             0xa65AA8747Fa0934d51315082336938696E80136E,
             0x9466b7430eC51c81e1F43dDCf69278878B559382
         ];
-
-        for (uint i ; i<voters.length ; i++) {
+        uint256 _numVoters = voters.length;
+        for (uint i ; i<_numVoters ; unsafe_inc(i)) {
             isVoter[voters[i]] = true;
             _mint(voters[i], initialSupply);
         }
