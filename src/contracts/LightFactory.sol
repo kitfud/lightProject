@@ -144,10 +144,10 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
 
     function _initTokenUriList() internal {
         s_CLTokenUris = [
-            "https://ipfs.io/ipfs/QmNj7w9ANHCEs7MYG3c5Xh97FTJCNnPXrqnvxhV1MDGTtG?filename=Candy_Lamp_JSON.json",
-            "https://ipfs.io/ipfs/QmdspNDZ6LQgiHwFgJRioSqYy4LuFhtxm3tkKcPoBGkSxC?filename=Candy_Lamp_sand_JSON.json",
-            "https://ipfs.io/ipfs/QmTnREAELq9evUCxGGX9p7cZJWiXVkL9d4WyfZkeQXinTM?filename=Candy_Lamp_cake_JSON.json",
-            "https://ipfs.io/ipfs/QmQFKHULie3c84h8LLMP91D3KdsPqbdhS9BoCw36fz8uCB?filename=Candy_Lamp_night_JSON.json"
+            "https://ipfs.io/ipfs/QmRDteW2UC3LU7aWGqbeLiZoX2w7E3eb28dMdrBFKtrVwD?filename=Candy_Lamp.json",
+            "https://ipfs.io/ipfs/QmV8xi7G4cCTjMkVYkxdeXMjBK3nHkGGekREY8xf6nQRB5?filename=Candy_Lamp_sand.json",
+            "https://ipfs.io/ipfs/QmR1sDe3EcUKfrkHY6j1aqigaGtHN4UbcHzpFqNQV8SvJc?filename=Candy_Lamp_cake.json",
+            "https://ipfs.io/ipfs/QmVWLgcc7A6zKm6HkBxkQghnv2sWu8BhngQWcDwrGYK1nw?filename=Candy_Lamp_night.json"
         ];
     }
 
