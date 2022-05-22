@@ -100,15 +100,16 @@ contract LightAgora is ILightAgora, ERC20Burnable {
             vote_state = VOTE_STATE.ONGOING;
         }
         require(voterDidVote[msg.sender] == false, "you already voted");
+        uint256 _numVoters = voters.length;
         voterDidVote[msg.sender] = true;
         votesCount ++;
         cumulativeCount += _newPrice;
-        if (votesCount == voters.length) {
+        if (votesCount == _numVoters) {
             vote_state = VOTE_STATE.SETTLED;
             ILightFactory(factoryAddress).setNFTPrice(cumulativeCount/votesCount);
             delete votesCount;
             delete cumulativeCount;
-            for (uint i ; i<voters.length ; i++){
+            for (uint i ; i < _numVoters ; unsafe_inc(i)){
                 delete voterDidVote[voters[i]];
             }
         }
@@ -128,23 +129,27 @@ contract LightAgora is ILightAgora, ERC20Burnable {
 
     // function vote()
 
+    function unsafe_inc(uint x) private pure returns (uint) {
+        unchecked { return x + 1; }
+    }
+
     function splitBalance() internal {
         uint256 tempLen = voters.length;
         uint256 splitAmount = address(this).balance/tempLen;
-        for (uint i ; i<tempLen ; i++){
+        for (uint i ; i<tempLen ; unsafe_inc(i)){
             (bool sent,) = voters[i].call{value:splitAmount}("");
             require(sent, "Failed to send ETH to voter");
         }
     }
 
-    function receivePayment(uint256 _amount) external payable {
-        uint256 tempLen = voters.length;
-        uint256 splitAmount = _amount/tempLen;
-        for (uint i ; i<tempLen ; i++){
-            (bool sent,) = payable(voters[i]).call{value:splitAmount}("");
-            require(sent, "Failed to send ETH to voter");
-        }
-    }
+    // function receivePayment(uint256 _amount) external payable {
+    //     uint256 tempLen = voters.length;
+    //     uint256 splitAmount = _amount/tempLen;
+    //     for (uint i ; i<tempLen ; i++){
+    //         (bool sent,) = payable(voters[i]).call{value:splitAmount}("");
+    //         require(sent, "Failed to send ETH to voter");
+    //     }
+    // }
 
     function getBalance() public view returns(uint256){
         return address(this).balance;

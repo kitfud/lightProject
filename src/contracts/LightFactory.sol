@@ -54,10 +54,10 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
     }
 
     function mintGenerator(string memory _name) public payable {
-        require(msg.value >= getNFTPriceInETH(),"Not Enough Eth to purchase NFT.");
+        require(msg.value >= getNFTPriceInETH(),"Not Enough Eth to buy NFT.");
         // IAgora(agoraAddress).receivePayment(msg.value);
         (bool sent,) = agoraAddress.call{value:msg.value}("");
-        require(sent, "Failed to purchase NFT. Send Eth to buy.");
+        require(sent, "Failed to buy NFT");
 
         uint256 newTokenId = tokenCount;
         _safeMint(msg.sender, newTokenId);

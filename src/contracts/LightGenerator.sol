@@ -76,9 +76,10 @@ contract LightGenerator is ILightGenerator {
     }
 
     function withdraw() external onlyOwner returns(uint256){
+        uint256 _prodCount = productCount;
         uint256 contractBalance;
         address owner = IERC721(factoryAddress).ownerOf(tokenId);
-        for (uint i ; i<productCount ; i++) {
+        for (uint i ; i < _prodCount ; unsafe_inc(i)) {
             uint256 tempProductBalance = idToProductContract[i].balance;
             if (tempProductBalance > 0) {
                 contractBalance += tempProductBalance;
