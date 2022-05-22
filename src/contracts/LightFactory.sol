@@ -34,7 +34,6 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
         priceFeedAddress = _priceFeedAddress;
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         currentNFTPriceInUSD = 100 * 10**18;
-        tokenCount = 0;
     }
 
     modifier onlyAgora {
@@ -84,26 +83,40 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
     }
 
 
-    function checkIfTokenHolder(address toSearch) public view returns(bool) {
-        for (uint i=0 ; i<tokenCount ; i++){
-            if(checkTokenOwnerById(i)== toSearch){
-                return true;
-            }
-        }
-        return false;
-    }
+    // function checkIfTokenHolder(address toSearch) public view returns(bool) {
+    //     for (uint i=0 ; i<tokenCount ; i++){
+    //         if(checkTokenOwnerById(i)== toSearch){
+    //             return true;
+    //         }
+    //     }
+    //     return false;
+    // }
 
     // check if a boolean mapping could work
-    function addressToTokenID(address toSearch) public view returns(bool[] memory){
-         bool[] memory values = new bool[](tokenCount);
-         for (uint i=0 ; i<tokenCount ; i++){
-            if(checkTokenOwnerById(i) == toSearch){
+    // function addressToTokenID(address toSearch) public view returns(bool[] memory){
+    //      bool[] memory values = new bool[](tokenCount);
+    //      for (uint i=0 ; i<tokenCount ; i++){
+    //         if(checkTokenOwnerById(i) == toSearch){
+    //             values[i] = true;
+    //         }
+    //     }
+    //     return values;
+    // }
+
+    function addressToTokenID(address _account) public view returns(bool[] memory){
+        uint256 _tokenCount = tokenCount;
+         bool[] memory values = new bool[](_tokenCount);
+         for (uint i=0 ; i < _tokenCount ; unsafe_inc(i)){
+            if(_isApprovedOrOwner(_account, i)){
                 values[i] = true;
             }
         }
         return values;
     }
 
+    function unsafe_inc(uint x) private pure returns (uint) {
+        unchecked { return x + 1; }
+    }
     // remove for gas optimization
     // function getGeneratorContractAddressByToken(uint256 tokenId) public view returns (address){
     //     return tokenIDToGenerator[tokenId].getAddress();
