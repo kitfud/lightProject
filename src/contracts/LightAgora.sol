@@ -65,8 +65,8 @@ contract LightAgora is ILightAgora, ERC20Burnable {
             0x9466b7430eC51c81e1F43dDCf69278878B559382
         ];
 
-
-        for (uint i ; i<voters.length ; i++) {
+        uint256 _numVoters = voters.length;
+        for (uint i ; i<_numVoters ; unsafe_inc(i)) {
             isVoter[voters[i]] = true;
             _mint(voters[i], initialSupply);
         }
@@ -100,7 +100,7 @@ contract LightAgora is ILightAgora, ERC20Burnable {
     }
 
     modifier onlyBurner {
-        require(canBurn[msg.sender] == true, "No minting rights");
+        require(canBurn[msg.sender] == true, "No burning rights");
         _;
     }
 
