@@ -8,11 +8,7 @@ import "./ILightAgora.sol";
 import "./LightGenerator.sol";
 import "./ILightFactory.sol";
 
-// TO DO: change checkIfTokenHolder to a mapping with boolean?
-// TO DO: change to several owner - whitelist?
 // TO DO: implement VRFV2 for NFTs rarity?
-// TO DO:
-// TO DO:
 
 contract LightFactory is ILightFactory, ERC721URIStorage {
 
@@ -82,27 +78,6 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
         return ownerOf(tokenId);
     }
 
-
-    // function checkIfTokenHolder(address toSearch) public view returns(bool) {
-    //     for (uint i=0 ; i<tokenCount ; i++){
-    //         if(checkTokenOwnerById(i)== toSearch){
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
-
-    // check if a boolean mapping could work
-    // function addressToTokenID(address toSearch) public view returns(bool[] memory){
-    //      bool[] memory values = new bool[](tokenCount);
-    //      for (uint i=0 ; i<tokenCount ; i++){
-    //         if(checkTokenOwnerById(i) == toSearch){
-    //             values[i] = true;
-    //         }
-    //     }
-    //     return values;
-    // }
-
     function addressToTokenID(address _account) public view returns(bool[] memory){
         uint256 _tokenCount = tokenCount;
          bool[] memory values = new bool[](_tokenCount);
@@ -117,9 +92,5 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
     function unsafe_inc(uint x) private pure returns (uint) {
         unchecked { return x + 1; }
     }
-    // remove for gas optimization
-    // function getGeneratorContractAddressByToken(uint256 tokenId) public view returns (address){
-    //     return tokenIDToGenerator[tokenId].getAddress();
-    // }
 
 }

@@ -85,12 +85,6 @@ contract ProductContract {
         // requestCounter++;
         // // and deal with the requestFulfilled mapping once the lights are changed
 
-        // emit Deposit(
-        //     msg.sender,
-        //     msg.value,
-        //     block.timestamp,
-        //     address(this).balance
-        // );
         emit ProductSold(id, msg.sender, priceETH, block.timestamp, rgbString);
     }
 
