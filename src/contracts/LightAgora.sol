@@ -72,7 +72,7 @@ contract LightAgora is ILightAgora, ERC20Burnable {
     }
 
     modifier onlyBurner {
-        require(canBurn[msg.sender] == true, "No minting rights");
+        require(canBurn[msg.sender] == true, "No burning rights");
         _;
     }
 
