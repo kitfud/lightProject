@@ -145,14 +145,14 @@ contract LightGenerator is ILightGenerator {
         emit ProductSold(productId, msg.sender, priceETH, block.timestamp);
     }
 
-    function fund() external payable {
-        emit Deposit(
-            msg.sender,
-            msg.value,
-            block.timestamp,
-            address(this).balance
-        );
-    }
+    // function fund() external payable {
+    //     emit Deposit(
+    //         msg.sender,
+    //         msg.value,
+    //         block.timestamp,
+    //         address(this).balance
+    //     );
+    // }
 
     function addProduct(string memory _name, uint256 _price) public onlyOwner {
         // address owner = IERC721(factoryAddress).ownerOf(tokenId);
@@ -191,20 +191,6 @@ contract LightGenerator is ILightGenerator {
         IERC20(agoraAddress).transfer(IERC721(factoryAddress).ownerOf(tokenId), amount);
     }
 
-    // function getAllAvailableProducts() public view returns(bool[] memory){
-    //     bool[] memory productList;
-    //     for (uint i=0 ; i<productCount ; i++){
-    //         productList[i] = idToProduct[i];
-    //     }
-    //     return productList;
-    // }
-
-    // // metamask cannot handle function calls but MyCrypto can.
-    // fallback() external payable {
-    //     // we can try top implement a diff check, the closest to 0 and within +- 10Gwei is selected
-    //     buyProduct()
-    // }
-    // 2300 gas max
     receive() external payable {
         emit Deposit(
             msg.sender,
