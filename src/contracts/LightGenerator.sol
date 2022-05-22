@@ -54,7 +54,7 @@ contract LightGenerator is ILightGenerator {
     constructor(
         address _agoraAddress,
         address _factoryAddress,
-        uint256 id,
+        uint256 _tokenId,
         string memory _name,
         address _priceFeedAddress
     ) payable {
@@ -62,7 +62,7 @@ contract LightGenerator is ILightGenerator {
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         factoryAddress = _factoryAddress; // create an interface - should lower the gas
         agoraAddress = _agoraAddress;
-        tokenId = id;
+        tokenId = _tokenId;
         generatorName = _name;
     }
 
