@@ -1,17 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialStateValue = 0
+const initialStateValue = 0;
 
 export const totalBalanceSlice = createSlice({
-    name: "totalBalance",
-    initialState: { value: initialStateValue },
-    reducers: {
-        setTotalBalance: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
+  name: 'totalBalance',
+  initialState: { value: initialStateValue },
+  reducers: {
+    setTotalBalance: (state, action) => {
+      state.value = action.payload;
+    },
+  },
+});
 
-export const { setTotalBalance } = totalBalanceSlice.actions
+export const { setTotalBalance } = totalBalanceSlice.actions;
 
-export default totalBalanceSlice.reducer
+export default totalBalanceSlice.reducer;

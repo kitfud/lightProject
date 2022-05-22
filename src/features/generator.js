@@ -1,17 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialStateValue = undefined
+const initialStateValue = undefined;
 
 export const generatorSlice = createSlice({
-    name: "generator",
-    initialState: { value: initialStateValue },
-    reducers: {
-        setGeneratorList: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
+  name: 'generator',
+  initialState: { value: initialStateValue },
+  reducers: {
+    setGeneratorList: (state, action) => {
+      state.value = action.payload;
+    },
+  },
+});
 
-export const { setGeneratorList } = generatorSlice.actions
+export const { setGeneratorList } = generatorSlice.actions;
 
-export default generatorSlice.reducer
+export default generatorSlice.reducer;
