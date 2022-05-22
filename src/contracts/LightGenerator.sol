@@ -7,10 +7,6 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./ProductContract.sol";
 import "./ILightGenerator.sol";
 
-// TO DO: decide if the products will only be local or a contract
-// TO DO: change the factory contract call to an interface call and use only the needed functions.
-// MAYBE: The aggregator function could be removed and imported from an ILightFactory interface.. try
-//        Or if we opt for an NFT price in ETH, the aggregator won'y be needed in the factory contract.
 // TO DO: Think about te lottery logic and the NFT generation for each light bought.
 
 contract LightGenerator is ILightGenerator {
@@ -31,7 +27,7 @@ contract LightGenerator is ILightGenerator {
 
     AggregatorV3Interface internal ETHUSDPriceFeed;
     Product[] public productsCompleteHistory; // products history, record of all products ever added or modified until reinitialized
-    mapping(uint256 => Product) public idToProduct; // keep in mind mappings cannot be deleted in solidity
+    mapping(uint256 => Product) public idToProduct;
     mapping(string => Product) public nameToProduct;
     mapping(uint256 => address) public idToProductContract;
     ProductContract[] public productContracts;
@@ -74,8 +70,6 @@ contract LightGenerator is ILightGenerator {
     function changeName(string memory _newName) external onlyOwner {
         generatorName = _newName;
     }
-
-    // remove - gas reasons
 
     function getBalance() public view onlyOwner returns(uint256 balance){
         balance = address(this).balance;
