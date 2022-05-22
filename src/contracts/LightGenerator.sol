@@ -134,16 +134,13 @@ contract LightGenerator is ILightGenerator {
 
     function buyProduct(uint256 productId) external payable {
         uint256 priceETH = getProductPriceInETH(productId);
-        require(
-            msg.value >= priceETH,
-            "Not Enough ETH to buy the product."
-        );
-        emit Deposit(
-            msg.sender,
-            msg.value,
-            block.timestamp,
-            address(this).balance
-        );
+        require(msg.value >= priceETH, "Not Enough ETH to buy the item.");
+        // emit Deposit(
+        //     msg.sender,
+        //     msg.value,
+        //     block.timestamp,
+        //     address(this).balance
+        // );
         emit ProductSold(productId, msg.sender, priceETH, block.timestamp);
     }
 
@@ -172,9 +169,9 @@ contract LightGenerator is ILightGenerator {
     }
 
     function reinitializeProductsHistory() public onlyOwner {
-        // Will cost a lot of gas if the product list is large, careful
+        uint256 _prodCount = productCount;
         delete productsCompleteHistory;
-        for (uint256 i; i < productCount; i++) {
+        for (uint256 i; i < _prodCount; unsafe_inc(i)) {
             Product memory prod = idToProduct[i];
             string memory prodName = prod.name;
             delete idToProduct[i];
@@ -182,6 +179,10 @@ contract LightGenerator is ILightGenerator {
             productContracts[i].destroy();
         }
         productCount = 0;
+    }
+
+    function unsafe_inc(uint x) private pure returns (uint) {
+        unchecked { return x + 1; }
     }
 
     // can withdraw LIQ tokens to owner(only)
