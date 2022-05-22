@@ -5,6 +5,6 @@ interface ILightAgora {
 
     function mintTokens(address generatorAddress) external;
 
-    function receivePayment(uint256 _amount) external payable;
+    // function receivePayment(uint256 _amount) external payable;
 
 }
