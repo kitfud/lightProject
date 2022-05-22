@@ -65,7 +65,6 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
         priceFeedAddress = _priceFeedAddress;
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         currentNFTPriceInUSD = 100 * 10**18;
-        tokenCount = 0;
         _initTokenUriList();
     }
 
@@ -91,10 +90,10 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
     }
 
     function mintGenerator(string memory _name) public payable returns (uint256 requestId) {
-        require(msg.value >= getNFTPriceInETH(),"Not Enough Eth to purchase NFT.");
+        require(msg.value >= getNFTPriceInETH(),"Not Enough Eth to buy NFT.");
         // IAgora(agoraAddress).receivePayment(msg.value);
         (bool sent,) = agoraAddress.call{value:msg.value}("");
-        require(sent, "Failed to purchase NFT. Send Eth to buy.");
+        require(sent, "Failed to buy NFT");
 
         requestId = COORDINATOR.requestRandomWords(
             keyHash,
@@ -158,7 +157,7 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
 
     function getTypeFromRarityScale(uint256 _randNum) public pure returns(uint256 i){
         uint256[4] memory chanceArray = getChanceArray();
-        for (i = 0; i < chanceArray.length; i++) {
+        for (i = 0; i < chanceArray.length; unsafe_inc(i)) {
             if (_randNum < chanceArray[i]) {
                 return i;
             }
@@ -169,32 +168,19 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
         return ownerOf(tokenId);
     }
 
-
-    function checkIfTokenHolder(address toSearch) public view returns(bool) {
-        for (uint i=0 ; i<tokenCount ; i++){
-            if(checkTokenOwnerById(i)== toSearch){
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // check if a boolean mapping could work
-    function addressToTokenID(address toSearch) public view returns(bool[] memory){
-         bool[] memory values = new bool[](tokenCount);
-         for (uint i=0 ; i<tokenCount ; i++){
-            if(checkTokenOwnerById(i) == toSearch){
+    function addressToTokenID(address _account) public view returns(bool[] memory){
+        uint256 _tokenCount = tokenCount;
+         bool[] memory values = new bool[](_tokenCount);
+         for (uint i=0 ; i < _tokenCount ; unsafe_inc(i)){
+            if(_isApprovedOrOwner(_account, i)){
                 values[i] = true;
             }
         }
         return values;
     }
 
-
-
-    // remove for gas optimization
-    // function getGeneratorContractAddressByToken(uint256 tokenId) public view returns (address){
-    //     return tokenIDToGenerator[tokenId].getAddress();
-    // }
+    function unsafe_inc(uint x) private pure returns (uint) {
+        unchecked { return x + 1; }
+    }
 
 }

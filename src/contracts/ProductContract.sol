@@ -60,16 +60,13 @@ contract ProductContract {
     // selected are passed through the blockchain
     function buyProduct(string[3] memory rgbString) external payable {
         uint256 priceETH = getProductPriceInETH();
-        require(
-            msg.value >= priceETH,
-            "Not Enough ETH to buy the product."
-        );
-        emit Deposit(
-            msg.sender,
-            msg.value,
-            block.timestamp,
-            address(this).balance
-        );
+        require(msg.value >= priceETH, "Not Enough ETH to buy the product.");
+        // emit Deposit(
+        //     msg.sender,
+        //     msg.value,
+        //     block.timestamp,
+        //     address(this).balance
+        // );
         emit ProductSold(id, msg.sender, priceETH, block.timestamp, rgbString);
     }
 
