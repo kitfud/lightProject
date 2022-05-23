@@ -257,7 +257,6 @@ function App() {
   return (
     <>
       <ThemeProvider theme={colorMode === "dark" ? themeDarkMode : themeLightMode}>
-
         <Header
           setColorMode={setColorMode}
           setUserAddress={setUserAddress}
