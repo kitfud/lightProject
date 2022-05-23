@@ -81,13 +81,23 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
     function addressToTokenID(address _account) public view returns(bool[] memory){
         uint256 _tokenCount = tokenCount;
          bool[] memory values = new bool[](_tokenCount);
-         for (uint256 i; i < _tokenCount ; unsafe_inc(i)){
+         for (uint i; i < _tokenCount ; i= unsafe_inc(i)){
             if(checkTokenOwnerById(i) == _account){
                 values[i] = true;
             }
         }
         return values;
-    }  
+    }
+
+    // function addressToTokenID(address toSearch) public view returns(bool[] memory){
+    //      bool[] memory values = new bool[](tokenCount);
+    //      for (uint i=0 ; i<tokenCount ; i++){
+    //         if(checkTokenOwnerById(i) == toSearch){
+    //             values[i] = true;
+    //         }
+    //     }
+    //     return values;
+    // }
 
     function unsafe_inc(uint x) private pure returns (uint) {
         unchecked { return x + 1; }

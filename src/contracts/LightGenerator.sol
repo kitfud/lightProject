@@ -79,7 +79,7 @@ contract LightGenerator is ILightGenerator {
         uint256 _prodCount = productCount;
         uint256 contractBalance;
         address owner = IERC721(factoryAddress).ownerOf(tokenId);
-        for (uint i ; i < _prodCount ; unsafe_inc(i)) {
+        for (uint i ; i < _prodCount ; i = unsafe_inc(i)) {
             uint256 tempProductBalance = idToProductContract[i].balance;
             if (tempProductBalance > 0) {
                 contractBalance += tempProductBalance;
@@ -172,7 +172,7 @@ contract LightGenerator is ILightGenerator {
     function reinitializeProductsHistory() public onlyOwner {
         uint256 _prodCount = productCount;
         delete productsCompleteHistory;
-        for (uint256 i; i < _prodCount; unsafe_inc(i)) {
+        for (uint256 i; i < _prodCount; i = unsafe_inc(i)) {
             Product memory prod = idToProduct[i];
             string memory prodName = prod.name;
             delete idToProduct[i];
@@ -200,6 +200,3 @@ contract LightGenerator is ILightGenerator {
         );
     }
 }
-
-
-// add Agora address --> to transfer the erc20 to owner
