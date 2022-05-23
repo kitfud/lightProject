@@ -13,7 +13,7 @@
 			},
 			{
 				"internalType": "uint256",
-				"name": "_tokenId",
+				"name": "id",
 				"type": "uint256"
 			},
 			{
@@ -184,6 +184,19 @@
 		"name": "buyProduct",
 		"outputs": [],
 		"stateMutability": "payable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "canSelectProduct",
+		"outputs": [
+			{
+				"internalType": "bool",
+				"name": "",
+				"type": "bool"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -453,6 +466,32 @@
 		"name": "reinitializeProductsHistory",
 		"outputs": [],
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [
+			{
+				"internalType": "uint256",
+				"name": "_productId",
+				"type": "uint256"
+			}
+		],
+		"name": "selectProduct",
+		"outputs": [],
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"inputs": [],
+		"name": "selectedProductId",
+		"outputs": [
+			{
+				"internalType": "uint256",
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
