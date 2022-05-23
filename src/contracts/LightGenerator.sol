@@ -201,6 +201,3 @@ contract LightGenerator is ILightGenerator {
         );
     }
 }
-
-
-// add Agora address --> to transfer the erc20 to owner
