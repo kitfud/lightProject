@@ -81,13 +81,13 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
     function addressToTokenID(address _account) public view returns(bool[] memory){
         uint256 _tokenCount = tokenCount;
          bool[] memory values = new bool[](_tokenCount);
-         for (uint i=0 ; i < _tokenCount ; unsafe_inc(i)){
-            if(_isApprovedOrOwner(_account, i)){
+         for (uint256 i; i < _tokenCount ; unsafe_inc(i)){
+            if(checkTokenOwnerById(i) == _account){
                 values[i] = true;
             }
         }
         return values;
-    }
+    }  
 
     function unsafe_inc(uint x) private pure returns (uint) {
         unchecked { return x + 1; }
