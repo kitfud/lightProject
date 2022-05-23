@@ -88,6 +88,7 @@ const LightBulb = () => {
   }, [HexBulbColor])
 
   return (
+   
     <canvas ref={canvasRef} />
   )
 }

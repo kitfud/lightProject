@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import {
   Box,
   Button,
@@ -33,7 +33,7 @@ const theme = createTheme({
   },
 });
 
-const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }) => {
+const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, ethprice }) => {
 
   const { HexColor } = useSelector(state => state.color.value)
   const { sendDataProcess } = useSelector(state => state.connection.value)
@@ -43,6 +43,9 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+
+  const [buttonColor, setButtonColor] = React.useState('success')
+
 
   return (
     <ThemeProvider theme={theme}>
@@ -54,7 +57,7 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }
             <Button
               variant="contained"
               size="large"
-              color="primary"
+              color={buttonColor}
               endIcon={<QrCode2Icon />}
               onClick={handleOpen}>
               {sendDataProcess === "initialized" ? (
@@ -63,7 +66,7 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }
             (<Button
               variant="contained"
               size="large"
-              color="primary"
+              color={buttonColor}
               endIcon={<QrCode2Icon />}
             >
               {typeof productSelected === "undefined" ? "Select product" : "Select color"}
@@ -79,15 +82,14 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected }
                 <QRCode value={selectGeneratorAddress} />
               </center>
               <center>
-                <Box className={classes.qRPic} sx={{ background: 'white', padding: '16px' }}>
-                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  </Typography>
-                </Box>
                 <Typography variant="h6" component="h2">
                   Address:{selectGeneratorAddress}
                 </Typography>
                 <Typography variant="h6" component="h2">
-                  Price:{selectProductPrice}
+                  Price USD:{selectProductPrice}  
+                </Typography>
+                <Typography variant="h6" component="h2">
+                  Price ETH: {ethprice} 
                 </Typography>
               </center>
             </Card>
