@@ -271,6 +271,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
           productSelected={productSelected}
           selectProductPrice={productSelectedPrice}
           selectGeneratorAddress={productSelectedAddress}
+          ethprice = {productSelectedPrice / ETHUSDConversionRate}
         />
       </Box>
     )

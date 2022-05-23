@@ -15,6 +15,7 @@ import {  Button,
 } from "@mui/material"
 import adminPic from "../img/adminHardHat.jpg"
 import shoppingPic from "../img/shoppingCart.jpg"
+import gearsPic from "../img/Gears.jpg"
 
 const NavLanding = () => {
   return (
@@ -35,12 +36,12 @@ const NavLanding = () => {
                 <CardMedia 
                     component="img"
                     height="300px"
-                    image={adminPic}
+                    image={gearsPic}
                     alt="Administrator wearing hardhat"
                     
                 />
                 <CardContent sx={{ height: "75px" }}>
-                    <Typography gutterbottom variant="h5" component="div">
+                    <Typography gutterBottom={true} variant="h5" component="div">
                         Admin Page
                     </Typography>
                     <Typography variant="body3" color="white">
@@ -74,7 +75,7 @@ const NavLanding = () => {
                    alt="Shopping cart" 
                 />
                 <CardContent sx={{ height: "75px" }}>
-                    <Typography gutterbottom variant="h5" component="div">
+                    <Typography gutterBottom={true} variant="h5" component="div">
                         Shopping Page
                     </Typography>
                     <Typography variant="body3" color="white">

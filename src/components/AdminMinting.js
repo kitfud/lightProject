@@ -75,7 +75,7 @@ const AdminMinting = ({
       await getETHUSDConversionRate()
       try {
         let tx = await factoryContract.mintGenerator(
-          nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConversionRate}`) }
+          nftName, { "value": ethers.utils.parseEther(`${(nftPrice / ETHUSDConversionRate)+0.000000000001}`) }
         )
         await tx.wait(1)
 
@@ -120,7 +120,7 @@ const AdminMinting = ({
     setNftNameInput(evt.target.value)
   }
 
-  // NFT Owner Card 
+  // NFT Owner Card
   const getGeneratorInfo = async (event = undefined) => {
     let nft_id
     if (typeof event === "undefined") {
@@ -270,7 +270,7 @@ const AdminMinting = ({
     setNewNFTName(undefined)
   }
 
-  // NFT Products Card 
+  // NFT Products Card
   const addNewProduct = async () => {
     if (!loading && newProductName && newProductPrice >= 0 && newProductPrice) {
       try {
