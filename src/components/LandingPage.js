@@ -3,16 +3,11 @@ import { useDispatch } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { setPathname } from '../features/pathname'
 import {  Button,
-        CircularProgress,
+        Grow,
         Box,
+        Slide,
         Typography,
-        Card,
-        CardContent,
-        CardMedia,
         Grid,
-        ThemeProvider,
-        createTheme,
-        Collapse,
     } from "@mui/material"
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Link as Scroll } from "react-scroll"
@@ -29,11 +24,9 @@ export const LandingPage = () => {
 
     useEffect(() => {
         dispatch(setPathname(window.location.pathname))
-    }, [])
-
-    useEffect(() => {
         setChecked(true)
     }, [])
+
       
     const TextHeader = () => {
 
@@ -47,35 +40,41 @@ export const LandingPage = () => {
                 }}
             >    
                 <Box sx={{ textAlign: "center", background: "none", height: "100vh"}}>
-                    <Collapse 
-                        in={checked}
-                        { ...(checked ? { timeout: 1000 } : {}) }
-                        collapsedHeight={50}
-                    >   
+                  
                         <Box sx={{background: "none", textAlign: "center"}}>
-                            <Typography 
-                                sx={{
+                          
+                                <Grow
+                                 in={checked}
+                                 style={{ transformOrigin: '0 0 0' }}
+                                 {...(checked ? { timeout: 2000 } : {})}
+                                >
+                                <Typography   sx={{
                                     color: "white",
-                                    fontSize: 80,                                    
-                                }}
-                            >
-                                Welcome to Candy Lamps.
-                            </Typography> 
+                                    fontSize: 80,
+                                    marginTop:5                                    
+                                }}>Welcome to Candy Lamps </Typography>
+                                </Grow>
                         </Box>
+                   
                     <Scroll to="places-to-visit" smooth={true}>
-                        <KeyboardArrowDownIcon 
+                     <Slide direction="down" in={checked}>
+                     <KeyboardArrowDownIcon 
                            sx={{
                                 color: "white",
-                                fontSize: "4rem",            
+                                fontSize: "15rem",            
                             }}
                         />
+                     </Slide>
+                      
+                       
                     </Scroll>
-                    </Collapse>
+                  
                 </Box>
+                
                 <NavLanding />
                 <Box sx={{ background: "none", }}>
                     <Typography sx={{ textAlign: "center", color: "gray"}}>
-                        Photo: Adonyi Gábor
+                        Photos by Adonyi Gábor and Ronaldo Galeano
                     </Typography>
                 </Box>
             </Box>
