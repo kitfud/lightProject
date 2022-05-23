@@ -41,12 +41,12 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
     address priceFeedAddress;
 
     /* VRF variables */
-    VRFCoordinatorV2Interface public COORDINATOR;
+    VRFCoordinatorV2Interface private immutable COORDINATOR;
     uint64 public s_subscriptionId;
-    bytes32 public keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
-    uint32 public callbackGasLimit = 500000; // the coordinator hardcodes this value as max gas for the testnet
-    uint16 public requestConfirmations = 3;
-    uint32 public numWords = 1;
+    bytes32 private constant keyHash = 0xd89b2bf150e3b9e13446986e571fb9cab24b13cea0a43ea20a6049a85cc807cc;
+    uint32 private constant callbackGasLimit = 500000; // the coordinator hardcodes this value as max gas for the testnet
+    uint16 private constant requestConfirmations = 3;
+    uint32 private constant numWords = 1;
     // VRF requests mapping
     mapping(uint256 => address) public s_requestIdToSender;
 
