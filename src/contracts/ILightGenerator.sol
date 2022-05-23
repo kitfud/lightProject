@@ -11,7 +11,7 @@ interface ILightGenerator {
 
     function changeProductPrice(uint256 _id, uint256 _priceUSD) external;
 
-    function fund() payable external;
+    // function fund() payable external;
 
 
 }

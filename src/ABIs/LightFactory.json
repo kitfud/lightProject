@@ -176,7 +176,11 @@
 		"inputs": [
 			{
 				"internalType": "address",
+<<<<<<< HEAD
 				"name": "toSearch",
+=======
+				"name": "_account",
+>>>>>>> svarogg_lightproject
 				"type": "address"
 			}
 		],

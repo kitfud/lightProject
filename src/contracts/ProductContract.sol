@@ -93,7 +93,7 @@ contract ProductContract {
         require(msg.sender == owner || msg.sender == linkedGenerator, "not allowed");
         uint256 contractBalance = address(this).balance;
         (bool sent,) = owner.call{value:contractBalance}("");
-        require(sent, "Failed to Send Ether To Owner");
+        require(sent, "Failed to Send Eth To Owner");
         emit Withdraw(block.timestamp, contractBalance, owner);
     }
 
@@ -103,7 +103,7 @@ contract ProductContract {
     }
 
     receive() external payable {
-        // Same as in the buyProduct function - we may need 2 mechanisms
+        // Same as in the buyProduct function - we may need both entry points
         require(block.number > blockNumLimit, "Processing... Please try again");
         require(msg.value >= getProductPriceInETH(), "amount sent too low");
         blockNumLimit = block.number + serviceDuration;

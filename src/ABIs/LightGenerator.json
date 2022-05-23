@@ -245,13 +245,6 @@
 	},
 	{
 		"inputs": [],
-		"name": "fund",
-		"outputs": [],
-		"stateMutability": "payable",
-		"type": "function"
-	},
-	{
-		"inputs": [],
 		"name": "generatorName",
 		"outputs": [
 			{

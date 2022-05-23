@@ -54,10 +54,10 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
     }
 
     function mintGenerator(string memory _name) public payable {
-        require(msg.value >= getNFTPriceInETH(),"Not Enough Eth to purchase NFT.");
+        require(msg.value >= getNFTPriceInETH(),"Not Enough Eth to buy NFT.");
         // IAgora(agoraAddress).receivePayment(msg.value);
         (bool sent,) = agoraAddress.call{value:msg.value}("");
-        require(sent, "Failed to purchase NFT. Send Eth to buy.");
+        require(sent, "Failed to buy NFT");
 
         uint256 newTokenId = tokenCount;
         _safeMint(msg.sender, newTokenId);
@@ -78,11 +78,21 @@ contract LightFactory is ILightFactory, ERC721URIStorage {
         return ownerOf(tokenId);
     }
 
+    function checkIfTokenHolder(address _account) public view returns(bool) {
+        uint256 _tokenCount = tokenCount;
+        for (uint i=0 ; i<_tokenCount ; i = unsafe_inc(i)){
+            if(checkTokenOwnerById(i) == _account){
+                return true;
+            }
+        }
+        return false;
+    }
+
     function addressToTokenID(address _account) public view returns(bool[] memory){
         uint256 _tokenCount = tokenCount;
          bool[] memory values = new bool[](_tokenCount);
-         for (uint i=0 ; i < _tokenCount ; unsafe_inc(i)){
-            if(_isApprovedOrOwner(_account, i)){
+         for (uint i; i < _tokenCount ; i= unsafe_inc(i)){
+            if(checkTokenOwnerById(i) == _account){
                 values[i] = true;
             }
         }
