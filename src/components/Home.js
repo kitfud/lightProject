@@ -300,13 +300,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
                             />
                         </Tooltip> </>) : ("Product address: --")}
         </Box>
-        {/* <Tooltip title="copy to clipboard">
-                            <Chip
-                                label={productAddress ? productAddress : "Product Address"}
-                                onClick={copyToClipboard}
-                                disabled={productAddress ? false : true}
-                            />
-                        </Tooltip> */}
+        
         <Box>
           {productSelectedPrice ? ("Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / ETHUSDConversionRate) + ")") :
             ("Product price: $-- (ETH --)")}
