@@ -289,7 +289,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <h1>Crypto Lights</h1>
         <center>
           <LightBulb />
-          <HardwareConnect handleAlerts={handleAlerts} disabled={!status ? false : true} />
+          {/* <HardwareConnect handleAlerts={handleAlerts} /> */}
         </center>
 
         <center>
@@ -302,15 +302,15 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
           {productSelectedName ? ("Product name: " + productSelectedName) : ("Product name: --")}
         </Box>
         <Box>
-          {productSelectedAddress ? ( <>Product address:<Tooltip title="copy to clipboard">
-                            <Chip
-                                label={productSelectedAddress ? productSelectedAddress : "Product Address"}
-                                onClick={copyToClipboard}
-                                disabled={productSelectedAddress ? false : true}
-                            />
-                        </Tooltip> </>) : ("Product address: --")}
+          {productSelectedAddress ? (<>Product address:<Tooltip title="copy to clipboard">
+            <Chip
+              label={productSelectedAddress ? productSelectedAddress : "Product Address"}
+              onClick={copyToClipboard}
+              disabled={productSelectedAddress ? false : true}
+            />
+          </Tooltip> </>) : ("Product address: --")}
         </Box>
-        
+
         <Box>
           {productSelectedPrice ? ("Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / ETHUSDConversionRate) + ")") :
             ("Product price: $-- (ETH --)")}
