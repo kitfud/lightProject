@@ -5,10 +5,10 @@ import { Grid,
          Card,
          CardMedia,
          Button,
-         Slide,
          Typography,
 
 } from '@mui/material'
+import { Link } from 'react-router-dom'
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 import NFTMintCard from './NFTMintCard'
@@ -19,7 +19,7 @@ import { setGeneratorList } from '../features/generator'
 import { setPathname } from '../features/pathname'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import { Link as Scroll } from "react-scroll"
-
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 
 
@@ -482,52 +482,58 @@ const AdminMinting = ({
                 alignItems: "center",
                 height: "100%",
                 width: "100%",
-                background: "blue",
+                background: "purple",
                 
               }}
         >
-
-          <Box sx={{ background: "lightgrey", display: "flex", justifyContent: 'center', flexDirection: "column", alignItems: "center", height: "100vh" }}>
-            <Card sx={{ bgcolor: "none", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
-              <CardMedia component="img"
-                alt="nft"
-                style={{ transform: "scale(1)", objectFit: 'cover', raised: true }}
-                image={require('../img/Candy_Lamp.png')}
-                xs={8}
-                height="350px"
-                width="350px"
-              >
-              </CardMedia>      
-            </Card>
-            <Box sx={{ justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-              <Button 
-                variant="contained"
-                color="warning"
-                sx={{margin: "30px"}}
-                size="large"
-              >
-                Mint New NFT
-              </Button>
-              <Button 
-                variant="contained"
-                color="info"
-                sx={{margin: "30px"}}
-                size="large"
-              >
-                Manage Existing
-              </Button>
+          <div id="adminTop">
+            <Box sx={{ background: "lightgrey", display: "flex", justifyContent: 'center', flexDirection: "column", alignItems: "center", height: "100vh" }}>
+              <Typography sx={{ fontSize:"60px", color: "black" }}>
+                Admin
+              </Typography>
+              <Card sx={{ bgcolor: "none", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
+                <CardMedia component="img"
+                  alt="nft"
+                  style={{ transform: "scale(1)", objectFit: 'cover', raised: true }}
+                  image={require('../img/Candy_Lamp.png')}
+                  xs={8}
+                  height="350px"
+                  width="350px"
+                >
+                </CardMedia>      
+              </Card>
+              <Box sx={{ justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
+                <Scroll to="NFTMint" smooth={true}>
+                    <Button 
+                      variant="contained"
+                      color="warning"
+                      sx={{margin: "30px"}}
+                      size="large"                 
+                    >
+                        Mint New NFT
+                    </Button>
+                </Scroll>
+                <Scroll to="ManageNFTs" smooth={true}>
+                  <Button 
+                    variant="contained"
+                    color="info"
+                    sx={{margin: "30px"}}
+                    size="large"
+                  >
+                    Manage NFTs
+                  </Button>
+                </Scroll>
+              </Box>
+              <Scroll to="NFTMint" smooth={true}>
+                  <KeyboardArrowDownIcon 
+                    sx={{
+                        color: "black",
+                        fontSize: "10rem",            
+                      }}
+                  />
+              </Scroll>
             </Box>
-            <Scroll to="NFTMint" smooth={true}>
-              <Slide direction="down" in={checked}>
-                <KeyboardArrowDownIcon 
-                  sx={{
-                      color: "white",
-                      fontSize: "10rem",            
-                    }}
-                />
-              </Slide>          
-            </Scroll>
-          </Box>
+          </div>
           
           <div id="NFTMint">
             <Box 
@@ -545,7 +551,7 @@ const AdminMinting = ({
               <Typography
                 sx={{
                   fontSize: "60px",
-                  color: "white",
+                  color: "black",
                   textAlign: "center",
                   background: "none",
                   marginBottom: "40px",
@@ -568,7 +574,7 @@ const AdminMinting = ({
                 <Typography
                   sx={{
                     fontSize: "30px",
-                    color: "white",
+                    color: "black",
                     textAlign: "center",
                     alignItems: "center",
                     justifyContent: "center",
@@ -591,14 +597,12 @@ const AdminMinting = ({
                 />
 
               <Scroll to="ManageNFTs" smooth={true}>
-                <Slide direction="down" in={checked}>
                   <KeyboardArrowDownIcon 
                     sx={{
-                        color: "white",
+                        color: "black",
                         fontSize: "10rem",            
                       }}
                   />
-                </Slide>          
               </Scroll>
 
             </Box>
@@ -611,19 +615,22 @@ const AdminMinting = ({
                     alignItems: "center",
                     height: "100vh",
                     background: "lightgrey",
+                    display: "flex",
+                    flexDirection: "column"
                   }}
             >
               <Typography
                 sx={{
                   fontSize: "60px",
-                  color: "white",
-                  textAlign: "center"
+                  color: "Black",
+                  textAlign: "center",
+                  marginTop: "40px",
                 }}
               >
                 Manage NFTs and Products
               </Typography>
-              <Box sx={{ display: "flex"}}>
-                <Box sx={{ flexGrow: 1, margin: "50px", display: "flex"  }}>
+              <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "center", background: "none"}}>
+                <Box sx={{ marginRight: "40px"}}>
                   <NFTOwnerCard
                     sumProductBalances={sumProductBalances}
                     wallet={wallet}
@@ -647,7 +654,7 @@ const AdminMinting = ({
                     handleAlerts={handleAlerts}
                   />
                 </Box>
-                <Box sx={{ flexGrow: 1, display: "flex" }}>
+                <Box sx={{ marginLeft: "40px" }}>
                   <NFTProductsCard
                     size={size}
                     handleProductList={handleProductList}
@@ -671,6 +678,70 @@ const AdminMinting = ({
                   />
                 </Box>
               </Box>
+              <Scroll to="FAQ" smooth={true}>
+                  <KeyboardArrowDownIcon 
+                    sx={{
+                        color: "black",
+                        fontSize: "10rem",           
+                      }}
+                  />
+              </Scroll>
+            </Box>
+          </div>
+
+          <div id="FAQ">
+            <Box sx={{
+                    height: "100vh",
+                    background: "grey",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}
+            >
+              <Box sx={{
+                      textAlign: "center",
+                    }}
+              >
+                  <Typography sx={{
+                                color: "black",
+                                fontSize: "60px",
+                              }}
+                  >
+                    Frequently Asked Questions
+                  </Typography>
+              </Box>
+
+              <Box sx={{
+                      background: "lightgrey",
+                      display: "flex",
+                      flexDirection: "column",
+                      height: "500px",
+                      width: "750px",
+
+                    }}
+              >
+                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px" }}>
+                    -Make sure your wallet is connected.
+                </Typography>
+                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
+                    -You need to mint an NFT before you can add products.
+                </Typography>
+                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
+                    -Make sure you have enough ETH in your wallet.
+                </Typography>
+                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
+                    -Make sure you're connected to Rinkeby test network.
+                </Typography>
+              </Box>
+              <Scroll to="adminTop" smooth={true}>
+                  <KeyboardArrowUpIcon 
+                    sx={{
+                        color: "black",
+                        fontSize: "10rem",           
+                      }}
+                  />
+              </Scroll>
             </Box>
           </div>
         
