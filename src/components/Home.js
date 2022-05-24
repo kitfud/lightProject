@@ -7,6 +7,8 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tooltip,
+  Chip
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
@@ -231,6 +233,15 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     )
   }
 
+  const copyToClipboard = async (evt) => {
+    // const text = evt.target.value
+    if ('clipboard' in navigator) {
+      return await navigator.clipboard.writeText(evt.target.innerText);
+    } else {
+      return document.execCommand('copy', true, evt.target.innerText);
+    }
+  }
+
   const UserSelectProduct = () => {
     return (
       <FormControl sx={{ m: 1, minWidth: 300 }}>
@@ -281,9 +292,21 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
           {productSelectedName ? ("Product name: " + productSelectedName) : ("Product name: --")}
         </Box>
         <Box>
-          {productSelectedAddress ? ("Product address: " + productSelectedAddress) : ("Product address: --")}
+          {productSelectedAddress ? ( <>Product address:<Tooltip title="copy to clipboard">
+                            <Chip
+                                label={productSelectedAddress ? productSelectedAddress : "Product Address"}
+                                onClick={copyToClipboard}
+                                disabled={productSelectedAddress ? false : true}
+                            />
+                        </Tooltip> </>) : ("Product address: --")}
         </Box>
-
+        {/* <Tooltip title="copy to clipboard">
+                            <Chip
+                                label={productAddress ? productAddress : "Product Address"}
+                                onClick={copyToClipboard}
+                                disabled={productAddress ? false : true}
+                            />
+                        </Tooltip> */}
         <Box>
           {productSelectedPrice ? ("Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / ETHUSDConversionRate) + ")") :
             ("Product price: $-- (ETH --)")}
