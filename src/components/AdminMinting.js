@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Grid } from '@mui/material'
+import { Grid,
+         Box,
+         Card,
+         CardMedia,
+         Button,
+         Slide,
+         Typography,
+
+} from '@mui/material'
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 import NFTMintCard from './NFTMintCard'
@@ -9,6 +17,11 @@ import NFTProductsCard from './NFTProductsCard'
 import { setProductList } from "../features/product"
 import { setGeneratorList } from '../features/generator'
 import { setPathname } from '../features/pathname'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Link as Scroll } from "react-scroll"
+
+
+
 
 
 const AdminMinting = ({
@@ -75,7 +88,7 @@ const AdminMinting = ({
       await getETHUSDConversionRate()
       try {
         let tx = await factoryContract.mintGenerator(
-          nftName, { "value": ethers.utils.parseEther(`${(nftPrice / ETHUSDConversionRate)+0.000000000001}`) }
+          nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConversionRate}`) }
         )
         await tx.wait(1)
 
@@ -120,7 +133,7 @@ const AdminMinting = ({
     setNftNameInput(evt.target.value)
   }
 
-  // NFT Owner Card
+  // NFT Owner Card 
   const getGeneratorInfo = async (event = undefined) => {
     let nft_id
     if (typeof event === "undefined") {
@@ -270,7 +283,7 @@ const AdminMinting = ({
     setNewNFTName(undefined)
   }
 
-  // NFT Products Card
+  // NFT Products Card 
   const addNewProduct = async () => {
     if (!loading && newProductName && newProductPrice >= 0 && newProductPrice) {
       try {
@@ -448,66 +461,221 @@ const AdminMinting = ({
     }
   }, [factoryContract])
 
+  const [checked, setChecked] = useState(false)
+
+
+    useEffect(() => {
+        dispatch(setPathname(window.location.pathname))
+        setChecked(true)
+    }, [])
+
   return (
     <>
-      <Grid container sx={{
-        alignItems: "center", display: "flex",
-        drection: "column", margin: 3, justifyContent: "space-around"
-      }} >
-        <NFTMintCard
-          nftPrice={nftPrice}
-          ETHUSDConversionRate={ETHUSDConversionRate}
-          useAutoName={useAutoName}
-          setUseAutoName={setUseAutoName}
-          handleNFTName={handleNFTName}
-          wallet={wallet}
-          loading={loading}
-          mintNFT={mintNFT}
-          handleAlerts={handleAlerts}
-        />
-        <NFTOwnerCard
-          sumProductBalances={sumProductBalances}
-          wallet={wallet}
-          generatorId={generatorId}
-          size={size}
-          getGeneratorInfo={getGeneratorInfo}
-          generatorList={generatorList}
-          generatorAddress={generatorAddress}
-          copyToClipboard={copyToClipboard}
-          ETHUSDConversionRate={ETHUSDConversionRate}
-          withdrawBalance={withdrawBalance}
-          loading={loading}
-          renameNFT={renameNFT}
-          handleNewName={handleNewName}
-          newNFTName={newNFTName}
-          productList={productList}
-          selectedAll={selectedAll}
-          setSelectedAll={setSelectedAll}
-          withdrawAndDelete={withdrawAndDelete}
-          setSelectedProduct={setSelectedProduct}
-          handleAlerts={handleAlerts}
-        />
-        <NFTProductsCard
-          size={size}
-          handleProductList={handleProductList}
-          productId={productId}
-          productList={productList}
-          generatorAddress={generatorAddress}
-          copyToClipboard={copyToClipboard}
-          prodCurrentPrice={prodCurrentPrice}
-          ETHUSDConversionRate={ETHUSDConversionRate}
-          newProductPrice={newProductPrice}
-          addNewProduct={addNewProduct}
-          loading={loading}
-          productNewPrice={productNewPrice}
-          handleNewProductName={handleNewProductName}
-          handleProductChangePrice={handleProductChangePrice}
-          handleNewProductPrice={handleNewProductPrice}
-          productAddress={productAddress}
-          setNewProductPrice={setNewProductPrice}
-          newProductName={newProductName}
-          generatorId={generatorId}
-        />
+      <Grid 
+        container
+        sx={{
+          justifyContent: "space-around"
+        }}
+      >
+        
+        <Box sx={{ 
+                alignItems: "center",
+                height: "100%",
+                width: "100%",
+                background: "blue",
+                
+              }}
+        >
+
+          <Box sx={{ background: "lightgrey", display: "flex", justifyContent: 'center', flexDirection: "column", alignItems: "center", height: "100vh" }}>
+            <Card sx={{ bgcolor: "none", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
+              <CardMedia component="img"
+                alt="nft"
+                style={{ transform: "scale(1)", objectFit: 'cover', raised: true }}
+                image={require('../img/Candy_Lamp.png')}
+                xs={8}
+                height="350px"
+                width="350px"
+              >
+              </CardMedia>      
+            </Card>
+            <Box sx={{ justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
+              <Button 
+                variant="contained"
+                color="warning"
+                sx={{margin: "30px"}}
+                size="large"
+              >
+                Mint New NFT
+              </Button>
+              <Button 
+                variant="contained"
+                color="info"
+                sx={{margin: "30px"}}
+                size="large"
+              >
+                Manage Existing
+              </Button>
+            </Box>
+            <Scroll to="NFTMint" smooth={true}>
+              <Slide direction="down" in={checked}>
+                <KeyboardArrowDownIcon 
+                  sx={{
+                      color: "white",
+                      fontSize: "10rem",            
+                    }}
+                />
+              </Slide>          
+            </Scroll>
+          </Box>
+          
+          <div id="NFTMint">
+            <Box 
+              sx={{
+                    id: "NFTMint",
+                    alignItems: "center",
+                    height: "100vh",
+                    display: "flex",
+                    flexDirection: "column",
+                    background: "grey",
+
+                    
+              }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "60px",
+                  color: "white",
+                  textAlign: "center",
+                  background: "none",
+                  marginBottom: "40px",
+                }}
+              >
+                Mint New NFT
+              </Typography>
+
+              <Box sx={{
+                    height: "300px",
+                    width: "500px",
+                    textAlign: "center",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    background: "none",
+                    marginBottom: "40px",
+                    }}
+                    
+              >
+                <Typography
+                  sx={{
+                    fontSize: "30px",
+                    color: "white",
+                    textAlign: "center",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  ELI5 TL;DR: "The NFT is used as a key to 'unlock' permissions so you can do stuff".
+                </Typography>
+              </Box>
+              
+                <NFTMintCard
+                  nftPrice={nftPrice}
+                  ETHUSDConversionRate={ETHUSDConversionRate}
+                  useAutoName={useAutoName}
+                  setUseAutoName={setUseAutoName}
+                  handleNFTName={handleNFTName}
+                  wallet={wallet}
+                  loading={loading}
+                  mintNFT={mintNFT}
+                  handleAlerts={handleAlerts}
+                />
+
+              <Scroll to="ManageNFTs" smooth={true}>
+                <Slide direction="down" in={checked}>
+                  <KeyboardArrowDownIcon 
+                    sx={{
+                        color: "white",
+                        fontSize: "10rem",            
+                      }}
+                  />
+                </Slide>          
+              </Scroll>
+
+            </Box>
+          </div>
+
+          <div id="ManageNFTs">
+            <Box sx={{ 
+                    flexGrow: 1,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "100vh",
+                    background: "lightgrey",
+                  }}
+            >
+              <Typography
+                sx={{
+                  fontSize: "60px",
+                  color: "white",
+                  textAlign: "center"
+                }}
+              >
+                Manage NFTs and Products
+              </Typography>
+              <Box sx={{ display: "flex"}}>
+                <Box sx={{ flexGrow: 1, margin: "50px", display: "flex"  }}>
+                  <NFTOwnerCard
+                    sumProductBalances={sumProductBalances}
+                    wallet={wallet}
+                    generatorId={generatorId}
+                    size={size}
+                    getGeneratorInfo={getGeneratorInfo}
+                    generatorList={generatorList}
+                    generatorAddress={generatorAddress}
+                    copyToClipboard={copyToClipboard}
+                    ETHUSDConversionRate={ETHUSDConversionRate}
+                    withdrawBalance={withdrawBalance}
+                    loading={loading}
+                    renameNFT={renameNFT}
+                    handleNewName={handleNewName}
+                    newNFTName={newNFTName}
+                    productList={productList}
+                    selectedAll={selectedAll}
+                    setSelectedAll={setSelectedAll}
+                    withdrawAndDelete={withdrawAndDelete}
+                    setSelectedProduct={setSelectedProduct}
+                    handleAlerts={handleAlerts}
+                  />
+                </Box>
+                <Box sx={{ flexGrow: 1, display: "flex" }}>
+                  <NFTProductsCard
+                    size={size}
+                    handleProductList={handleProductList}
+                    productId={productId}
+                    productList={productList}
+                    generatorAddress={generatorAddress}
+                    copyToClipboard={copyToClipboard}
+                    prodCurrentPrice={prodCurrentPrice}
+                    ETHUSDConversionRate={ETHUSDConversionRate}
+                    newProductPrice={newProductPrice}
+                    addNewProduct={addNewProduct}
+                    loading={loading}
+                    productNewPrice={productNewPrice}
+                    handleNewProductName={handleNewProductName}
+                    handleProductChangePrice={handleProductChangePrice}
+                    handleNewProductPrice={handleNewProductPrice}
+                    productAddress={productAddress}
+                    setNewProductPrice={setNewProductPrice}
+                    newProductName={newProductName}
+                    generatorId={generatorId}
+                  />
+                </Box>
+              </Box>
+            </Box>
+          </div>
+        
+        </Box>
+
       </Grid>
     </>
   );
