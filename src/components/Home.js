@@ -289,7 +289,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <h1>Crypto Lights</h1>
         <center>
           <LightBulb />
-          <HardwareConnect handleAlerts={handleAlerts} />
+          {/* <HardwareConnect handleAlerts={handleAlerts} /> */}
         </center>
 
         <center>
