@@ -26,8 +26,8 @@ const AdminMinting = ({
   // General
   const userAddress = useSelector((state) => state.userAddress.value)
   const wallet = useSelector((state) => state.wallet.value)
-  const { socket } = useSelector((state) => state.webSocket.value)
-  const { port } = useSelector(state => state.connection.value)
+  const { previousTxHash } = useSelector(state => state.paymentData.value)
+
 
   const [useAutoName, setUseAutoName] = useState(true)
   const [size, setSize] = useState([100, 100])
@@ -147,29 +147,37 @@ const AdminMinting = ({
     try {
       if (!loading && generatorId && selectedProduct) {
         setLoading(true)
-
-        let there_is_product_selected = false
-        let products_str = ""
         let tx = undefined
-        const products = Object.keys(productList[generatorId])
-        for (let ii = 0; ii < products.length; ii++) {
-          if (productList[generatorId][products[ii]].selected) {
-            there_is_product_selected = true
-            if (productList[generatorId][products[ii]].balance > 0) {
-              tx = await productList[generatorId][products[ii]].contract.withdraw()
 
-              products_str += products[ii] + ", "
+        if (selectedAll) {
+          tx = await generatorContract.withdraw()
+          await tx.wait(1)
+
+          handleAlerts("Withdrawal from all products completed!", "success")
+        } else {
+          let there_is_product_selected = false
+          let products_str = ""
+          const products = Object.keys(productList[generatorId])
+          for (let ii = 0; ii < products.length; ii++) {
+            if (productList[generatorId][products[ii]].selected) {
+              there_is_product_selected = true
+              if (productList[generatorId][products[ii]].balance > 0) {
+                tx = await productList[generatorId][products[ii]].contract.withdraw()
+
+                products_str += products[ii] + ", "
+              }
             }
           }
-        }
-        if (tx) {
-          await tx.wait(1)
-        }
 
-        if (there_is_product_selected) {
-          handleAlerts("Withdrawed successfully from products (IDs): " + products_str.substr(0, products_str.length - 2), "success")
-        } else {
-          handleAlerts("No product selected!", "warning")
+          if (tx) {
+            await tx.wait(1)
+          }
+
+          if (there_is_product_selected) {
+            handleAlerts("Withdrawed successfully from products (IDs): " + products_str.substr(0, products_str.length - 2), "success")
+          } else {
+            handleAlerts("No product selected!", "warning")
+          }
         }
         await updateProductList()
 
@@ -427,7 +435,7 @@ const AdminMinting = ({
     }
     setSelectedAll(false)
     getETHUSDConversionRate()
-  }, [wallet, loading])
+  }, [wallet, loading, previousTxHash])
 
   useEffect(() => {
     if (wallet && factoryContract && !wrongNetwork) {
