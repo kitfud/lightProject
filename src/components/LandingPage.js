@@ -74,7 +74,11 @@ export const LandingPage = () => {
                 <NavLanding />
                 <Box sx={{ background: "none", }}>
                     <Typography sx={{ textAlign: "center", color: "gray"}}>
-                        Photos by Adonyi Gábor and Ronaldo Galeano
+                        Background photo: Adonyi Gábor
+                        <br/>
+                        Admin photo: Ronaldo Galeano
+                        <br/>
+                        Shopping photo: Emirkhan Bal
                     </Typography>
                 </Box>
             </Box>
