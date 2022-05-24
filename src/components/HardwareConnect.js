@@ -3,7 +3,7 @@ import { Button, Box } from "@mui/material"
 import { useDispatch, useSelector } from 'react-redux'
 import { setPort, setConnected } from "../features/connection"
 import { sendData } from '../features/connection'
-import { setCurrentTxHash } from '../features/paymentData'
+import { setCurrentTxHash, setPreviousTxHash } from '../features/paymentData'
 
 const HardwareConnect = ({ handleAlerts }) => {
 
@@ -85,6 +85,7 @@ const HardwareConnect = ({ handleAlerts }) => {
       dispatch(sendData(data))
       await socket.emit("request status", { status: "owner-data processed", address: userAddressRef.current })
       handleAlerts("Data successfully processed!", "success")
+      dispatch(setPreviousTxHash(currentTxHash))
       dispatch(setCurrentTxHash(undefined))
     }
   }
