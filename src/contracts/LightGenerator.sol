@@ -1,11 +1,11 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
-import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./ProductContract.sol";
-import "./ILightGenerator.sol";
+import '@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
+import '@openzeppelin/contracts/token/ERC20/IERC20.sol';
+import './ProductContract.sol';
+import './ILightGenerator.sol';
 
 // TO DO: Think about te lottery logic and the NFT generation for each light bought.
 
@@ -32,12 +32,7 @@ contract LightGenerator is ILightGenerator {
     mapping(uint256 => address) public idToProductContract;
     ProductContract[] public productContracts;
 
-    event ProductSold(
-        uint256 indexed _id,
-        address buyer,
-        uint256 price,
-        uint256 timestamp
-    );
+    event ProductSold(uint256 indexed _id, address buyer, uint256 price, uint256 timestamp);
     event ProductAdded(uint256 indexed _id, string name, uint256 timestamp);
     event Deposit(
         address indexed payee,
@@ -63,7 +58,7 @@ contract LightGenerator is ILightGenerator {
     }
 
     modifier onlyOwner() {
-        require(msg.sender == IERC721(factoryAddress).ownerOf(tokenId), "Only owner");
+        require(msg.sender == IERC721(factoryAddress).ownerOf(tokenId), 'Only owner');
         _;
     }
 
@@ -71,14 +66,14 @@ contract LightGenerator is ILightGenerator {
         generatorName = _newName;
     }
 
-    function getBalance() public view onlyOwner returns(uint256 balance){
+    function getBalance() public view onlyOwner returns (uint256 balance) {
         balance = address(this).balance;
     }
 
-    function withdraw() external onlyOwner returns(uint256){
+    function withdraw() external onlyOwner returns (uint256) {
         uint256 contractBalance;
         address owner = IERC721(factoryAddress).ownerOf(tokenId);
-        for (uint i ; i<productCount ; i++) {
+        for (uint256 i; i < productCount; i++) {
             uint256 tempProductBalance = idToProductContract[i].balance;
             if (tempProductBalance > 0) {
                 contractBalance += tempProductBalance;
@@ -89,11 +84,7 @@ contract LightGenerator is ILightGenerator {
         return contractBalance;
     }
 
-    function getProductPriceInETH(uint256 productId)
-        public
-        view
-        returns (uint256)
-    {
+    function getProductPriceInETH(uint256 productId) public view returns (uint256) {
         uint256 precision = 1 * 10**18;
         uint256 productPriceinUSD = idToProduct[productId].priceUSD;
         return (productPriceinUSD * precision) / getETHUSDConversionRate();
@@ -105,10 +96,7 @@ contract LightGenerator is ILightGenerator {
         return uint256(price) * 10**factor;
     }
 
-    function changeProductPrice(uint256 _id, uint256 _priceUSD)
-        external
-        onlyOwner
-    {
+    function changeProductPrice(uint256 _id, uint256 _priceUSD) external onlyOwner {
         Product memory currentProduct = idToProduct[_id];
         Product memory modProduct = Product(
             currentProduct.id,
@@ -134,35 +122,33 @@ contract LightGenerator is ILightGenerator {
 
     function buyProduct(uint256 productId) external payable {
         uint256 priceETH = getProductPriceInETH(productId);
-        require(
-            msg.value >= priceETH,
-            "Not Enough ETH to buy the product."
-        );
-        emit Deposit(
-            msg.sender,
-            msg.value,
-            block.timestamp,
-            address(this).balance
-        );
+        require(msg.value >= priceETH, 'Not Enough ETH to buy the product.');
+        emit Deposit(msg.sender, msg.value, block.timestamp, address(this).balance);
         emit ProductSold(productId, msg.sender, priceETH, block.timestamp);
     }
 
     function fund() external payable {
-        emit Deposit(
-            msg.sender,
-            msg.value,
-            block.timestamp,
-            address(this).balance
-        );
+        emit Deposit(msg.sender, msg.value, block.timestamp, address(this).balance);
     }
 
     function addProduct(string memory _name, uint256 _price) public onlyOwner {
         // address owner = IERC721(factoryAddress).ownerOf(tokenId);
-        ProductContract newContract = new ProductContract(productCount, _name, _price, tokenId, factoryAddress);
+        ProductContract newContract = new ProductContract(
+            productCount,
+            _name,
+            _price,
+            tokenId,
+            factoryAddress
+        );
         productContracts.push(newContract);
         idToProductContract[productCount] = payable(newContract);
 
-        Product memory newProduct = Product(productCount, _name, _price, idToProductContract[productCount]);
+        Product memory newProduct = Product(
+            productCount,
+            _name,
+            _price,
+            idToProductContract[productCount]
+        );
         productsCompleteHistory.push(newProduct);
         idToProduct[productCount] = newProduct;
         nameToProduct[_name] = newProduct;
@@ -204,14 +190,8 @@ contract LightGenerator is ILightGenerator {
     // }
     // 2300 gas max
     receive() external payable {
-        emit Deposit(
-            msg.sender,
-            msg.value,
-            block.timestamp,
-            address(this).balance
-        );
+        emit Deposit(msg.sender, msg.value, block.timestamp, address(this).balance);
     }
 }
-
 
 // add Agora address --> to transfer the erc20 to owner

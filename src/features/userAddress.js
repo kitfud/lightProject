@@ -1,17 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialStateValue = undefined
+const initialStateValue = undefined;
 
 export const userAddressSlice = createSlice({
-    name: "userAddress",
-    initialState: { value: initialStateValue },
-    reducers: {
-        setUserAddress: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
+  name: 'userAddress',
+  initialState: { value: initialStateValue },
+  reducers: {
+    setUserAddress: (state, action) => {
+      state.value = action.payload;
+    },
+  },
+});
 
-export const { setUserAddress } = userAddressSlice.actions
+export const { setUserAddress } = userAddressSlice.actions;
 
-export default userAddressSlice.reducer
+export default userAddressSlice.reducer;

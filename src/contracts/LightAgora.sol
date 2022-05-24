@@ -2,12 +2,11 @@
 pragma solidity ^0.8.13;
 
 // import "@openzeppelin/contracts/access/AccessControl.sol";
-import "./ILightFactory.sol";
-import "./LightFactory.sol";
-import "./ILightAgora.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-
+import './ILightFactory.sol';
+import './LightFactory.sol';
+import './ILightAgora.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol';
 
 // TO DO: Add the ERC20 token mechanics here? Add roles?
 
@@ -34,12 +33,12 @@ contract LightAgora is ILightAgora, ERC20Burnable {
     }
     VOTE_STATE public vote_state;
 
-    constructor(uint256 initialSupply, address _priceFeedAddress) ERC20('LiquidLight', 'LIQ'){
+    constructor(uint256 initialSupply, address _priceFeedAddress) ERC20('LiquidLight', 'LIQ') {
         // _mint(msg.sender, initialSupply);
-// very simple behavior: mint tokens when a new generator is minted/deployed,
-//                       a fixed supply for that specific generator
-//                       when a user buys a product, the gen can send tokens
-//                       once tokens are all out, the generator gets the right to burn tokens?
+        // very simple behavior: mint tokens when a new generator is minted/deployed,
+        //                       a fixed supply for that specific generator
+        //                       when a user buys a product, the gen can send tokens
+        //                       once tokens are all out, the generator gets the right to burn tokens?
 
         lightFactory = new LightFactory(address(this), _priceFeedAddress);
         factoryAddress = address(lightFactory);
@@ -53,26 +52,26 @@ contract LightAgora is ILightAgora, ERC20Burnable {
             0x9466b7430eC51c81e1F43dDCf69278878B559382
         ];
 
-        for (uint i ; i<voters.length ; i++) {
+        for (uint256 i; i < voters.length; i++) {
             isVoter[voters[i]] = true;
             _mint(voters[i], initialSupply);
         }
         vote_state = VOTE_STATE.SETTLED;
     }
 
-    modifier onlyVoter {
-        require(isVoter[msg.sender] == true, "you are not a voter");
+    modifier onlyVoter() {
+        require(isVoter[msg.sender] == true, 'you are not a voter');
         _;
     }
 
     // change for an Access control mechanism?
-    modifier onlyMinter {
-        require(canMint[msg.sender] == true, "No minting rights");
+    modifier onlyMinter() {
+        require(canMint[msg.sender] == true, 'No minting rights');
         _;
     }
 
-    modifier onlyBurner {
-        require(canBurn[msg.sender] == true, "No minting rights");
+    modifier onlyBurner() {
+        require(canBurn[msg.sender] == true, 'No minting rights');
         _;
     }
 
@@ -96,29 +95,29 @@ contract LightAgora is ILightAgora, ERC20Burnable {
     }
 
     function suggestNFTPriceChange(uint256 _newPrice) public onlyVoter {
-        if (vote_state == VOTE_STATE.SETTLED){
+        if (vote_state == VOTE_STATE.SETTLED) {
             vote_state = VOTE_STATE.ONGOING;
         }
-        require(voterDidVote[msg.sender] == false, "you already voted");
+        require(voterDidVote[msg.sender] == false, 'you already voted');
         voterDidVote[msg.sender] = true;
-        votesCount ++;
+        votesCount++;
         cumulativeCount += _newPrice;
         if (votesCount == voters.length) {
             vote_state = VOTE_STATE.SETTLED;
-            ILightFactory(factoryAddress).setNFTPrice(cumulativeCount/votesCount);
+            ILightFactory(factoryAddress).setNFTPrice(cumulativeCount / votesCount);
             delete votesCount;
             delete cumulativeCount;
-            for (uint i ; i<voters.length ; i++){
+            for (uint256 i; i < voters.length; i++) {
                 delete voterDidVote[voters[i]];
             }
         }
     }
 
-    function checkIfOnGoingVote() external view returns(string memory){
-        if (vote_state == VOTE_STATE.ONGOING){
-            return "On-going vote.";
+    function checkIfOnGoingVote() external view returns (string memory) {
+        if (vote_state == VOTE_STATE.ONGOING) {
+            return 'On-going vote.';
         } else {
-            return "All votes settled.";
+            return 'All votes settled.';
         }
     }
 
@@ -130,23 +129,23 @@ contract LightAgora is ILightAgora, ERC20Burnable {
 
     function splitBalance() internal {
         uint256 tempLen = voters.length;
-        uint256 splitAmount = address(this).balance/tempLen;
-        for (uint i ; i<tempLen ; i++){
-            (bool sent,) = voters[i].call{value:splitAmount}("");
-            require(sent, "Failed to send ETH to voter");
+        uint256 splitAmount = address(this).balance / tempLen;
+        for (uint256 i; i < tempLen; i++) {
+            (bool sent, ) = voters[i].call{value: splitAmount}('');
+            require(sent, 'Failed to send ETH to voter');
         }
     }
 
     function receivePayment(uint256 _amount) external payable {
         uint256 tempLen = voters.length;
-        uint256 splitAmount = _amount/tempLen;
-        for (uint i ; i<tempLen ; i++){
-            (bool sent,) = payable(voters[i]).call{value:splitAmount}("");
-            require(sent, "Failed to send ETH to voter");
+        uint256 splitAmount = _amount / tempLen;
+        for (uint256 i; i < tempLen; i++) {
+            (bool sent, ) = payable(voters[i]).call{value: splitAmount}('');
+            require(sent, 'Failed to send ETH to voter');
         }
     }
 
-    function getBalance() public view returns(uint256){
+    function getBalance() public view returns (uint256) {
         return address(this).balance;
     }
 

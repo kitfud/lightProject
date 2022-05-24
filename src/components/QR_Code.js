@@ -1,28 +1,20 @@
-import React, { useEffect } from 'react'
-import {
-  Box,
-  Button,
-  Typography,
-  Card,
-  Grid,
-  Modal,
-  CircularProgress
-} from '@mui/material'
-import { makeStyles } from "@mui/styles"
+import React, { useEffect } from 'react';
+import { Box, Button, Typography, Card, Grid, Modal, CircularProgress } from '@mui/material';
+import { makeStyles } from '@mui/styles';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
-import QRCode from "react-qr-code";
+import QRCode from 'react-qr-code';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { useSelector } from 'react-redux';
 
 const useStyles = makeStyles({
   qRPic: {
-    position: "fixed",
-    top: "50%",
-    left: "50%",
-    marginLeft: "-125px",
-    marginTop: "-125px"
+    position: 'fixed',
+    top: '50%',
+    left: '50%',
+    marginLeft: '-125px',
+    marginTop: '-125px',
   },
-})
+});
 
 const theme = createTheme({
   palette: {
@@ -34,43 +26,41 @@ const theme = createTheme({
 });
 
 const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, ethprice }) => {
+  const { HexColor } = useSelector((state) => state.color.value);
+  const { sendDataProcess } = useSelector((state) => state.connection.value);
 
-  const { HexColor } = useSelector(state => state.color.value)
-  const { sendDataProcess } = useSelector(state => state.connection.value)
-
-  const classes = useStyles()
-  const howToQR = "Select a color, then click the button below."
+  const classes = useStyles();
+  const howToQR = 'Select a color, then click the button below.';
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
-  const [buttonColor, setButtonColor] = React.useState('success')
-
+  const [buttonColor, setButtonColor] = React.useState('success');
 
   return (
     <ThemeProvider theme={theme}>
-      <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginBottom: 2 }}>
+      <Grid
+        sx={{ alignItems: 'center', display: 'flex', flexDirection: 'column', marginBottom: 2 }}
+      >
         <Box>
           {howToQR}
-          <br /><br />
-          {typeof productSelected !== "undefined" && typeof HexColor !== "undefined" ? (
+          <br />
+          <br />
+          {typeof productSelected !== 'undefined' && typeof HexColor !== 'undefined' ? (
             <Button
               variant="contained"
               size="large"
               color={buttonColor}
               endIcon={<QrCode2Icon />}
-              onClick={handleOpen}>
-              {sendDataProcess === "initialized" ? (
-                <CircularProgress color="inherit" />) : ("Get QR")}
-            </Button>) :
-            (<Button
-              variant="contained"
-              size="large"
-              color={buttonColor}
-              endIcon={<QrCode2Icon />}
+              onClick={handleOpen}
             >
-              {typeof productSelected === "undefined" ? "Select product" : "Select color"}
-            </Button>)}
+              {sendDataProcess === 'initialized' ? <CircularProgress color="inherit" /> : 'Get QR'}
+            </Button>
+          ) : (
+            <Button variant="contained" size="large" color={buttonColor} endIcon={<QrCode2Icon />}>
+              {typeof productSelected === 'undefined' ? 'Select product' : 'Select color'}
+            </Button>
+          )}
           <Modal
             open={open}
             onClose={handleClose}
@@ -86,10 +76,10 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
                   Address:{selectGeneratorAddress}
                 </Typography>
                 <Typography variant="h6" component="h2">
-                  Price USD:{selectProductPrice}  
+                  Price USD:{selectProductPrice}
                 </Typography>
                 <Typography variant="h6" component="h2">
-                  Price ETH: {ethprice} 
+                  Price ETH: {ethprice}
                 </Typography>
               </center>
             </Card>
@@ -97,7 +87,7 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
         </Box>
       </Grid>
     </ThemeProvider>
-  )
-}
+  );
+};
 
-export default QR_Code
+export default QR_Code;
