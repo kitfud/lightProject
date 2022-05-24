@@ -24,49 +24,16 @@ export const colorSlice = createSlice({
                 const b = rgb_color.b
 
                 const rgb_string = `${r},${g},${b}`
-
-                const hex_color = state.value.RGBColorString
-                const rgb_color_string = rgb_string
-                const hex_bulb_color = state.value.HexBulbColor
-                const new_sate = {
-                    HexColor: hex_color,
-                    RGBColorString: rgb_color_string,
-                    HexBulbColor: hex_bulb_color
-                }
-                state.value = { ...new_sate }
+                state.value.RGBColorString = rgb_string
             } else {
-                const hex_color = state.value.RGBColorString
-                const rgb_color_string = action.payload
-                const hex_bulb_color = state.value.HexBulbColor
-                const new_sate = {
-                    HexColor: hex_color,
-                    RGBColorString: rgb_color_string,
-                    HexBulbColor: hex_bulb_color
-                }
-                state.value = { ...new_sate }
+                state.value.RGBColorString = action.payload
             }
         },
         setHexColor: (state, action) => {
-            const hex_color = action.payload
-            const rgb_color_string = state.value.RGBColorString
-            const hex_bulb_color = state.value.HexBulbColor
-            const new_sate = {
-                HexColor: hex_color,
-                RGBColorString: rgb_color_string,
-                HexBulbColor: hex_bulb_color
-            }
-            state.value = { ...new_sate }
+            state.value.HexColor = action.payload
         },
         setHexBulbColor: (state, action) => {
-            const hex_color = state.value.RGBColorString
-            const rgb_color_string = state.value.RGBColorString
-            const hex_bulb_color = action.payload
-            const new_sate = {
-                HexColor: hex_color,
-                RGBColorString: rgb_color_string,
-                HexBulbColor: hex_bulb_color
-            }
-            state.value = { ...new_sate }
+            state.value.HexBulbColor = action.payload
         },
     }
 }

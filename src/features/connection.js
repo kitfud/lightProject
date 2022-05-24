@@ -29,23 +29,7 @@ export const connectionSlice = createSlice({
     initialState: { value: initialStateValue },
     reducers: {
         setPort: (state, action) => {
-            const new_port = action.payload
-            const new_connected = state.value.connected
-            const new_sendDataStatus = state.value.sendDataStatus
-            const new_sendDataProcess = state.value.sendDataProcess
-            const new_receiveDataStatus = state.value.receiveDataStatus
-            const new_lastSentData = state.value.lastSentData
-            const new_lastReceivedData = state.value.lastReceivedData
-
-            state.value = {
-                port: new_port,
-                connected: new_connected,
-                sendDataStatus: new_sendDataStatus,
-                sendDataProcess: new_sendDataProcess,
-                receiveDataStatus: new_receiveDataStatus,
-                lastSentData: new_lastSentData,
-                lastReceivedData: new_lastReceivedData
-            }
+            state.value.port = action.payload
         },
         setConnected: (state, action) => {
             state.value.connected = action.payload

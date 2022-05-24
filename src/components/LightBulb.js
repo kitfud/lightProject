@@ -5,7 +5,7 @@ import { setRGBColorString, setHexBulbColor } from "../features/color"
 const LightBulb = () => {
 
   const dispatch = useDispatch()
-  const { currentTxHash } = useSelector((state) => state.paymentData.value)
+  const { previousTxHash, currentTxHash } = useSelector((state) => state.paymentData.value)
   const { HexColor, HexBulbColor } = useSelector(state => state.color.value)
 
   const canvasRef = useRef(null)
@@ -75,19 +75,20 @@ const LightBulb = () => {
     draw(context)
   }
 
-  // useEffect(() => {
-  //   if (currentTxHash && HexColor) {
-  //     // if (HexColor) {
-  //     dispatch(setHexBulbColor(HexColor))
-  //     dispatch(setRGBColorString(HexColor))
-  //   }
-  // }, [currentTxHash, HexColor])
+  useEffect(() => {
+    if (previousTxHash !== currentTxHash && HexColor) {
+      // if (HexColor) {
+      dispatch(setHexBulbColor(HexColor))
+      dispatch(setRGBColorString(HexColor))
+    }
+  }, [currentTxHash, HexColor])
 
   useEffect(() => {
     generateGraphic()
   }, [HexBulbColor])
 
   return (
+
     <canvas ref={canvasRef} />
   )
 }

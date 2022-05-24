@@ -7,19 +7,23 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tooltip,
+  Chip
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 import LightBulb from './LightBulb';
 import { useSearchParams } from 'react-router-dom';
 import { ethers } from 'ethers';
+import { getProductContract } from '../utils';
+import { setProductList } from '../features/product';
 import { setRefAddress } from '../features/refAddress';
-import { setCurrentTxHash } from "../features/paymentData"
+import { setPreviousTxHash, setCurrentTxHash } from "../features/paymentData"
 import { setSendDataProcess, sendData } from '../features/connection';
 import { setPathname } from "../features/pathname"
 import HardwareConnect from './HardwareConnect';
 import { setStatus } from '../features/webSocket';
-import { setRGBColorString, setHexColor, setHexBulbColor } from '../features/color'
+import { setRGBColorString, setHexColor } from '../features/color'
 
 const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
@@ -31,10 +35,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   const factoryContract = useSelector((state) => state.factoryContract.value)
   const generatorList = useSelector((state) => state.generator.value)
   const refAddress = useSelector((state) => state.refAddress.value)
-  const { currentTxHash } = useSelector((state) => state.paymentData.value)
+  const { currentTxHash, previousTxHash } = useSelector((state) => state.paymentData.value)
   const { socket, status } = useSelector((state) => state.webSocket.value)
   const { port } = useSelector(state => state.connection.value)
-  const { HexColor, RGBColorString } = useSelector(state => state.color.value)
+  const { RGBColorString } = useSelector(state => state.color.value)
 
   // Local Variables
   const [nftSelected, setNFTSelected] = useState(undefined)
@@ -98,7 +102,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const sendDataFunc = async () => {
     if (typeof port === "undefined" && socket && typeof status === "undefined") {
-      await socket.emit("user request", { data: RGBColorString, address: refAddress, tx_hash: currentTxHash })
+      await socket.emit("user request", { data: RGBColorString, address: refAddress })
     } else if (port) {
       dispatch(sendData(RGBColorString))
     }
@@ -125,22 +129,15 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   }, [socket])
 
   useEffect(() => {
-    if (RGBColorString && currentTxHash) {
+    if (RGBColorString && previousTxHash !== currentTxHash) {
       // if (RGBColorString) {
       sendDataFunc()
-      dispatch(setCurrentTxHash(undefined))
+      dispatch(setPreviousTxHash(currentTxHash))
       dispatch(setRGBColorString(undefined))
       dispatch(setHexColor(undefined))
       dispatch(setSendDataProcess("finished"))
     }
   }, [RGBColorString])
-
-  useEffect(() => {
-    if (HexColor && currentTxHash) {
-      dispatch(setHexBulbColor(HexColor))
-      dispatch(setRGBColorString(HexColor))
-    }
-  }, [HexColor, currentTxHash])
 
   useEffect(() => {
     if (status) {
@@ -189,19 +186,14 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   useEffect(() => {
 
     if (selectedProductContract !== undefined && firstTimeListener) {
-      selectedProductContract.on("Deposit", async (payee, value, time, currentContractBalance, event) => {
+      selectedProductContract.on("Deposit", (payee, value, time, currentContractBalance, event) => {
 
         const tx_hash = event.transactionHash
-        let current_tx_hash = undefined
-        await socket.emit("transaction hash", refAddress, (data) => {
-          current_tx_hash = data
-        })
 
-
-        if (!current_tx_hash) {
-          dispatch(setSendDataProcess("initialized"))
-          handleAlerts("Initialization: sending data to lamps owner...", "warning", true)
+        if (currentTxHash !== tx_hash) {
+          dispatch(setPreviousTxHash(currentTxHash))
           dispatch(setCurrentTxHash(tx_hash))
+          dispatch(setSendDataProcess("initialized"))
         }
       })
 
@@ -239,6 +231,15 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         </Select>
       </FormControl>
     )
+  }
+
+  const copyToClipboard = async (evt) => {
+    // const text = evt.target.value
+    if ('clipboard' in navigator) {
+      return await navigator.clipboard.writeText(evt.target.innerText);
+    } else {
+      return document.execCommand('copy', true, evt.target.innerText);
+    }
   }
 
   const UserSelectProduct = () => {
@@ -291,9 +292,15 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
           {productSelectedName ? ("Product name: " + productSelectedName) : ("Product name: --")}
         </Box>
         <Box>
-          {productSelectedAddress ? ("Product address: " + productSelectedAddress) : ("Product address: --")}
+          {productSelectedAddress ? ( <>Product address:<Tooltip title="copy to clipboard">
+                            <Chip
+                                label={productSelectedAddress ? productSelectedAddress : "Product Address"}
+                                onClick={copyToClipboard}
+                                disabled={productSelectedAddress ? false : true}
+                            />
+                        </Tooltip> </>) : ("Product address: --")}
         </Box>
-
+        
         <Box>
           {productSelectedPrice ? ("Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / ETHUSDConversionRate) + ")") :
             ("Product price: $-- (ETH --)")}
@@ -303,8 +310,9 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <QR_Code
           productSelected={productSelected}
           selectProductPrice={productSelectedPrice}
-          productSelectedAddress={productSelectedAddress}
+          selectGeneratorAddress={productSelectedAddress}
           disabled={!status ? false : true}
+          ethprice={productSelectedPrice / ETHUSDConversionRate}
         />
       </Box>
     )

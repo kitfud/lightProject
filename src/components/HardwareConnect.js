@@ -3,7 +3,7 @@ import { Button, Box } from "@mui/material"
 import { useDispatch, useSelector } from 'react-redux'
 import { setPort, setConnected } from "../features/connection"
 import { sendData } from '../features/connection'
-import { setCurrentTxHash } from '../features/paymentData'
+import { setUserAddress } from '../features/userAddress'
 
 const HardwareConnect = ({ handleAlerts }) => {
 
@@ -11,7 +11,6 @@ const HardwareConnect = ({ handleAlerts }) => {
 
   const { port, connected } = useSelector(state => state.connection.value)
   const { socket } = useSelector(state => state.webSocket.value)
-  const { currentTxHash } = useSelector(state => state.paymentData.value)
   const userAddress = useSelector(state => state.userAddress.value)
   const refAddress = useSelector(state => state.refAddress.value)
   const baudRate = 57600
@@ -79,13 +78,10 @@ const HardwareConnect = ({ handleAlerts }) => {
   }
 
   const handleUserRequestSocketEvent = async (data) => {
-    if (portRef.current && !currentTxHash) {
-      handleAlerts("Receieved user colors data.", "info", true)
+    if (portRef.current) {
       await socket.emit("request status", { status: "owner-received", address: userAddressRef.current })
       dispatch(sendData(data))
       await socket.emit("request status", { status: "owner-data processed", address: userAddressRef.current })
-      handleAlerts("Data successfully processed!", "success")
-      dispatch(setCurrentTxHash(undefined))
     }
   }
 
@@ -98,13 +94,20 @@ const HardwareConnect = ({ handleAlerts }) => {
     }
   }, [socket])
 
+  useEffect(() => {
+    if (userAddress) {
+      // dispatch(setUserAddress(userAddress))
+
+    }
+  }, [userAddress])
+
   return (
     <>
       <Box>
         {connected ? (
           <Button
             variant="contained"
-            color="error"
+            color="primary"
             onClick={handleDisconnect}
           >
             DISCONNECT Light Generator
@@ -112,7 +115,7 @@ const HardwareConnect = ({ handleAlerts }) => {
         ) : (
           <Button
             variant="contained"
-            color="success"
+            color="primary"
             onClick={handleConnect}
             disabled={userAddress || refAddress ? false : true}
           >
