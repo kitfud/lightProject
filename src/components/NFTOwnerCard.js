@@ -94,7 +94,7 @@ const NFTOwnerCard = ({ sumProductBalances, generatorId, size, getGeneratorInfo,
                             </Tooltip>
                         </FormControl>
                     </FormControl>
-                   
+                    <HardwareConnect handleAlerts={handleAlerts} />
                     <FormControl sx={{ padding: 1, marginBottom: 1 }}>
                         {productList && generatorId ? (Object.keys(productList[generatorId]).map(productKey => (
                             <Grid container key={productKey}>
