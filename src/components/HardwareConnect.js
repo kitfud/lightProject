@@ -1,18 +1,24 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Button, Box } from "@mui/material"
 import { useDispatch, useSelector } from 'react-redux'
-import { setPort, setConnected, sendData, setSendDataProcess } from "../features/connection"
-import { setRGBColorString, setHexColor } from '../features/color'
-import { setPreviousTxHash } from "../features/paymentData"
+import { setPort, setConnected } from "../features/connection"
+import { sendData } from '../features/connection'
+import { setUserAddress } from '../features/userAddress'
 
 const HardwareConnect = ({ handleAlerts }) => {
 
   const dispatch = useDispatch()
 
-  const { RGBColorString } = useSelector(state => state.color.value)
   const { port, connected } = useSelector(state => state.connection.value)
-  const { previousTxHash, currentTxHash } = useSelector(state => state.paymentData.value)
+  const { socket } = useSelector(state => state.webSocket.value)
+  const userAddress = useSelector(state => state.userAddress.value)
+  const refAddress = useSelector(state => state.refAddress.value)
   const baudRate = 57600
+
+  const userAddressRef = useRef()
+  userAddressRef.current = userAddress
+  const portRef = useRef()
+  portRef.current = port
 
   const handleConnect = () => {
     connectDevice()
@@ -29,7 +35,17 @@ const HardwareConnect = ({ handleAlerts }) => {
         await new_port.open({ baudRate })
         dispatch(setPort(new_port))
         dispatch(setConnected(true))
-        handleAlerts("Port connected", "success")
+
+
+        if (userAddress && socket) {
+          try {
+            // const json_obj = { userAddress }
+            socket.emit("owner connected", userAddress)
+            handleAlerts("Port connected and registered", "success")
+          } catch (error) {
+            handleAlerts("Failed to register hardware device", "error")
+          }
+        }
       } catch (error) {
         handleAlerts("Failed to open serial port", "error")
       }
@@ -43,10 +59,6 @@ const HardwareConnect = ({ handleAlerts }) => {
     dispatch(setPort(undefined))
     dispatch(setConnected(false))
     handleAlerts("Port disconnected", "info")
-  }
-
-  const sendDataFunc = () => {
-    dispatch(sendData(RGBColorString))
   }
 
   const readDataFunc = async () => {
@@ -65,27 +77,48 @@ const HardwareConnect = ({ handleAlerts }) => {
     }
   }
 
-  useEffect(() => {
-    if (port && RGBColorString && previousTxHash !== currentTxHash) {
-      // if (port && RGBColorString) {
-      console.log("here")
-      sendDataFunc()
-      dispatch(setPreviousTxHash(currentTxHash))
-      dispatch(setRGBColorString(undefined))
-      dispatch(setHexColor(undefined))
-      dispatch(setSendDataProcess("finished"))
+  const handleUserRequestSocketEvent = async (data) => {
+    if (portRef.current) {
+      await socket.emit("request status", { status: "owner-received", address: userAddressRef.current })
+      dispatch(sendData(data))
+      await socket.emit("request status", { status: "owner-data processed", address: userAddressRef.current })
     }
-  }, [RGBColorString])
+  }
+
+  useEffect(() => {
+    if (socket) {
+      socket.on("user request", handleUserRequestSocketEvent)
+      return () => {
+        socket.off("user request")
+      }
+    }
+  }, [socket])
+
+  useEffect(() => {
+    if (userAddress) {
+      // dispatch(setUserAddress(userAddress))
+
+    }
+  }, [userAddress])
 
   return (
     <>
       <Box>
         {connected ? (
-          <Button variant="contained" color="primary" onClick={handleDisconnect}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleDisconnect}
+          >
             DISCONNECT Light Generator
           </Button>
         ) : (
-          <Button variant="contained" color="primary" onClick={handleConnect}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={handleConnect}
+            disabled={userAddress || refAddress ? false : true}
+          >
             CONNECT Light Generator
           </Button>
         )}
