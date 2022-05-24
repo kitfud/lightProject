@@ -31,7 +31,7 @@ jobs:
       if: always()
     - run: npm run lint
       if: always()
-    - run: npm run solhint
-      if: always()
+    # - run: npm run solhint
+    #   if: always()
     - run: npm run format
       if: always()
