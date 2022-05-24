@@ -500,7 +500,7 @@ const AdminMinting = ({
           newProductName={newProductName}
           generatorId={generatorId}
           setNewProductName={setNewProductName}
-          setNewProducPrice={setNewProducPrice}
+          setNewProducPrice={setNewProductPrice}
           setProductNewPrice={setProductNewPrice}
         />
       </Grid>
