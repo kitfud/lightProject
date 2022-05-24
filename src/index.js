@@ -18,6 +18,7 @@ import providerReducer from "./features/provider"
 import refAddressReducer from "./features/refAddress"
 import paymentDataReducer from "./features/paymentData"
 import pathnameReducer from "./features/pathname"
+import webSocketReducer from "./features/webSocket"
 
 const store = configureStore({
   reducer: {
@@ -33,7 +34,8 @@ const store = configureStore({
     provider: providerReducer,
     refAddress: refAddressReducer,
     paymentData: paymentDataReducer,
-    pathname: pathnameReducer
+    pathname: pathnameReducer,
+    webSocket: webSocketReducer
   },
   middleware: getDefaultMiddleware =>
     getDefaultMiddleware({

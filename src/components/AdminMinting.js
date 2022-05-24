@@ -23,7 +23,6 @@ import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 
 
 
-
 const AdminMinting = ({
   loading,
   setLoading,
@@ -40,7 +39,8 @@ const AdminMinting = ({
   // General
   const userAddress = useSelector((state) => state.userAddress.value)
   const wallet = useSelector((state) => state.wallet.value)
-  const alerts = useSelector((state) => state.alerts.value)
+  const { socket } = useSelector((state) => state.webSocket.value)
+  const { port } = useSelector(state => state.connection.value)
 
   const [useAutoName, setUseAutoName] = useState(true)
   const [size, setSize] = useState([100, 100])
@@ -88,7 +88,7 @@ const AdminMinting = ({
       await getETHUSDConversionRate()
       try {
         let tx = await factoryContract.mintGenerator(
-          nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConversionRate}`) }
+          nftName, { "value": ethers.utils.parseEther(`${(nftPrice / ETHUSDConversionRate) + 0.000000000001}`) }
         )
         await tx.wait(1)
 
@@ -285,7 +285,7 @@ const AdminMinting = ({
 
   // NFT Products Card 
   const addNewProduct = async () => {
-    if (!loading && newProductName && newProductPrice >= 0 && newProductPrice) {
+    if (!loading && newProductName && parseFloat(newProductPrice) >= 0 && newProductPrice) {
       try {
         setLoading(true)
         const tx = await generatorContract.addProduct(
@@ -317,8 +317,8 @@ const AdminMinting = ({
     setLoading(false)
   }
 
-  const setNewProductPrice = async () => {
-    if (!loading && generatorId && productNewPrice >= 0 && !productNewPrice === "") {
+  const changeProductPrice = async () => {
+    if (!loading && generatorId && parseFloat(productNewPrice) >= 0 && productNewPrice !== "") {
       setLoading(true)
       try {
         const tx = await generatorContract.changeProductPrice(
@@ -339,6 +339,7 @@ const AdminMinting = ({
         } else if (error.code === -32602 || error.code === -32603) {
           handleAlerts("Internal error", "error")
         } else {
+          console.log(error)
           handleAlerts("An unknown error occurred", "error")
         }
       }
@@ -348,18 +349,6 @@ const AdminMinting = ({
       handleAlerts("New price must be zero or positive", "warning")
     }
     setLoading(false)
-  }
-
-  const handleNewProductName = (evt) => {
-    setNewProductName(evt)
-  }
-
-  const handleNewProductPrice = (evt) => {
-    setNewProducPrice(evt.target.value)
-  }
-
-  const handleProductChangePrice = (evt) => {
-    setProductNewPrice(evt.target.value)
   }
 
   const handleProductList = (evt) => {
@@ -442,7 +431,7 @@ const AdminMinting = ({
   }, [wallet, productList, generatorId])
 
   useEffect(() => {
-    if (wallet && factoryContract) {
+    if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
     if (!wallet) {
@@ -453,7 +442,7 @@ const AdminMinting = ({
   }, [wallet, loading])
 
   useEffect(() => {
-    if (wallet && factoryContract) {
+    if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
     if (factoryContract) {
@@ -747,6 +736,72 @@ const AdminMinting = ({
         
         </Box>
 
+=======
+  // useEffect(() => {
+  //   resetAllFields()
+  // }, [wallet])
+
+  return (
+    <>
+      <Grid container sx={{
+        alignItems: "center", display: "flex",
+        drection: "column", margin: 3, justifyContent: "space-around"
+      }} >
+        <NFTMintCard
+          nftPrice={nftPrice}
+          ETHUSDConversionRate={ETHUSDConversionRate}
+          useAutoName={useAutoName}
+          setUseAutoName={setUseAutoName}
+          handleNFTName={handleNFTName}
+          wallet={wallet}
+          loading={loading}
+          mintNFT={mintNFT}
+          handleAlerts={handleAlerts}
+        />
+        <NFTOwnerCard
+          sumProductBalances={sumProductBalances}
+          wallet={wallet}
+          generatorId={generatorId}
+          size={size}
+          getGeneratorInfo={getGeneratorInfo}
+          generatorList={generatorList}
+          generatorAddress={generatorAddress}
+          copyToClipboard={copyToClipboard}
+          ETHUSDConversionRate={ETHUSDConversionRate}
+          withdrawBalance={withdrawBalance}
+          loading={loading}
+          renameNFT={renameNFT}
+          handleNewName={handleNewName}
+          newNFTName={newNFTName}
+          productList={productList}
+          selectedAll={selectedAll}
+          setSelectedAll={setSelectedAll}
+          withdrawAndDelete={withdrawAndDelete}
+          setSelectedProduct={setSelectedProduct}
+          handleAlerts={handleAlerts}
+        />
+        <NFTProductsCard
+          size={size}
+          handleProductList={handleProductList}
+          productId={productId}
+          productList={productList}
+          generatorAddress={generatorAddress}
+          copyToClipboard={copyToClipboard}
+          prodCurrentPrice={prodCurrentPrice}
+          ETHUSDConversionRate={ETHUSDConversionRate}
+          newProductPrice={newProductPrice}
+          addNewProduct={addNewProduct}
+          loading={loading}
+          productNewPrice={productNewPrice}
+
+          productAddress={productAddress}
+          changeProductPrice={changeProductPrice}
+          newProductName={newProductName}
+          generatorId={generatorId}
+          setNewProductName={setNewProductName}
+          setNewProducPrice={setNewProducPrice}
+          setProductNewPrice={setProductNewPrice}
+        />
       </Grid>
     </>
   );
