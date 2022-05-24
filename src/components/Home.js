@@ -17,9 +17,11 @@ import { getProductContract } from '../utils';
 import { setProductList } from '../features/product';
 import { setRefAddress } from '../features/refAddress';
 import { setPreviousTxHash, setCurrentTxHash } from "../features/paymentData"
-import { setSendDataProcess } from '../features/connection';
+import { setSendDataProcess, sendData } from '../features/connection';
 import { setPathname } from "../features/pathname"
 import HardwareConnect from './HardwareConnect';
+import { setStatus } from '../features/webSocket';
+import { setRGBColorString, setHexColor } from '../features/color'
 
 const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
@@ -31,7 +33,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   const factoryContract = useSelector((state) => state.factoryContract.value)
   const generatorList = useSelector((state) => state.generator.value)
   const refAddress = useSelector((state) => state.refAddress.value)
-  const { currentTxHash } = useSelector((state) => state.paymentData.value)
+  const { currentTxHash, previousTxHash } = useSelector((state) => state.paymentData.value)
+  const { socket, status } = useSelector((state) => state.webSocket.value)
+  const { port } = useSelector(state => state.connection.value)
+  const { RGBColorString } = useSelector(state => state.color.value)
 
   // Local Variables
   const [nftSelected, setNFTSelected] = useState(undefined)
@@ -63,38 +68,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     }
   }
 
-  // const updateProductList = async () => {
-  //   if (generatorList) {
-  //     handleAlerts("Fetching products registered per NFT...", "info", true)
-  //     let objOfProducts_perGenerator = {}
-  //     const generatorList_KeysArr = Object.keys(generatorList)
-  //     for (let jj = 0; jj < generatorList_KeysArr.length; jj++) {
-  //       const generatorKey = generatorList_KeysArr[jj]
-  //       const generatorContract = generatorList[generatorKey].contract
-  //       const products_num = await generatorContract.productCount()
-  //       let objOfProducts_fromGenerator = {}
-  //       for (let ii = 0; ii < products_num; ii++) {
-  //         const product = await generatorContract.idToProduct(ii)
-  //         const product_id = parseInt(product.id, 16)
-
-  //         objOfProducts_fromGenerator[product_id] = {
-  //           name: product.name,
-  //           priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
-  //           address: product.contractAddress,
-  //           contract: getProductContract(product.contractAddress)
-  //         }
-  //       }
-  //       objOfProducts_perGenerator[generatorKey] = objOfProducts_fromGenerator
-  //     }
-
-  //     dispatch(setProductList(objOfProducts_perGenerator))
-  //     handleAlerts("Products per NFT collected!", "info")
-
-  //   } else {
-  //     dispatch(setProductList(undefined))
-  //   }
-  // }
-
   const handleResetNFT = (event) => {
     event.preventDefault()
     setNFTSelected(undefined)
@@ -124,6 +97,56 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     setProductSelectedPrice(productList[nftSelected][new_selected_product].priceUSD)
     setSelectedProductContract(productList[nftSelected][new_selected_product].contract)
   }
+
+  const sendDataFunc = async () => {
+    if (typeof port === "undefined" && socket && typeof status === "undefined") {
+      await socket.emit("user request", { data: RGBColorString, address: refAddress })
+    } else if (port) {
+      dispatch(sendData(RGBColorString))
+    }
+  }
+
+  // SocketIO
+  useEffect(() => {
+    if (socket) {
+      socket.on("request status", (data) => {
+        let status_str
+        if (data === "server-received") {
+          status_str = "Data received by server"
+        } else if (data === "owner-received") {
+          status_str = "Data received by owner"
+        } else if (data === "owner-data processed") {
+          status_str = "finished"
+        }
+        dispatch(setStatus(status_str))
+      })
+      return () => {
+        socket.off("request status")
+      }
+    }
+  }, [socket])
+
+  useEffect(() => {
+    if (RGBColorString && previousTxHash !== currentTxHash) {
+      // if (RGBColorString) {
+      sendDataFunc()
+      dispatch(setPreviousTxHash(currentTxHash))
+      dispatch(setRGBColorString(undefined))
+      dispatch(setHexColor(undefined))
+      dispatch(setSendDataProcess("finished"))
+    }
+  }, [RGBColorString])
+
+  useEffect(() => {
+    if (status) {
+      if (status === "finished") {
+        handleAlerts("Sent data successfully", "success")
+      } else {
+        handleAlerts(status, "info", true)
+      }
+      dispatch(setStatus(undefined))
+    }
+  }, [status])
 
   useEffect(() => {
     if (generatorList) {
@@ -245,7 +268,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <h1>Crypto Lights</h1>
         <center>
           <LightBulb />
-          <HardwareConnect handleAlerts={handleAlerts} />
+          <HardwareConnect handleAlerts={handleAlerts} disabled={!status ? false : true} />
         </center>
 
         <center>
@@ -271,7 +294,8 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
           productSelected={productSelected}
           selectProductPrice={productSelectedPrice}
           selectGeneratorAddress={productSelectedAddress}
-          ethprice = {productSelectedPrice / ETHUSDConversionRate}
+          disabled={!status ? false : true}
+          ethprice={productSelectedPrice / ETHUSDConversionRate}
         />
       </Box>
     )
