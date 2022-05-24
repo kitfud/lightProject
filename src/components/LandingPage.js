@@ -50,8 +50,7 @@ export const LandingPage = () => {
                                 >
                                 <Typography   sx={{
                                     color: "white",
-                                    fontSize: 80,
-                                    marginTop:5                                    
+                                    fontSize: 80,                                    
                                 }}>Welcome to Candy Lamps </Typography>
                                 </Grow>
                         </Box>

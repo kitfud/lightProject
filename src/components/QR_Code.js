@@ -6,7 +6,8 @@ import {
   Card,
   Grid,
   Modal,
-  CircularProgress
+  CircularProgress,
+  CardMedia,
 } from '@mui/material'
 import { makeStyles } from "@mui/styles"
 import QrCode2Icon from '@mui/icons-material/QrCode2';
@@ -76,14 +77,16 @@ const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected, 
             onClose={handleClose}
             aria-labelledby="QRCode"
             aria-describedby="Shows the QR code in a modal."
+            sx={{ alignItems: "center", justifyContent: "center", display: "flex",}}
           >
             <Card sx={{
               alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1,
-              minHeight: 750, justifyContent: "center"
+              maxHeight: "75%", minWidth: "50%" , maxWidth: "75%", justifyContent: "center",
             }}>
-              <center>
-                <QRCode value={productSelectedAddress} />
-              </center>
+              <CardMedia
+                sx={{marginTop: 3}}
+              ><QRCode value={productSelectedAddress} /></CardMedia>
+              
               <center>
                 <Typography variant="h6" component="h2">
                   Address:{productSelectedAddress}
