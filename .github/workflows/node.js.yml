@@ -27,6 +27,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
         cache: 'npm'
     - run: npm ci
-    - run: npm lint
-    - run: npm solhint
-    - run: npm format
+    - run: npm run lint
+    - run: npm run solhint
+    - run: npm run format
