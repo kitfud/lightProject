@@ -74,7 +74,7 @@ const LightBulb = () => {
     canvas.height = 60
     draw(context)
   }
-
+  
   // useEffect(() => {
   //   if (currentTxHash && HexColor) {
   //     // if (HexColor) {
@@ -88,6 +88,7 @@ const LightBulb = () => {
   }, [HexBulbColor])
 
   return (
+
     <canvas ref={canvasRef} />
   )
 }

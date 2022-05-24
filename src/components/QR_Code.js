@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect } from 'react'
 import {
   Box,
   Button,
@@ -33,7 +33,7 @@ const theme = createTheme({
   },
 });
 
-const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected }) => {
+const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, ethprice }) => {
 
   const { HexColor, RGBColorString } = useSelector(state => state.color.value)
   const { sendDataProcess } = useSelector(state => state.connection.value)
@@ -56,6 +56,9 @@ const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected }
 
   copyToClipboard(qrCode_string)
 
+  const [buttonColor, setButtonColor] = React.useState('success')
+
+
   return (
     <ThemeProvider theme={theme}>
       <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginBottom: 2 }}>
@@ -66,7 +69,7 @@ const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected }
             <Button
               variant="contained"
               size="large"
-              color="primary"
+              color={buttonColor}
               endIcon={<QrCode2Icon />}
               onClick={handleOpen}>
               {sendDataProcess === "initialized" ? (
@@ -75,7 +78,7 @@ const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected }
             (<Button
               variant="contained"
               size="large"
-              color="primary"
+              color={buttonColor}
               endIcon={<QrCode2Icon />}
             >
               {typeof productSelected !== "undefined" ? "Select product" : "Select color"}
@@ -94,15 +97,14 @@ const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected }
                 <QRCode value={qrCode_string} />
               </center>
               <center>
-                <Box className={classes.qRPic} sx={{ background: 'white', padding: '16px' }}>
-                  <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-                  </Typography>
-                </Box>
                 <Typography variant="h6" component="h2">
                   Address:{productSelectedAddress}
                 </Typography>
                 <Typography variant="h6" component="h2">
-                  Price:{selectProductPrice}
+                  Price USD:{selectProductPrice}  
+                </Typography>
+                <Typography variant="h6" component="h2">
+                  Price ETH: {ethprice} 
                 </Typography>
                 <Typography variant="h6" component="h2">
                   RGB Color:{RGBColorString}

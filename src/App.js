@@ -137,9 +137,15 @@ function App() {
           }
         }
 
-        dispatch(setGeneratorList(generatorsObj))
-        handleAlerts("NFTs owned by address collected!", "info")
+        if (Object.keys(generatorsObj).length > 0) {
+          dispatch(setGeneratorList(generatorsObj))
+          handleAlerts("NFTs owned by address collected!", "info")
+        } else {
+          dispatch(setGeneratorList(undefined))
+          handleAlerts("No NFTs owned by this address.", "info")
+        }
       } else {
+        dispatch(setGeneratorList(undefined))
         handleAlerts("No NFTs owned by this address.", "info")
       }
     } else {
@@ -249,7 +255,6 @@ function App() {
       } else if (provider) {
         updateGeneratorList(refAddress)
       }
-      updateProductList()
       // handleAlerts("Data from address collected!", "info")
     }
 
@@ -258,7 +263,6 @@ function App() {
   return (
     <>
       <ThemeProvider theme={colorMode === "dark" ? themeDarkMode : themeLightMode}>
-
         <Header
           setColorMode={setColorMode}
           setUserAddress={setUserAddress}
