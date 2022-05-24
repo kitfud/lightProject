@@ -1,7 +1,7 @@
 from flask import Flask, request, send_from_directory
 from flask_socketio import SocketIO, emit
 
-app = Flask(__name__, static_url_path="", static_folder="build")
+app = Flask(__name__, static_url_path="", static_folder="./build")
 app.config["SECRET_KEY"] = "secret!"
 socketio = SocketIO(app, async_mode='gevent')
 
