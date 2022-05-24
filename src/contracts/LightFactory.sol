@@ -10,11 +10,7 @@ import "./ILightFactory.sol";
 import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
 import "@chainlink/contracts/src/v0.8/VRFConsumerBaseV2.sol";
 
-// TO DO: change checkIfTokenHolder to a mapping with boolean?
-// TO DO: change to several owner - whitelist?
 // TO DO: implement VRFV2 for NFTs rarity?
-// TO DO:
-// TO DO:
 
 contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
 
@@ -66,6 +62,7 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
         currentNFTPriceInUSD = 100 * 10**18;
         _initTokenUriList();
+
     }
 
     modifier onlyAgora {

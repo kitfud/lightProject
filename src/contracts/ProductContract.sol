@@ -103,6 +103,7 @@ contract ProductContract {
     }
 
     receive() external payable {
+
         // Same as in the buyProduct function - we may need both entry points
         require(block.number > blockNumLimit, "Processing... Please try again");
         require(msg.value >= getProductPriceInETH(), "amount sent too low");
