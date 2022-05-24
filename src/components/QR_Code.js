@@ -33,9 +33,9 @@ const theme = createTheme({
   },
 });
 
-const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, ethprice }) => {
+const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected, ethprice }) => {
 
-  const { HexColor, RGBColorString } = useSelector(state => state.color.value)
+  const { RGBColorString } = useSelector(state => state.color.value)
   const { sendDataProcess } = useSelector(state => state.connection.value)
   const HexColorTemp = "fsadf"
   const classes = useStyles()
@@ -43,15 +43,6 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-
-  const copyToClipboard = async (data) => {
-    // const text = evt.target.value
-    if ('clipboard' in navigator) {
-      return await navigator.clipboard.writeText(data);
-    } else {
-      return document.execCommand('copy', true, data);
-    }
-  }
 
   const [buttonColor, setButtonColor] = React.useState('success')
 
@@ -91,7 +82,7 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
               minHeight: 750, justifyContent: "center"
             }}>
               <center>
-                <QRCode value={selectGeneratorAddress} />
+                <QRCode value={productSelectedAddress} />
               </center>
               <center>
                 <Typography variant="h6" component="h2">
@@ -102,9 +93,6 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
                 </Typography>
                 <Typography variant="h6" component="h2">
                   Price ETH: {ethprice}
-                </Typography>
-                <Typography variant="h6" component="h2">
-                  RGB Color:{RGBColorString}
                 </Typography>
               </center>
             </Card>

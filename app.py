@@ -1,9 +1,9 @@
 from flask import Flask, request, send_from_directory
 from flask_socketio import SocketIO, emit
 
-app = Flask(__name__, static_url_path='', static_folder='frontend/build')
+app = Flask(__name__, static_url_path="", static_folder="./build")
 app.config["SECRET_KEY"] = "secret!"
-socketio = SocketIO(app, async_mode='gevent')
+socketio = SocketIO(app)  # , async_mode='gevent')
 
 owners = {}
 user_sid = {}
@@ -14,10 +14,7 @@ tx_hash = {}
 def handle_owner_connection(address):
     owners[address] = request.sid
     if not address in list(tx_hash.keys()):
-        tx_hash[address] = {
-            "previous": None,
-            "current": None
-        }
+        tx_hash[address] = {"previous": None, "current": None}
 
 
 @socketio.on("user request", namespace="/websocket")
@@ -52,15 +49,15 @@ def handle_owner_connection(address):
     return tx_hash[address]["current"]
 
 
-@app.route('/', defaults={'path': ''})
+@app.route("/", defaults={"path": ""})
 def serve(path):
     return send_from_directory(app.static_folder, "index.html")
 
 
-@app.route('/<path>')
+@app.route("/<path>")
 def catch_all(path):
     return send_from_directory(app.static_folder, "index.html")
 
 
 if __name__ == "__main__":
-    socketio.run(app, host='0.0.0.0', port=5000)  # , debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000)  # , debug=True)
