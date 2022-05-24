@@ -15,7 +15,12 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
         <Grid >
             <Box style={{ display: "flex", justifyContent: 'center' }}>
                 <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
-                    
+                    <CardMedia component="img"
+                        alt="nft"
+                        style={{ transform: "scale(1)", objectFit: 'cover', raised: true }}
+                        image={require('../img/Candy_Lamp.png')}
+                        xs={8}>
+                    </CardMedia>
                     <Typography gutterBottom variant="h5" component="div">
                         NFT Minting
                     </Typography>

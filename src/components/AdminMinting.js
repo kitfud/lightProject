@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Grid,
-         Box,
-         Card,
-         CardMedia,
-         Button,
-         Typography,
-
-} from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Grid } from '@mui/material'
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 import NFTMintCard from './NFTMintCard'
@@ -17,11 +9,6 @@ import NFTProductsCard from './NFTProductsCard'
 import { setProductList } from "../features/product"
 import { setGeneratorList } from '../features/generator'
 import { setPathname } from '../features/pathname'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { Link as Scroll } from "react-scroll"
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
-
 
 const AdminMinting = ({
   loading,
@@ -133,7 +120,7 @@ const AdminMinting = ({
     setNftNameInput(evt.target.value)
   }
 
-  // NFT Owner Card 
+  // NFT Owner Card
   const getGeneratorInfo = async (event = undefined) => {
     let nft_id
     if (typeof event === "undefined") {
@@ -283,7 +270,7 @@ const AdminMinting = ({
     setNewNFTName(undefined)
   }
 
-  // NFT Products Card 
+  // NFT Products Card
   const addNewProduct = async () => {
     if (!loading && newProductName && parseFloat(newProductPrice) >= 0 && newProductPrice) {
       try {
@@ -450,293 +437,6 @@ const AdminMinting = ({
     }
   }, [factoryContract])
 
-  const [checked, setChecked] = useState(false)
-
-
-    useEffect(() => {
-        dispatch(setPathname(window.location.pathname))
-        setChecked(true)
-    }, [])
-
-  return (
-    <>
-      <Grid 
-        container
-        sx={{
-          justifyContent: "space-around"
-        }}
-      >
-        
-        <Box sx={{ 
-                alignItems: "center",
-                height: "100%",
-                width: "100%",
-                background: "purple",
-                
-              }}
-        >
-          <div id="adminTop">
-            <Box sx={{ background: "lightgrey", display: "flex", justifyContent: 'center', flexDirection: "column", alignItems: "center", height: "100vh" }}>
-              <Typography sx={{ fontSize:"60px", color: "black" }}>
-                Admin
-              </Typography>
-              <Card sx={{ bgcolor: "none", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
-                <CardMedia component="img"
-                  alt="nft"
-                  style={{ transform: "scale(1)", objectFit: 'cover', raised: true }}
-                  image={require('../img/Candy_Lamp.png')}
-                  xs={8}
-                  height="350px"
-                  width="350px"
-                >
-                </CardMedia>      
-              </Card>
-              <Box sx={{ justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                <Scroll to="NFTMint" smooth={true}>
-                    <Button 
-                      variant="contained"
-                      color="warning"
-                      sx={{margin: "30px"}}
-                      size="large"                 
-                    >
-                        Mint New NFT
-                    </Button>
-                </Scroll>
-                <Scroll to="ManageNFTs" smooth={true}>
-                  <Button 
-                    variant="contained"
-                    color="info"
-                    sx={{margin: "30px"}}
-                    size="large"
-                  >
-                    Manage NFTs
-                  </Button>
-                </Scroll>
-              </Box>
-              <Scroll to="NFTMint" smooth={true}>
-                  <KeyboardArrowDownIcon 
-                    sx={{
-                        color: "black",
-                        fontSize: "10rem",            
-                      }}
-                  />
-              </Scroll>
-            </Box>
-          </div>
-          
-          <div id="NFTMint">
-            <Box 
-              sx={{
-                    id: "NFTMint",
-                    alignItems: "center",
-                    height: "100vh",
-                    display: "flex",
-                    flexDirection: "column",
-                    background: "grey",
-
-                    
-              }}
-            >
-              <Typography
-                sx={{
-                  fontSize: "60px",
-                  color: "black",
-                  textAlign: "center",
-                  background: "none",
-                  marginBottom: "40px",
-                }}
-              >
-                Mint New NFT
-              </Typography>
-
-              <Box sx={{
-                    height: "300px",
-                    width: "500px",
-                    textAlign: "center",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "none",
-                    marginBottom: "40px",
-                    }}
-                    
-              >
-                <Typography
-                  sx={{
-                    fontSize: "30px",
-                    color: "black",
-                    textAlign: "center",
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                >
-                  ELI5 TL;DR: "The NFT is used as a key to 'unlock' permissions so you can do stuff".
-                </Typography>
-              </Box>
-              
-                <NFTMintCard
-                  nftPrice={nftPrice}
-                  ETHUSDConversionRate={ETHUSDConversionRate}
-                  useAutoName={useAutoName}
-                  setUseAutoName={setUseAutoName}
-                  handleNFTName={handleNFTName}
-                  wallet={wallet}
-                  loading={loading}
-                  mintNFT={mintNFT}
-                  handleAlerts={handleAlerts}
-                />
-
-              <Scroll to="ManageNFTs" smooth={true}>
-                  <KeyboardArrowDownIcon 
-                    sx={{
-                        color: "black",
-                        fontSize: "10rem",            
-                      }}
-                  />
-              </Scroll>
-
-            </Box>
-          </div>
-
-          <div id="ManageNFTs">
-            <Box sx={{ 
-                    flexGrow: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "100vh",
-                    background: "lightgrey",
-                    display: "flex",
-                    flexDirection: "column"
-                  }}
-            >
-              <Typography
-                sx={{
-                  fontSize: "60px",
-                  color: "Black",
-                  textAlign: "center",
-                  marginTop: "40px",
-                }}
-              >
-                Manage NFTs and Products
-              </Typography>
-              <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "center", background: "none"}}>
-                <Box sx={{ marginRight: "40px"}}>
-                  <NFTOwnerCard
-                    sumProductBalances={sumProductBalances}
-                    wallet={wallet}
-                    generatorId={generatorId}
-                    size={size}
-                    getGeneratorInfo={getGeneratorInfo}
-                    generatorList={generatorList}
-                    generatorAddress={generatorAddress}
-                    copyToClipboard={copyToClipboard}
-                    ETHUSDConversionRate={ETHUSDConversionRate}
-                    withdrawBalance={withdrawBalance}
-                    loading={loading}
-                    renameNFT={renameNFT}
-                    handleNewName={handleNewName}
-                    newNFTName={newNFTName}
-                    productList={productList}
-                    selectedAll={selectedAll}
-                    setSelectedAll={setSelectedAll}
-                    withdrawAndDelete={withdrawAndDelete}
-                    setSelectedProduct={setSelectedProduct}
-                    handleAlerts={handleAlerts}
-                  />
-                </Box>
-                <Box sx={{ marginLeft: "40px" }}>
-                  <NFTProductsCard
-                    size={size}
-                    handleProductList={handleProductList}
-                    productId={productId}
-                    productList={productList}
-                    generatorAddress={generatorAddress}
-                    copyToClipboard={copyToClipboard}
-                    prodCurrentPrice={prodCurrentPrice}
-                    ETHUSDConversionRate={ETHUSDConversionRate}
-                    newProductPrice={newProductPrice}
-                    addNewProduct={addNewProduct}
-                    loading={loading}
-                    productNewPrice={productNewPrice}
-                    handleNewProductName={handleNewProductName}
-                    handleProductChangePrice={handleProductChangePrice}
-                    handleNewProductPrice={handleNewProductPrice}
-                    productAddress={productAddress}
-                    setNewProductPrice={setNewProductPrice}
-                    newProductName={newProductName}
-                    generatorId={generatorId}
-                  />
-                </Box>
-              </Box>
-              <Scroll to="FAQ" smooth={true}>
-                  <KeyboardArrowDownIcon 
-                    sx={{
-                        color: "black",
-                        fontSize: "10rem",           
-                      }}
-                  />
-              </Scroll>
-            </Box>
-          </div>
-
-          <div id="FAQ">
-            <Box sx={{
-                    height: "100vh",
-                    background: "grey",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-            >
-              <Box sx={{
-                      textAlign: "center",
-                    }}
-              >
-                  <Typography sx={{
-                                color: "black",
-                                fontSize: "60px",
-                              }}
-                  >
-                    Frequently Asked Questions
-                  </Typography>
-              </Box>
-
-              <Box sx={{
-                      background: "lightgrey",
-                      display: "flex",
-                      flexDirection: "column",
-                      height: "500px",
-                      width: "750px",
-
-                    }}
-              >
-                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px" }}>
-                    -Make sure your wallet is connected.
-                </Typography>
-                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
-                    -You need to mint an NFT before you can add products.
-                </Typography>
-                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
-                    -Make sure you have enough ETH in your wallet.
-                </Typography>
-                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
-                    -Make sure you're connected to Rinkeby test network.
-                </Typography>
-              </Box>
-              <Scroll to="adminTop" smooth={true}>
-                  <KeyboardArrowUpIcon 
-                    sx={{
-                        color: "black",
-                        fontSize: "10rem",           
-                      }}
-                  />
-              </Scroll>
-            </Box>
-          </div>
-        
-        </Box>
-
-=======
   // useEffect(() => {
   //   resetAllFields()
   // }, [wallet])
