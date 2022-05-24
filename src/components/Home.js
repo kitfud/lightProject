@@ -54,7 +54,12 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     if (refAddress) {
       const valid_address = ethers.utils.isAddress(refAddress)
       if (valid_address) {
-        const isOwner = await factoryContract.checkIfTokenHolder(refAddress)
+        let isOwner = false
+        const tokensOwned = await factoryContract.addressToTokenID(refAddress)
+
+        if (tokensOwned.includes(true)) {
+          isOwner = true
+        }
         if (!isOwner) {
           handleAlerts("Given address has no NFTs", "warning")
         } else {
