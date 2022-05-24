@@ -398,6 +398,7 @@ const AdminMinting = ({
   // useEffects
   useEffect(() => {
     dispatch(setPathname(window.location.pathname))
+    window.scrollTo(0, 0)
   }, [])
 
   useEffect(() => {
@@ -580,7 +581,7 @@ const AdminMinting = ({
                     justifyContent: "center",
                   }}
                 >
-                  ELI5 TL;DR: "The NFT is used as a key to 'unlock' permissions so you can do stuff".
+                  "The NFT is used as a key to 'unlock' permissions so you can do stuff".
                 </Typography>
               </Box>
               
