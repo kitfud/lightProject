@@ -157,7 +157,7 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
 
     function getTypeFromRarityScale(uint256 _randNum) public pure returns(uint256 i){
         uint256[4] memory chanceArray = getChanceArray();
-        for (i = 0; i < chanceArray.length; unsafe_inc(i)) {
+        for (i = 0; i < chanceArray.length; i = unsafe_inc(i)) {
             if (_randNum < chanceArray[i]) {
                 return i;
             }
@@ -171,8 +171,8 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
     function addressToTokenID(address _account) public view returns(bool[] memory){
         uint256 _tokenCount = tokenCount;
          bool[] memory values = new bool[](_tokenCount);
-         for (uint256 i ; i < _tokenCount ; unsafe_inc(i)){
-            if(_isApprovedOrOwner(_account, i)){
+         for (uint i; i < _tokenCount ; i= unsafe_inc(i)){
+            if(checkTokenOwnerById(i) == _account){
                 values[i] = true;
             }
         }

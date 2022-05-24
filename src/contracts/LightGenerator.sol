@@ -56,7 +56,7 @@ contract LightGenerator is ILightGenerator {
     ) payable {
         // ethusd price feed address on rinkeby : 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
-        factoryAddress = _factoryAddress; // create an interface - should lower the gas
+        factoryAddress = _factoryAddress;
         agoraAddress = _agoraAddress;
         tokenId = _tokenId;
         generatorName = _name;
@@ -79,7 +79,7 @@ contract LightGenerator is ILightGenerator {
         uint256 _prodCount = productCount;
         uint256 contractBalance;
         address owner = IERC721(factoryAddress).ownerOf(tokenId);
-        for (uint i ; i < _prodCount ; unsafe_inc(i)) {
+        for (uint i ; i < _prodCount ; i = unsafe_inc(i)) {
             uint256 tempProductBalance = idToProductContract[i].balance;
             if (tempProductBalance > 0) {
                 contractBalance += tempProductBalance;
@@ -173,7 +173,7 @@ contract LightGenerator is ILightGenerator {
     function reinitializeProductsHistory() public onlyOwner {
         uint256 _prodCount = productCount;
         delete productsCompleteHistory;
-        for (uint256 i; i < _prodCount; unsafe_inc(i)) {
+        for (uint256 i; i < _prodCount; i = unsafe_inc(i)) {
             Product memory prod = idToProduct[i];
             string memory prodName = prod.name;
             delete idToProduct[i];

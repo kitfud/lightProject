@@ -66,7 +66,7 @@ contract LightAgora is ILightAgora, ERC20Burnable {
         ];
 
         uint256 _numVoters = voters.length;
-        for (uint i ; i<_numVoters ; unsafe_inc(i)) {
+        for (uint i ; i<_numVoters ; i = unsafe_inc(i)) {
             isVoter[voters[i]] = true;
             _mint(voters[i], initialSupply);
         }
@@ -161,7 +161,7 @@ contract LightAgora is ILightAgora, ERC20Burnable {
             ILightFactory(factoryAddress).setNFTPrice(cumulativeCount/votesCount);
             delete votesCount;
             delete cumulativeCount;
-            for (uint i ; i < _numVoters ; unsafe_inc(i)){
+            for (uint i ; i < _numVoters ; i = unsafe_inc(i)){
                 delete voterDidVote[voters[i]];
             }
         }
@@ -193,7 +193,7 @@ contract LightAgora is ILightAgora, ERC20Burnable {
     function splitBalance() internal {
         uint256 tempLen = voters.length;
         uint256 splitAmount = address(this).balance/tempLen;
-        for (uint i ; i<tempLen ; unsafe_inc(i)){
+        for (uint i ; i<tempLen ; i = unsafe_inc(i)){
             (bool sent,) = voters[i].call{value:splitAmount}("");
             require(sent, "Failed to send ETH to voter");
         }
