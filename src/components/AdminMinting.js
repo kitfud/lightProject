@@ -1,6 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Grid } from '@mui/material'
+import { 
+        Grid,
+        Box,
+        Typography,
+        Card,
+        CardMedia,
+        Button,
+
+} from '@mui/material'
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 import NFTMintCard from './NFTMintCard'
@@ -9,6 +17,10 @@ import NFTProductsCard from './NFTProductsCard'
 import { setProductList } from "../features/product"
 import { setGeneratorList } from '../features/generator'
 import { setPathname } from '../features/pathname'
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import { Link as Scroll } from "react-scroll"
+
 
 const AdminMinting = ({
   loading,
@@ -17,7 +29,7 @@ const AdminMinting = ({
   updateProductList,
   sumProductBalances,
   handleAlerts,
-  copyToClipboard
+  copyToClipboard,
 }) => {
 
   // Dispatch
@@ -439,9 +451,7 @@ const AdminMinting = ({
     }
   }, [factoryContract])
 
-  // useEffect(() => {
-  //   resetAllFields()
-  // }, [wallet])
+  
 
   return (
     <>
@@ -642,13 +652,14 @@ const AdminMinting = ({
                     addNewProduct={addNewProduct}
                     loading={loading}
                     productNewPrice={productNewPrice}
-                    handleNewProductName={handleNewProductName}
-                    handleProductChangePrice={handleProductChangePrice}
-                    handleNewProductPrice={handleNewProductPrice}
                     productAddress={productAddress}
-                    setNewProductPrice={setNewProductPrice}
+                    changeProductPrice={changeProductPrice}
                     newProductName={newProductName}
                     generatorId={generatorId}
+                    setNewProductName={setNewProductName}
+                    setNewProducPrice={setNewProductPrice}
+                    setProductNewPrice={setProductNewPrice}
+                    
                   />
                 </Box>
               </Box>
