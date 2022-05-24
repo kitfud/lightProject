@@ -494,13 +494,12 @@ const AdminMinting = ({
           addNewProduct={addNewProduct}
           loading={loading}
           productNewPrice={productNewPrice}
-
           productAddress={productAddress}
           changeProductPrice={changeProductPrice}
           newProductName={newProductName}
           generatorId={generatorId}
           setNewProductName={setNewProductName}
-          setNewProducPrice={setNewProducPrice}
+          setNewProducPrice={setNewProductPrice}
           setProductNewPrice={setProductNewPrice}
         />
       </Grid>

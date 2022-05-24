@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Button,
@@ -33,9 +33,9 @@ const theme = createTheme({
   },
 });
 
-const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, ethprice }) => {
+const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected, ethprice }) => {
 
-  const { HexColor, RGBColorString } = useSelector(state => state.color.value)
+  const { RGBColorString } = useSelector(state => state.color.value)
   const { sendDataProcess } = useSelector(state => state.connection.value)
   const HexColorTemp = "fsadf"
   const classes = useStyles()
@@ -43,18 +43,6 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
-  const qrCode_string = window.location.origin + "/transfer?ref=" + productSelectedAddress + "&price=" + selectProductPrice + "&data=" + RGBColorString
-
-  const copyToClipboard = async (data) => {
-    // const text = evt.target.value
-    if ('clipboard' in navigator) {
-      return await navigator.clipboard.writeText(data);
-    } else {
-      return document.execCommand('copy', true, data);
-    }
-  }
-
-  copyToClipboard(qrCode_string)
 
   const [buttonColor, setButtonColor] = React.useState('success')
 
@@ -94,20 +82,17 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
               minHeight: 750, justifyContent: "center"
             }}>
               <center>
-                <QRCode value={qrCode_string} />
+                <QRCode value={productSelectedAddress} />
               </center>
               <center>
                 <Typography variant="h6" component="h2">
                   Address:{productSelectedAddress}
                 </Typography>
                 <Typography variant="h6" component="h2">
-                  Price USD:{selectProductPrice}  
+                  Price USD:{selectProductPrice}
                 </Typography>
                 <Typography variant="h6" component="h2">
-                  Price ETH: {ethprice} 
-                </Typography>
-                <Typography variant="h6" component="h2">
-                  RGB Color:{RGBColorString}
+                  Price ETH: {ethprice}
                 </Typography>
               </center>
             </Card>
