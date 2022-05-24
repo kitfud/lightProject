@@ -6,17 +6,22 @@ import { Routes, Route } from 'react-router-dom'
 import Shop from './components/Shop'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import Transfer from './components/Transfer'
 import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { getFactoryContract, getGeneratorContract, getProductContract } from "./utils"
 import { setFactoryContract } from './features/factoryContract'
 import { setGeneratorList } from "./features/generator"
 import { setProductList } from './features/product'
 import { setUserAddress } from './features/userAddress'
 import { setAlerts } from './features/alerts'
+import { setWebSocket, setStatus, setSocketConnected } from './features/webSocket'
 import { ethers } from "ethers"
 import { LandingPage } from './components/LandingPage'
+import { io } from "socket.io-client"
+
+const new_socket = io("/websocket", { forceNew: true })
 
 let themeLightMode = createTheme({
 
@@ -61,11 +66,16 @@ function App() {
   const generatorList = useSelector((state) => state.generator.value)
   const alerts = useSelector((state) => state.alerts.value)
   const provider = useSelector((state) => state.provider.value)
+  const { status, socketConnected } = useSelector((state) => state.webSocket.value)
+  const wrongNetwork = useSelector((state) => state.network.value.wrongNetwork)
+  const refAddress = useSelector(state => state.refAddress.value)
+
+  const providerRef = useRef()
+  providerRef.current = provider
 
   const [loading, setLoading] = useState(false)
   const [colorMode, setColorMode] = useState("dark")
   const [sumProductBalances, setSumProductBalances] = useState(undefined)
-  const [pathname, setPathname] = useState(undefined)
 
   const handleAlerts = (msg, severity, loading = false) => {
     dispatch(setAlerts([true, msg, severity, loading]))
@@ -89,7 +99,7 @@ function App() {
   }
 
   const updateGeneratorList = async (refAddress = undefined) => {
-    if ((wallet && userAddress) || (refAddress && provider)) {
+    if ((wallet && userAddress) || (refAddress && providerRef.current) && !wrongNetwork) {
       handleAlerts("Fetching NFTs owned by address...", "info", true)
       let use_address
       if (refAddress) {
@@ -97,10 +107,15 @@ function App() {
       } else {
         use_address = userAddress
       }
-      const isOwner = await factoryContract.checkIfTokenHolder(use_address)
-      let tokensOwned
+
+      let isOwner = false
+      const tokensOwned = await factoryContract.addressToTokenID(use_address)
+
+      if (tokensOwned.includes(true)) {
+        isOwner = true
+      }
+
       if (isOwner) {
-        tokensOwned = await factoryContract.addressToTokenID(use_address)
         let generatorsObj = {}
         for (let ii = 0; ii < tokensOwned.length; ii++) {
           if (tokensOwned[ii] === true) {
@@ -121,8 +136,17 @@ function App() {
             }
           }
         }
-        dispatch(setGeneratorList(generatorsObj))
-        handleAlerts("NFTs owned by address collected!", "info")
+
+        if (Object.keys(generatorsObj).length > 0) {
+          dispatch(setGeneratorList(generatorsObj))
+          handleAlerts("NFTs owned by address collected!", "info")
+        } else {
+          dispatch(setGeneratorList(undefined))
+          handleAlerts("No NFTs owned by this address.", "info")
+        }
+      } else {
+        dispatch(setGeneratorList(undefined))
+        handleAlerts("No NFTs owned by this address.", "info")
       }
     } else {
       dispatch(setGeneratorList(undefined))
@@ -130,7 +154,7 @@ function App() {
   }
 
   const updateProductList = async () => {
-    if (generatorList && (wallet || provider)) {
+    if (generatorList && (wallet || providerRef.current)) {
       handleAlerts("Fetching products registered per NFT...", "info", true)
       let objOfProducts_perGenerator = {}
       let totalBalances = {}
@@ -150,9 +174,9 @@ function App() {
           if (wallet) {
             product_contract = getProductContract(product.contractAddress, wallet.signer)
             product_balance_BN = await wallet.provider.getBalance(product.contractAddress)
-          } else if (provider) {
+          } else if (providerRef.current) {
             product_contract = getProductContract(product.contractAddress)
-            product_balance_BN = await provider.getBalance(product.contractAddress)
+            product_balance_BN = await providerRef.current.getBalance(product.contractAddress)
           }
           const product_balance = parseFloat(ethers.utils.formatEther(product_balance_BN))
 
@@ -182,10 +206,39 @@ function App() {
     }
   }
 
+  // SocketIO listeners
   useEffect(() => {
     const new_contract = getFactoryContract()
     dispatch(setFactoryContract(new_contract))
+
+    dispatch(setWebSocket(new_socket))
+    new_socket.on("connect", () => {
+      dispatch(setSocketConnected(true))
+    })
+
+    new_socket.on('disconnect', () => {
+      dispatch(setSocketConnected(false))
+    })
+
+    return () => {
+      new_socket.off("connect")
+      new_socket.off("disconnect")
+    }
   }, [])
+
+  useEffect(() => {
+    if (status === "finished") {
+      dispatch(setStatus(undefined))
+    }
+  }, [status])
+
+  useEffect(() => {
+    if (!socketConnected) {
+      handleAlerts("Connecting server...", "info", true)
+    } else {
+      handleAlerts("Server connected!", "success")
+    }
+  }, [socketConnected])
 
   useEffect(() => {
     if (alerts[0]) {
@@ -195,6 +248,17 @@ function App() {
     }
   }, [alerts])
 
+  useEffect(() => {
+    if ((wallet || provider) && !wrongNetwork) {
+      if (wallet) {
+        updateGeneratorList()
+      } else if (provider) {
+        updateGeneratorList(refAddress)
+      }
+      // handleAlerts("Data from address collected!", "info")
+    }
+
+  }, [wrongNetwork])
 
   return (
     <>
@@ -212,6 +276,9 @@ function App() {
 
         <Card sx={{ bgcolor: "secondary.main" }}>
           <Routes>
+            <Route path="/transfer" element={
+              <Transfer />
+            } />
             <Route path='/' element={
               <LandingPage />} />
             <Route path='/home' element={

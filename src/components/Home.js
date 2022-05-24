@@ -7,19 +7,21 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Tooltip,
+  Chip
 } from '@mui/material';
 import LightPicker from './LightPicker';
 import QR_Code from './QR_Code';
 import LightBulb from './LightBulb';
 import { useSearchParams } from 'react-router-dom';
 import { ethers } from 'ethers';
-import { getProductContract } from '../utils';
-import { setProductList } from '../features/product';
 import { setRefAddress } from '../features/refAddress';
-import { setPreviousTxHash, setCurrentTxHash } from "../features/paymentData"
-import { setSendDataProcess } from '../features/connection';
+import { setCurrentTxHash } from "../features/paymentData"
+import { setSendDataProcess, sendData } from '../features/connection';
 import { setPathname } from "../features/pathname"
 import HardwareConnect from './HardwareConnect';
+import { setStatus } from '../features/webSocket';
+import { setRGBColorString, setHexColor, setHexBulbColor } from '../features/color'
 
 const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
@@ -32,6 +34,9 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   const generatorList = useSelector((state) => state.generator.value)
   const refAddress = useSelector((state) => state.refAddress.value)
   const { currentTxHash } = useSelector((state) => state.paymentData.value)
+  const { socket, status } = useSelector((state) => state.webSocket.value)
+  const { port } = useSelector(state => state.connection.value)
+  const { HexColor, RGBColorString } = useSelector(state => state.color.value)
 
   // Local Variables
   const [nftSelected, setNFTSelected] = useState(undefined)
@@ -63,38 +68,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     }
   }
 
-  // const updateProductList = async () => {
-  //   if (generatorList) {
-  //     handleAlerts("Fetching products registered per NFT...", "info", true)
-  //     let objOfProducts_perGenerator = {}
-  //     const generatorList_KeysArr = Object.keys(generatorList)
-  //     for (let jj = 0; jj < generatorList_KeysArr.length; jj++) {
-  //       const generatorKey = generatorList_KeysArr[jj]
-  //       const generatorContract = generatorList[generatorKey].contract
-  //       const products_num = await generatorContract.productCount()
-  //       let objOfProducts_fromGenerator = {}
-  //       for (let ii = 0; ii < products_num; ii++) {
-  //         const product = await generatorContract.idToProduct(ii)
-  //         const product_id = parseInt(product.id, 16)
-
-  //         objOfProducts_fromGenerator[product_id] = {
-  //           name: product.name,
-  //           priceUSD: parseFloat(ethers.utils.formatEther(product.priceUSD)).toFixed(2),
-  //           address: product.contractAddress,
-  //           contract: getProductContract(product.contractAddress)
-  //         }
-  //       }
-  //       objOfProducts_perGenerator[generatorKey] = objOfProducts_fromGenerator
-  //     }
-
-  //     dispatch(setProductList(objOfProducts_perGenerator))
-  //     handleAlerts("Products per NFT collected!", "info")
-
-  //   } else {
-  //     dispatch(setProductList(undefined))
-  //   }
-  // }
-
   const handleResetNFT = (event) => {
     event.preventDefault()
     setNFTSelected(undefined)
@@ -124,6 +97,63 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     setProductSelectedPrice(productList[nftSelected][new_selected_product].priceUSD)
     setSelectedProductContract(productList[nftSelected][new_selected_product].contract)
   }
+
+  const sendDataFunc = async () => {
+    if (typeof port === "undefined" && socket && typeof status === "undefined") {
+      await socket.emit("user request", { data: RGBColorString, address: refAddress, tx_hash: currentTxHash })
+    } else if (port) {
+      dispatch(sendData(RGBColorString))
+    }
+  }
+
+  // SocketIO
+  useEffect(() => {
+    if (socket) {
+      socket.on("request status", (data) => {
+        let status_str
+        if (data === "server-received") {
+          status_str = "Data received by server"
+        } else if (data === "owner-received") {
+          status_str = "Data received by owner"
+        } else if (data === "owner-data processed") {
+          status_str = "finished"
+        }
+        dispatch(setStatus(status_str))
+      })
+      return () => {
+        socket.off("request status")
+      }
+    }
+  }, [socket])
+
+  useEffect(() => {
+    if (RGBColorString && currentTxHash) {
+      // if (RGBColorString) {
+      sendDataFunc()
+      dispatch(setCurrentTxHash(undefined))
+      dispatch(setRGBColorString(undefined))
+      dispatch(setHexColor(undefined))
+      dispatch(setSendDataProcess("finished"))
+    }
+  }, [RGBColorString])
+
+  useEffect(() => {
+    if (HexColor && currentTxHash) {
+      dispatch(setHexBulbColor(HexColor))
+      dispatch(setRGBColorString(HexColor))
+    }
+  }, [HexColor, currentTxHash])
+
+  useEffect(() => {
+    if (status) {
+      if (status === "finished") {
+        handleAlerts("Sent data successfully", "success")
+      } else {
+        handleAlerts(status, "info", true)
+      }
+      dispatch(setStatus(undefined))
+    }
+  }, [status])
 
   useEffect(() => {
     if (generatorList) {
@@ -161,14 +191,19 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   useEffect(() => {
 
     if (selectedProductContract !== undefined && firstTimeListener) {
-      selectedProductContract.on("Deposit", (payee, value, time, currentContractBalance, event) => {
+      selectedProductContract.on("Deposit", async (payee, value, time, currentContractBalance, event) => {
 
         const tx_hash = event.transactionHash
+        let current_tx_hash = undefined
+        await socket.emit("transaction hash", refAddress, (data) => {
+          current_tx_hash = data
+        })
 
-        if (currentTxHash !== tx_hash) {
-          dispatch(setPreviousTxHash(currentTxHash))
-          dispatch(setCurrentTxHash(tx_hash))
+
+        if (!current_tx_hash) {
           dispatch(setSendDataProcess("initialized"))
+          handleAlerts("Initialization: sending data to lamps owner...", "warning", true)
+          dispatch(setCurrentTxHash(tx_hash))
         }
       })
 
@@ -208,6 +243,15 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     )
   }
 
+  const copyToClipboard = async (evt) => {
+    // const text = evt.target.value
+    if ('clipboard' in navigator) {
+      return await navigator.clipboard.writeText(evt.target.innerText);
+    } else {
+      return document.execCommand('copy', true, evt.target.innerText);
+    }
+  }
+
   const UserSelectProduct = () => {
     return (
       <FormControl sx={{ m: 1, minWidth: 300 }}>
@@ -245,7 +289,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <h1>Crypto Lights</h1>
         <center>
           <LightBulb />
-          <HardwareConnect handleAlerts={handleAlerts} />
+          <HardwareConnect handleAlerts={handleAlerts} disabled={!status ? false : true} />
         </center>
 
         <center>
@@ -258,9 +302,15 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
           {productSelectedName ? ("Product name: " + productSelectedName) : ("Product name: --")}
         </Box>
         <Box>
-          {productSelectedAddress ? ("Product address: " + productSelectedAddress) : ("Product address: --")}
+          {productSelectedAddress ? ( <>Product address:<Tooltip title="copy to clipboard">
+                            <Chip
+                                label={productSelectedAddress ? productSelectedAddress : "Product Address"}
+                                onClick={copyToClipboard}
+                                disabled={productSelectedAddress ? false : true}
+                            />
+                        </Tooltip> </>) : ("Product address: --")}
         </Box>
-
+        
         <Box>
           {productSelectedPrice ? ("Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / ETHUSDConversionRate) + ")") :
             ("Product price: $-- (ETH --)")}
@@ -270,8 +320,9 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <QR_Code
           productSelected={productSelected}
           selectProductPrice={productSelectedPrice}
-          selectGeneratorAddress={productSelectedAddress}
-          ethprice = {productSelectedPrice / ETHUSDConversionRate}
+          productSelectedAddress={productSelectedAddress}
+          disabled={!status ? false : true}
+          ethprice={productSelectedPrice / ETHUSDConversionRate}
         />
       </Box>
     )

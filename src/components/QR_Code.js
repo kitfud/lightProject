@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useState } from 'react'
 import {
   Box,
   Button,
@@ -33,14 +33,14 @@ const theme = createTheme({
   },
 });
 
-const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, ethprice }) => {
+const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected, ethprice }) => {
 
-  const { HexColor } = useSelector(state => state.color.value)
+  const { RGBColorString } = useSelector(state => state.color.value)
   const { sendDataProcess } = useSelector(state => state.connection.value)
-
+  const HexColorTemp = "fsadf"
   const classes = useStyles()
   const howToQR = "Select a color, then click the button below."
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
@@ -53,7 +53,7 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
         <Box>
           {howToQR}
           <br /><br />
-          {typeof productSelected !== "undefined" && typeof HexColor !== "undefined" ? (
+          {typeof productSelected !== "undefined" && typeof HexColorTemp !== "undefined" ? (
             <Button
               variant="contained"
               size="large"
@@ -69,7 +69,7 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
               color={buttonColor}
               endIcon={<QrCode2Icon />}
             >
-              {typeof productSelected === "undefined" ? "Select product" : "Select color"}
+              {typeof productSelected !== "undefined" ? "Select product" : "Select color"}
             </Button>)}
           <Modal
             open={open}
@@ -77,19 +77,22 @@ const QR_Code = ({ selectProductPrice, selectGeneratorAddress, productSelected, 
             aria-labelledby="QRCode"
             aria-describedby="Shows the QR code in a modal."
           >
-            <Card>
+            <Card sx={{
+              alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1,
+              minHeight: 750, justifyContent: "center"
+            }}>
               <center>
-                <QRCode value={selectGeneratorAddress} />
+                <QRCode value={productSelectedAddress} />
               </center>
               <center>
                 <Typography variant="h6" component="h2">
-                  Address:{selectGeneratorAddress}
+                  Address:{productSelectedAddress}
                 </Typography>
                 <Typography variant="h6" component="h2">
-                  Price USD:{selectProductPrice}  
+                  Price USD:{selectProductPrice}
                 </Typography>
                 <Typography variant="h6" component="h2">
-                  Price ETH: {ethprice} 
+                  Price ETH: {ethprice}
                 </Typography>
               </center>
             </Card>

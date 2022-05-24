@@ -1,14 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { Grid,
-         Box,
-         Card,
-         CardMedia,
-         Button,
-         Typography,
-
-} from '@mui/material'
-import { Link } from 'react-router-dom'
+import { Grid } from '@mui/material'
 import { ethers } from 'ethers'
 import { getGeneratorContract } from "../utils"
 import NFTMintCard from './NFTMintCard'
@@ -17,12 +9,6 @@ import NFTProductsCard from './NFTProductsCard'
 import { setProductList } from "../features/product"
 import { setGeneratorList } from '../features/generator'
 import { setPathname } from '../features/pathname'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import { Link as Scroll } from "react-scroll"
-import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
-
-
-
 
 const AdminMinting = ({
   loading,
@@ -40,7 +26,8 @@ const AdminMinting = ({
   // General
   const userAddress = useSelector((state) => state.userAddress.value)
   const wallet = useSelector((state) => state.wallet.value)
-  const alerts = useSelector((state) => state.alerts.value)
+  const { socket } = useSelector((state) => state.webSocket.value)
+  const { port } = useSelector(state => state.connection.value)
 
   const [useAutoName, setUseAutoName] = useState(true)
   const [size, setSize] = useState([100, 100])
@@ -68,7 +55,7 @@ const AdminMinting = ({
   // Regarding Product Contract
   const [productAddress, setProductAddress] = useState(undefined)
   const [newProductName, setNewProductName] = useState(undefined)
-  const [newProductPrice, setNewProducPrice] = useState(undefined)
+  const [newProductPrice, setNewProductPrice] = useState(undefined)
   const [productNewPrice, setProductNewPrice] = useState(undefined)
   const [selectedAll, setSelectedAll] = useState(false)
 
@@ -88,7 +75,7 @@ const AdminMinting = ({
       await getETHUSDConversionRate()
       try {
         let tx = await factoryContract.mintGenerator(
-          nftName, { "value": ethers.utils.parseEther(`${nftPrice / ETHUSDConversionRate}`) }
+          nftName, { "value": ethers.utils.parseEther(`${(nftPrice / ETHUSDConversionRate) + 0.000000000001}`) }
         )
         await tx.wait(1)
 
@@ -133,7 +120,7 @@ const AdminMinting = ({
     setNftNameInput(evt.target.value)
   }
 
-  // NFT Owner Card 
+  // NFT Owner Card
   const getGeneratorInfo = async (event = undefined) => {
     let nft_id
     if (typeof event === "undefined") {
@@ -283,16 +270,16 @@ const AdminMinting = ({
     setNewNFTName(undefined)
   }
 
-  // NFT Products Card 
+  // NFT Products Card
   const addNewProduct = async () => {
-    if (!loading && newProductName && newProductPrice >= 0 && newProductPrice) {
+    if (!loading && newProductName && parseFloat(newProductPrice) >= 0 && newProductPrice) {
       try {
         setLoading(true)
         const tx = await generatorContract.addProduct(
           newProductName, ethers.utils.parseEther(newProductPrice)
         )
         await tx.wait(1)
-        setNewProducPrice(undefined)
+        setNewProductPrice(undefined)
         setNewProductName(undefined)
         await updateProductList()
         handleAlerts("New product added successfully", "success")
@@ -317,8 +304,9 @@ const AdminMinting = ({
     setLoading(false)
   }
 
-  const setNewProductPrice = async () => {
-    if (!loading && generatorId && productNewPrice >= 0 && !productNewPrice === "") {
+
+  const changeProductPrice = async () => {
+    if (!loading && generatorId && parseFloat(productNewPrice) >= 0 && productNewPrice !== "") {
       setLoading(true)
       try {
         const tx = await generatorContract.changeProductPrice(
@@ -339,6 +327,7 @@ const AdminMinting = ({
         } else if (error.code === -32602 || error.code === -32603) {
           handleAlerts("Internal error", "error")
         } else {
+          console.log(error)
           handleAlerts("An unknown error occurred", "error")
         }
       }
@@ -348,18 +337,6 @@ const AdminMinting = ({
       handleAlerts("New price must be zero or positive", "warning")
     }
     setLoading(false)
-  }
-
-  const handleNewProductName = (evt) => {
-    setNewProductName(evt)
-  }
-
-  const handleNewProductPrice = (evt) => {
-    setNewProducPrice(evt.target.value)
-  }
-
-  const handleProductChangePrice = (evt) => {
-    setProductNewPrice(evt.target.value)
   }
 
   const handleProductList = (evt) => {
@@ -443,7 +420,7 @@ const AdminMinting = ({
   }, [wallet, productList, generatorId])
 
   useEffect(() => {
-    if (wallet && factoryContract) {
+    if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
     if (!wallet) {
@@ -454,7 +431,7 @@ const AdminMinting = ({
   }, [wallet, loading])
 
   useEffect(() => {
-    if (wallet && factoryContract) {
+    if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
     if (factoryContract) {
@@ -462,13 +439,9 @@ const AdminMinting = ({
     }
   }, [factoryContract])
 
-  const [checked, setChecked] = useState(false)
-
-
-    useEffect(() => {
-        dispatch(setPathname(window.location.pathname))
-        setChecked(true)
-    }, [])
+  // useEffect(() => {
+  //   resetAllFields()
+  // }, [wallet])
 
   return (
     <>
