@@ -55,7 +55,7 @@ const AdminMinting = ({
   // Regarding Product Contract
   const [productAddress, setProductAddress] = useState(undefined)
   const [newProductName, setNewProductName] = useState(undefined)
-  const [newProductPrice, setNewProducPrice] = useState(undefined)
+  const [newProductPrice, setNewProductPrice] = useState(undefined)
   const [productNewPrice, setProductNewPrice] = useState(undefined)
   const [selectedAll, setSelectedAll] = useState(false)
 
@@ -279,7 +279,7 @@ const AdminMinting = ({
           newProductName, ethers.utils.parseEther(newProductPrice)
         )
         await tx.wait(1)
-        setNewProducPrice(undefined)
+        setNewProductPrice(undefined)
         setNewProductName(undefined)
         await updateProductList()
         handleAlerts("New product added successfully", "success")
@@ -304,7 +304,7 @@ const AdminMinting = ({
     setLoading(false)
   }
 
-  const setNewProductPrice = async () => {
+  const changeNewProductPrice = async () => {
     if (!loading && generatorId && productNewPrice >= 0 && !productNewPrice === "") {
       setLoading(true)
       try {
@@ -342,7 +342,7 @@ const AdminMinting = ({
   }
 
   const handleNewProductPrice = (evt) => {
-    setNewProducPrice(evt.target.value)
+    setNewProductPrice(evt.target.value)
   }
 
   const handleProductChangePrice = (evt) => {
@@ -504,7 +504,7 @@ const AdminMinting = ({
           handleProductChangePrice={handleProductChangePrice}
           handleNewProductPrice={handleNewProductPrice}
           productAddress={productAddress}
-          setNewProductPrice={setNewProductPrice}
+          changeNewProductPrice={changeNewProductPrice}
           newProductName={newProductName}
           generatorId={generatorId}
         />

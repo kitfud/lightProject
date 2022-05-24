@@ -6,6 +6,7 @@ import { Routes, Route } from 'react-router-dom'
 import Shop from './components/Shop'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import Transfer from './components/Transfer'
 import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useRef, useState } from "react"
@@ -20,8 +21,7 @@ import { ethers } from "ethers"
 import { LandingPage } from './components/LandingPage'
 import { io } from "socket.io-client"
 
-const socketServerUrl = "https://candy-lamps-socketio.herokuapp.com/"
-const new_socket = io(socketServerUrl)
+const new_socket = io("/websocket", { forceNew: true })
 
 let themeLightMode = createTheme({
 
@@ -107,10 +107,15 @@ function App() {
       } else {
         use_address = userAddress
       }
-      const isOwner = await factoryContract.checkIfTokenHolder(use_address)
-      let tokensOwned
+
+      let isOwner = false
+      const tokensOwned = await factoryContract.addressToTokenID(use_address)
+
+      if (tokensOwned.includes(true)) {
+        isOwner = true
+      }
+
       if (isOwner) {
-        tokensOwned = await factoryContract.addressToTokenID(use_address)
         let generatorsObj = {}
         for (let ii = 0; ii < tokensOwned.length; ii++) {
           if (tokensOwned[ii] === true) {
@@ -208,6 +213,7 @@ function App() {
     new_socket.on('disconnect', () => {
       dispatch(setSocketConnected(false))
     })
+
     return () => {
       new_socket.off("connect")
       new_socket.off("disconnect")
@@ -266,6 +272,9 @@ function App() {
 
         <Card sx={{ bgcolor: "secondary.main" }}>
           <Routes>
+            <Route path="/transfer" element={
+              <Transfer />
+            } />
             <Route path='/' element={
               <LandingPage />} />
             <Route path='/home' element={

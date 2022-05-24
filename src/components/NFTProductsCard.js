@@ -5,7 +5,7 @@ import {
 } from '@mui/material'
 
 const NFTProductsCard = ({ size, handleProductList, productId, productList, copyToClipboard, prodCurrentPrice,
-    ETHUSDConversionRate, handleProductChangePrice, setNewProductPrice, loading, handleNewProductName, newProductName,
+    ETHUSDConversionRate, handleProductChangePrice, changeNewProductPrice, loading, handleNewProductName, newProductName,
     handleNewProductPrice, addNewProduct, productNewPrice, newProductPrice, productAddress, generatorId }) => {
 
     return (
@@ -88,7 +88,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             value={typeof productNewPrice !== "undefined" ? productNewPrice : ""}
                             sx={{ maxWidth: 300 }}
                         />
-                        <Button onClick={setNewProductPrice} variant="contained" color="secondary">{loading ? (
+                        <Button onClick={changeNewProductPrice} variant="contained" color="secondary">{loading ? (
                             <CircularProgress color="inherit" />) : ("Change price")}</Button>
                     </FormControl>
                     <FormControl sx={{ padding: 1 }}>
