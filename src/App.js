@@ -6,6 +6,7 @@ import { Routes, Route } from 'react-router-dom'
 import Shop from './components/Shop'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import Transfer from './components/Transfer'
 import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useRef, useState } from "react"
@@ -136,15 +137,9 @@ function App() {
           }
         }
 
-        if (Object.keys(generatorsObj).length > 0) {
-          dispatch(setGeneratorList(generatorsObj))
-          handleAlerts("NFTs owned by address collected!", "info")
-        } else {
-          dispatch(setGeneratorList(undefined))
-          handleAlerts("No NFTs owned by this address.", "info")
-        }
+        dispatch(setGeneratorList(generatorsObj))
+        handleAlerts("NFTs owned by address collected!", "info")
       } else {
-        dispatch(setGeneratorList(undefined))
         handleAlerts("No NFTs owned by this address.", "info")
       }
     } else {
@@ -218,6 +213,7 @@ function App() {
     new_socket.on('disconnect', () => {
       dispatch(setSocketConnected(false))
     })
+
     return () => {
       new_socket.off("connect")
       new_socket.off("disconnect")
@@ -253,6 +249,7 @@ function App() {
       } else if (provider) {
         updateGeneratorList(refAddress)
       }
+      updateProductList()
       // handleAlerts("Data from address collected!", "info")
     }
 
@@ -261,6 +258,7 @@ function App() {
   return (
     <>
       <ThemeProvider theme={colorMode === "dark" ? themeDarkMode : themeLightMode}>
+
         <Header
           setColorMode={setColorMode}
           setUserAddress={setUserAddress}
@@ -274,6 +272,9 @@ function App() {
 
         <Card sx={{ bgcolor: "secondary.main" }}>
           <Routes>
+            <Route path="/transfer" element={
+              <Transfer />
+            } />
             <Route path='/' element={
               <LandingPage />} />
             <Route path='/home' element={

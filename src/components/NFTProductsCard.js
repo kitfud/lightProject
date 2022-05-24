@@ -5,20 +5,8 @@ import {
 } from '@mui/material'
 
 const NFTProductsCard = ({ size, handleProductList, productId, productList, copyToClipboard, prodCurrentPrice,
-    ETHUSDConversionRate, changeProductPrice, loading, newProductName, addNewProduct, productNewPrice,
-    newProductPrice, productAddress, generatorId, setNewProductName, setNewProducPrice, setProductNewPrice }) => {
-
-    const handleNewProductName = (evt) => {
-        setNewProductName(evt)
-    }
-
-    const handleNewProductPrice = (evt) => {
-        setNewProducPrice(evt.target.value)
-    }
-
-    const handleProductChangePrice = (evt) => {
-        setProductNewPrice(evt.target.value)
-    }
+    ETHUSDConversionRate, handleProductChangePrice, changeNewProductPrice, loading, handleNewProductName, newProductName,
+    handleNewProductPrice, addNewProduct, productNewPrice, newProductPrice, productAddress, generatorId }) => {
 
     return (
         <Grid>
@@ -100,7 +88,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             value={typeof productNewPrice !== "undefined" ? productNewPrice : ""}
                             sx={{ maxWidth: 300 }}
                         />
-                        <Button onClick={changeProductPrice} variant="contained" color="secondary">{loading ? (
+                        <Button onClick={changeNewProductPrice} variant="contained" color="secondary">{loading ? (
                             <CircularProgress color="inherit" />) : ("Change price")}</Button>
                     </FormControl>
                     <FormControl sx={{ padding: 1 }}>

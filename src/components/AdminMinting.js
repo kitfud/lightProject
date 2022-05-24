@@ -55,7 +55,7 @@ const AdminMinting = ({
   // Regarding Product Contract
   const [productAddress, setProductAddress] = useState(undefined)
   const [newProductName, setNewProductName] = useState(undefined)
-  const [newProductPrice, setNewProducPrice] = useState(undefined)
+  const [newProductPrice, setNewProductPrice] = useState(undefined)
   const [productNewPrice, setProductNewPrice] = useState(undefined)
   const [selectedAll, setSelectedAll] = useState(false)
 
@@ -272,14 +272,14 @@ const AdminMinting = ({
 
   // NFT Products Card
   const addNewProduct = async () => {
-    if (!loading && newProductName && parseFloat(newProductPrice) >= 0 && newProductPrice) {
+    if (!loading && newProductName && newProductPrice >= 0 && newProductPrice) {
       try {
         setLoading(true)
         const tx = await generatorContract.addProduct(
           newProductName, ethers.utils.parseEther(newProductPrice)
         )
         await tx.wait(1)
-        setNewProducPrice(undefined)
+        setNewProductPrice(undefined)
         setNewProductName(undefined)
         await updateProductList()
         handleAlerts("New product added successfully", "success")
@@ -304,8 +304,8 @@ const AdminMinting = ({
     setLoading(false)
   }
 
-  const changeProductPrice = async () => {
-    if (!loading && generatorId && parseFloat(productNewPrice) >= 0 && productNewPrice !== "") {
+  const changeNewProductPrice = async () => {
+    if (!loading && generatorId && productNewPrice >= 0 && !productNewPrice === "") {
       setLoading(true)
       try {
         const tx = await generatorContract.changeProductPrice(
@@ -326,7 +326,6 @@ const AdminMinting = ({
         } else if (error.code === -32602 || error.code === -32603) {
           handleAlerts("Internal error", "error")
         } else {
-          console.log(error)
           handleAlerts("An unknown error occurred", "error")
         }
       }
@@ -336,6 +335,18 @@ const AdminMinting = ({
       handleAlerts("New price must be zero or positive", "warning")
     }
     setLoading(false)
+  }
+
+  const handleNewProductName = (evt) => {
+    setNewProductName(evt)
+  }
+
+  const handleNewProductPrice = (evt) => {
+    setNewProductPrice(evt.target.value)
+  }
+
+  const handleProductChangePrice = (evt) => {
+    setProductNewPrice(evt.target.value)
   }
 
   const handleProductList = (evt) => {
@@ -437,10 +448,6 @@ const AdminMinting = ({
     }
   }, [factoryContract])
 
-  // useEffect(() => {
-  //   resetAllFields()
-  // }, [wallet])
-
   return (
     <>
       <Grid container sx={{
@@ -493,14 +500,13 @@ const AdminMinting = ({
           addNewProduct={addNewProduct}
           loading={loading}
           productNewPrice={productNewPrice}
-
+          handleNewProductName={handleNewProductName}
+          handleProductChangePrice={handleProductChangePrice}
+          handleNewProductPrice={handleNewProductPrice}
           productAddress={productAddress}
-          changeProductPrice={changeProductPrice}
+          changeNewProductPrice={changeNewProductPrice}
           newProductName={newProductName}
           generatorId={generatorId}
-          setNewProductName={setNewProductName}
-          setNewProducPrice={setNewProducPrice}
-          setProductNewPrice={setProductNewPrice}
         />
       </Grid>
     </>

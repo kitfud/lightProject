@@ -7,6 +7,10 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 import "./ProductContract.sol";
 import "./ILightGenerator.sol";
 
+// TO DO: decide if the products will only be local or a contract
+// TO DO: change the factory contract call to an interface call and use only the needed functions.
+// MAYBE: The aggregator function could be removed and imported from an ILightFactory interface.. try
+//        Or if we opt for an NFT price in ETH, the aggregator won'y be needed in the factory contract.
 // TO DO: Think about te lottery logic and the NFT generation for each light bought.
 
 contract LightGenerator is ILightGenerator {
@@ -15,8 +19,8 @@ contract LightGenerator is ILightGenerator {
     uint256 public immutable tokenId;
     uint256 public productCount;
     string public generatorName;
-    // uint256 public selectedProductId;
-    // bool public canSelectProduct;
+    uint256 public selectedProductId;
+    bool public canSelectProduct;
 
     struct Product {
         uint256 id;
@@ -27,7 +31,7 @@ contract LightGenerator is ILightGenerator {
 
     AggregatorV3Interface internal ETHUSDPriceFeed;
     Product[] public productsCompleteHistory; // products history, record of all products ever added or modified until reinitialized
-    mapping(uint256 => Product) public idToProduct;
+    mapping(uint256 => Product) public idToProduct; // keep in mind mappings cannot be deleted in solidity
     mapping(string => Product) public nameToProduct;
     mapping(uint256 => address) public idToProductContract;
     ProductContract[] public productContracts;
@@ -50,15 +54,15 @@ contract LightGenerator is ILightGenerator {
     constructor(
         address _agoraAddress,
         address _factoryAddress,
-        uint256 _tokenId,
+        uint256 id,
         string memory _name,
         address _priceFeedAddress
     ) payable {
         // ethusd price feed address on rinkeby : 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         ETHUSDPriceFeed = AggregatorV3Interface(_priceFeedAddress);
-        factoryAddress = _factoryAddress;
+        factoryAddress = _factoryAddress; // create an interface - should lower the gas
         agoraAddress = _agoraAddress;
-        tokenId = _tokenId;
+        tokenId = id;
         generatorName = _name;
     }
 
@@ -70,6 +74,8 @@ contract LightGenerator is ILightGenerator {
     function changeName(string memory _newName) external onlyOwner {
         generatorName = _newName;
     }
+
+    // remove - gas reasons
 
     function getBalance() public view onlyOwner returns(uint256 balance){
         balance = address(this).balance;
@@ -88,6 +94,12 @@ contract LightGenerator is ILightGenerator {
         emit Withdraw(block.timestamp, contractBalance, owner);
         return contractBalance;
     }
+
+    // remove - gas reasons
+    // function getAddress() public view returns (address){
+    //     return address(this);
+    // }
+
 
     function getProductPriceInETH(uint256 productId)
         public
@@ -126,17 +138,17 @@ contract LightGenerator is ILightGenerator {
     // - works together with the boolean canSelectProduct -
     // should not work though because people could exhaust the account
     // by changing the product selection wityhout buying
-    // function selectProduct(uint256 _productId) external {
-    //     require(canSelectProduct, "An operation is already ongoing");
-    //     require(_productId < productCount, "Product not listed");
-    //     selectedProductId = _productId;
-    // }
+    function selectProduct(uint256 _productId) external {
+        require(canSelectProduct, "An operation is already ongoing");
+        require(_productId < productCount, "Product not listed");
+        selectedProductId = _productId;
+    }
 
     function buyProduct(uint256 productId) external payable {
         uint256 priceETH = getProductPriceInETH(productId);
         require(
             msg.value >= priceETH,
-            "Not Enough ETH to buy the product."
+            "Not Enough ETH to purchase the product."
         );
         emit Deposit(
             msg.sender,

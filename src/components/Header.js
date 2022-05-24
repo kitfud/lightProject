@@ -161,6 +161,9 @@ const Header = ({
       dispatch(setUserAddress(new_user_address))
       setButtonColor("success")
 
+      updateGeneratorList()
+      updateProductList()
+
       setRefLink(window.location.origin + "/home?ref=" + new_user_address)
 
     } else {
@@ -219,6 +222,9 @@ const Header = ({
       dispatch(setUserAddress(new_user_address))
       setButtonColor("success")
 
+      updateGeneratorList()
+      updateProductList()
+
       setRefLink(window.location.origin + "/home?ref=" + new_user_address)
     }
   }
@@ -244,6 +250,9 @@ const Header = ({
       dispatch(setFactoryContract(new_contract))
       dispatch(setUserAddress(new_user_address))
       setButtonColor("success")
+
+      updateGeneratorList()
+      updateProductList()
 
       setRefLink(window.location.origin + "/home?ref=" + new_user_address)
     } else if (provider) {
@@ -274,12 +283,7 @@ const Header = ({
       if (window.ethereum) {
         window.ethereum.on('chainChanged', handleChainChanged)
         if (pathname === "/admin" || pathname === "/shop") {
-          window.ethereum.on('accountsChanged', () => {
-            dispatch(setGeneratorList(undefined))
-            dispatch(setProductList(undefined))
-            dispatch(setUserAddress(undefined))
-            reconnectWallet()
-          })
+          window.ethereum.on('accountsChanged', reconnectWallet)
         }
         // return () => {
         //   window.ethereum.removeListener('chainChanged', handleChainChanged)
@@ -293,10 +297,6 @@ const Header = ({
       getProvider()
     }
   }, [provider, wallet, pathname])
-
-  useEffect(() => {
-    updateGeneratorList()
-  }, [wallet])
 
   return (
 

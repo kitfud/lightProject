@@ -16,7 +16,7 @@ import {
      
 
         <Typography color="inherit">
-         Chainlink Spring Hackathon 2022
+         ChainLink Hackathon 2022
         </Typography>
       </Toolbar>
 

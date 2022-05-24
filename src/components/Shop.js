@@ -76,7 +76,6 @@ function PricingContent() {
 
   useEffect(() => {
     dispatch(setPathname(window.location.pathname))
-    window.scrollTo(0, 0)
   }, [])
 
   return (
