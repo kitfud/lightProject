@@ -76,8 +76,8 @@ const LightBulb = () => {
   }
 
   useEffect(() => {
-    // if (previousTxHash !== currentTxHash && HexColor) {
-    if (HexColor) {
+    if (previousTxHash !== currentTxHash && HexColor) {
+      // if (HexColor) {
       dispatch(setHexBulbColor(HexColor))
       dispatch(setRGBColorString(HexColor))
     }
@@ -88,7 +88,7 @@ const LightBulb = () => {
   }, [HexBulbColor])
 
   return (
-   
+
     <canvas ref={canvasRef} />
   )
 }

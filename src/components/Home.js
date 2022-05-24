@@ -127,8 +127,8 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   }, [socket])
 
   useEffect(() => {
-    // if (RGBColorString && previousTxHash !== currentTxHash) {
-    if (RGBColorString) {
+    if (RGBColorString && previousTxHash !== currentTxHash) {
+      // if (RGBColorString) {
       sendDataFunc()
       dispatch(setPreviousTxHash(currentTxHash))
       dispatch(setRGBColorString(undefined))
