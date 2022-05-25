@@ -40,6 +40,7 @@ const AdminMinting = ({
   const userAddress = useSelector((state) => state.userAddress.value)
   const wallet = useSelector((state) => state.wallet.value)
   const { previousTxHash } = useSelector(state => state.paymentData.value)
+  const [nftMintedMsg, setNftMintedMsg] = useState(undefined)
 
 
   const [useAutoName, setUseAutoName] = useState(true)
@@ -460,11 +461,11 @@ const AdminMinting = ({
       getNFTPrice()
 
       factoryContract.on("NftRequested", (requestId, requester) => {
-        handleAlerts("Please wait while your NFT is being minted. Follow the link to see transaction status: ", "warning", false, true, false)
+        setNftMintedMsg("Please wait while your NFT is being minted. Follow the link to see transaction status: ")
       })
 
       factoryContract.on("NftMinted", (imgNumber, minter) => {
-        handleAlerts("NFT ready! Please, refresh the page.", "success")
+        setNftMintedMsg("NFT ready! Please, refresh the page.")
       })
 
       return () => {
@@ -606,6 +607,7 @@ const AdminMinting = ({
                 loading={loading}
                 mintNFT={mintNFT}
                 handleAlerts={handleAlerts}
+                nftMintedMsg={nftMintedMsg}
               />
 
               <Scroll to="border3" smooth={true}>

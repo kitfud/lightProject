@@ -85,8 +85,8 @@ function App() {
   const [colorMode, setColorMode] = useState("dark")
   const [sumProductBalances, setSumProductBalances] = useState(undefined)
 
-  const handleAlerts = (msg, severity, loading = false, vrfLink = false, openAlert = true) => {
-    dispatch(setAlerts([openAlert, msg, severity, loading, vrfLink]))
+  const handleAlerts = (msg, severity, loading = false) => {
+    dispatch(setAlerts([true, msg, severity, loading]))
   }
 
   const handleCloseAlerts = (event, reason) => {

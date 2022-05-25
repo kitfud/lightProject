@@ -5,10 +5,8 @@ import {
 } from '@mui/material'
 import { useSelector } from 'react-redux'
 
-const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts,
+const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts, nftMintedMsg,
     setUseAutoName, handleNFTName, loading, mintNFT, wallet }) => {
-
-    const alerts = useSelector(state => state.alerts.value)
 
     const showAlert_WalletNotConnected = () => {
         handleAlerts("Please, first connect your crypto wallet (click on the top right orange button)", "warning")
@@ -55,9 +53,9 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
                             </Button>
                         )}
                     </Box>
-                    {alerts[4] ? (
-                        <Typography gutterBottom variant="h6" component="div" sx={{ fontFamily: "Nunito", }}>
-                            {alerts[1]}
+                    {nftMintedMsg ? (
+                        <Typography gutterBottom variant="p" component="div" sx={{ fontFamily: "Nunito", }}>
+                            {nftMintedMsg}
                             {<a href="https://vrf.chain.link/rinkeby/5025">VRF Link</a>}
                         </Typography>) : (<ins></ins>)}
                 </Card>
