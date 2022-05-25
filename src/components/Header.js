@@ -369,20 +369,17 @@ const Header = ({
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {pathname === "/admin" || pathname === "/shop" ? (
-              <Tooltip title="copy to clipboard">
-                <Chip
-                  label={refLink ? refLink : "Referral link"}
-                  onClick={copyToClipboard}
-                  disabled={refLink ? false : true}
-                />
-              </Tooltip>) : (<ins></ins>)}
-
+            {(pathname === "/admin" || pathname === "/shop") && refLink ? (
+              <Link to={refLink}>
+                <Button className={errorPulseClass.pulse} onClick={changeNetwork} variant="contained" color={"error"}>
+                  Launch Store Front
+                </Button>
+              </Link>) : null}
             {(pathname === "/admin" || pathname === "/shop") ? (wallet && wrongNetwork ? (
               <Button className={errorPulseClass.pulse} onClick={changeNetwork} variant="contained" color={"error"}>
                 Switch network
               </Button>) :
-              (<Button sx={{ fontFamily: "Nunito" }}className={buttonColor === "warning" ? warningPulseClass.pulse : ""} color={buttonColor} onClick={connectWallet} variant="contained">
+              (<Button sx={{ fontFamily: "Nunito" }} className={buttonColor === "warning" ? warningPulseClass.pulse : ""} color={buttonColor} onClick={connectWallet} variant="contained">
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
               </Button>)
             ) : (

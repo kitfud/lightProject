@@ -469,7 +469,6 @@ const AdminMinting = ({
 
       factoryContract.on("NftMinted", (imgNumber, minter) => {
         setNftMintedMsg("NFT ready! Please, refresh the page.")
-        setNeedRefresh(true)
       })
 
       return () => {
