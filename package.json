@@ -39,6 +39,7 @@
     "eject": "react-scripts eject",
     "format:check": "prettier --check ./src",
     "format:fix": "prettier --write ./src",
+    "lint": "eslint src/**/*.js",
     "solhint": "./node_modules/.bin/solhint -f table ./src/contracts/**/*.sol",
     "prettier:solidity": "./node_modules/.bin/prettier --write ./src/contracts/**/*.sol"
   },
