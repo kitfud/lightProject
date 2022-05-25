@@ -1,11 +1,14 @@
 import React from 'react'
 import {
     Card, Button, Typography, Box, Grid, CircularProgress,
-    CardMedia, FormControl, TextField, Checkbox, FormControlLabel
+    FormControl, TextField, Checkbox, FormControlLabel
 } from '@mui/material'
+import { useSelector } from 'react-redux'
 
 const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts,
     setUseAutoName, handleNFTName, loading, mintNFT, wallet }) => {
+
+    const alerts = useSelector(state => state.alerts.value)
 
     const showAlert_WalletNotConnected = () => {
         handleAlerts("Please, first connect your crypto wallet (click on the top right orange button)", "warning")
@@ -52,6 +55,11 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
                             </Button>
                         )}
                     </Box>
+                    {alerts[4] ? (
+                        <Typography gutterBottom variant="h6" component="div" sx={{ fontFamily: "Nunito", }}>
+                            {alerts[1]}
+                            {<a href="https://vrf.chain.link/rinkeby/5025">VRF Link</a>}
+                        </Typography>) : (<ins></ins>)}
                 </Card>
             </Box>
         </Grid>

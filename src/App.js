@@ -85,8 +85,8 @@ function App() {
   const [colorMode, setColorMode] = useState("dark")
   const [sumProductBalances, setSumProductBalances] = useState(undefined)
 
-  const handleAlerts = (msg, severity, loading = false, vrfLink = false) => {
-    dispatch(setAlerts([true, msg, severity, loading, vrfLink]))
+  const handleAlerts = (msg, severity, loading = false, vrfLink = false, openAlert = true) => {
+    dispatch(setAlerts([openAlert, msg, severity, loading, vrfLink]))
   }
 
   const handleCloseAlerts = (event, reason) => {
@@ -324,7 +324,6 @@ function App() {
             sx={{ width: '100%' }}
           >
             {alerts[1]}
-            {alerts[4] ? <a href="https://vrf.chain.link/rinkeby/5025">VRF Link</a> : <ins></ins>}
             {alerts[3] ? (<CircularProgress size={20} color="inherit" />) : (<ins></ins>)}
             <IconButton
               size="small"
