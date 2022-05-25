@@ -1,7 +1,9 @@
 {
   "name": "lightproject",
   "version": "0.1.0",
-  "private": true,
+  "engines": {
+    "node": "16.x"
+  },
   "dependencies": {
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
@@ -21,11 +23,13 @@
     "react-native-gesture-handler": "^1.2.2",
     "react-native-slider-color-picker": "^2.1.1",
     "react-qr-code": "^2.0.7",
-    "react-redux": "^8.0.1",
+    "react-redux": "^8.0.2",
     "react-router-dom": "^6.3.0",
     "react-scripts": "5.0.1",
+    "react-scroll": "^1.8.7",
     "redux": "^4.2.0",
     "simple-web-serial": "^0.0.8",
+    "socket.io-client": "^4.5.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

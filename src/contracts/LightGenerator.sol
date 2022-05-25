@@ -90,7 +90,6 @@ contract LightGenerator is ILightGenerator {
         return contractBalance;
     }
 
-
     function getProductPriceInETH(uint256 productId)
         public
         view
@@ -143,6 +142,7 @@ contract LightGenerator is ILightGenerator {
         //     block.timestamp,
         //     address(this).balance
         // );
+
         emit ProductSold(productId, msg.sender, priceETH, block.timestamp);
     }
 
