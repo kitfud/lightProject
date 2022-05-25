@@ -35,3 +35,6 @@ jobs:
     - run: npm run lint
       if: always()
       continue-on-error: true
+    - run: npm run solhint
+      if: always()
+      continue-on-error: true
