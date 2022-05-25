@@ -29,8 +29,8 @@ jobs:
         cache: 'npm'
     - run: npm ci
       if: always()
-    - run: npm format
-      if: always()
+    - name: Prettier Action
+      uses: creyD/prettier_action@v4.2
       continue-on-error: true
     - run: npm run lint
       if: always()
