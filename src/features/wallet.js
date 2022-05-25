@@ -1,17 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialStateValue = undefined
+const initialStateValue = undefined;
 
 export const walletSlice = createSlice({
-    name: "wallet",
-    initialState: { value: initialStateValue },
-    reducers: {
-        setWallet: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
+  name: 'wallet',
+  initialState: { value: initialStateValue },
+  reducers: {
+    setWallet: (state, action) => {
+      state.value = action.payload;
+    },
+  },
+});
 
-export const { setWallet } = walletSlice.actions
+export const { setWallet } = walletSlice.actions;
 
-export default walletSlice.reducer
+export default walletSlice.reducer;

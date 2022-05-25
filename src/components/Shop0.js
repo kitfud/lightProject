@@ -1,8 +1,5 @@
-import React, { useState } from "react";
-import { Card, Button, Typography, Box, Grid, CircularProgress } from '@mui/material'
-
-
-
+import React, { useState } from 'react';
+import { Card, Button, Typography, Box, Grid, CircularProgress } from '@mui/material';
 
 const Shop = () => {
   const [num, setNum] = useState(0);
@@ -14,7 +11,7 @@ const Shop = () => {
   };
 
   function myName() {
-    return "Kit";
+    return 'Kit';
   }
 
   let user = myName();
@@ -23,7 +20,7 @@ const Shop = () => {
   const MyAnimal = () => {
     return (
       <div>
-        <Button sx={{ color: "pink" }} variant="contained">
+        <Button sx={{ color: 'pink' }} variant="contained">
           Animal Button
         </Button>
       </div>
@@ -34,20 +31,14 @@ const Shop = () => {
     return <div>Apple Pie</div>;
   };
 
-  1 === "1" ? console.log("true") : console.log("false");
+  1 === '1' ? console.log('true') : console.log('false');
 
   return (
     <>
-    {/* <div>Hello World</div> */}
+      {/* <div>Hello World</div> */}
       <div>{`my number is ${num}`}</div>
       <button onClick={changeNum}>Change Num</button>
       {num % 2 === 0 ? <MyAnimal /> : <MyDinner />}
-
-
-
-
-
-     
     </>
   );
 };

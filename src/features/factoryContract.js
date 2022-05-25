@@ -1,17 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialStateValue = undefined
+const initialStateValue = undefined;
 
 export const factoryContractSlice = createSlice({
-    name: "factoryContract",
-    initialState: { value: initialStateValue },
-    reducers: {
-        setFactoryContract: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
+  name: 'factoryContract',
+  initialState: { value: initialStateValue },
+  reducers: {
+    setFactoryContract: (state, action) => {
+      state.value = action.payload;
+    },
+  },
+});
 
-export const { setFactoryContract } = factoryContractSlice.actions
+export const { setFactoryContract } = factoryContractSlice.actions;
 
-export default factoryContractSlice.reducer
+export default factoryContractSlice.reducer;

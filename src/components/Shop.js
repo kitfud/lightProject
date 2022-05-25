@@ -18,66 +18,58 @@ import Container from '@mui/material/Container';
 import img_arduino from '../img/arduino_uno_200.jpg';
 import img_wires from '../img/JumperWires.jpg';
 import img_led from '../img/led_strip200.jpg';
-import circuit_diagram from '../img/CryptoLightsCircuit.png'
+import circuit_diagram from '../img/CryptoLightsCircuit.png';
 
 import { setPathname } from '../features/pathname';
 import { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-
 const tiers = [
   {
     title: 'Arduino Uno',
     price: '24.10',
-    description: [
-      'A microcontroller board'
-    ],
+    description: ['A microcontroller board'],
     image: img_arduino,
     buttonText: 'Buy now',
     buttonVariant: 'contained',
-    vendorURL: 'https://amzn.to/3LsZVzI'
+    vendorURL: 'https://amzn.to/3LsZVzI',
   },
   {
     title: 'Led Strip',
     price: '11',
-    description: [
-      'LED Strip - Tunable White'
-    ],
+    description: ['LED Strip - Tunable White'],
     image: img_led,
     buttonText: 'Buy now',
     buttonVariant: 'contained',
-    vendorURL: 'https://amzn.to/3wzXbLm'
+    vendorURL: 'https://amzn.to/3wzXbLm',
   },
   {
     title: 'Jumper Wires',
     price: '5',
-    description: [
-      'Wire your LED lights to Arduino'
-    ],
+    description: ['Wire your LED lights to Arduino'],
     image: img_wires,
     buttonText: 'Buy now',
     buttonVariant: 'contained',
-    vendorURL: 'https://amzn.to/3aaveSW'
+    vendorURL: 'https://amzn.to/3aaveSW',
   },
 ];
 
 function PricingContent() {
-
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [num, setNum] = useState(0);
 
   const changeNum = () => {
     let number = num;
     number++;
     setNum(number);
-    console.log(num)
-    console.log('Soon this will get you to the store...')
+    console.log(num);
+    console.log('Soon this will get you to the store...');
   };
 
   useEffect(() => {
-    dispatch(setPathname(window.location.pathname))
-    window.scrollTo(0, 0)
-  }, [])
+    dispatch(setPathname(window.location.pathname));
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <React.Fragment>
@@ -91,7 +83,7 @@ function PricingContent() {
           align="center"
           color="text.primary"
           gutterBottom
-          sx={{ fontFamily: "Nunito" }}
+          sx={{ fontFamily: 'Nunito' }}
         >
           Build your setup
         </Typography>
@@ -104,14 +96,8 @@ function PricingContent() {
         <Grid container spacing={5} alignItems="flex-end">
           {tiers.map((tier) => (
             // Enterprise card is full width at sm breakpoint
-            <Grid
-              item
-              key={tier.title}
-              xs={12}
-              sm={tier.title === 'Led Strip' ? 12 : 10}
-              md={4}
-            >
-              <Card sx={{ bgcolor: "primary.main" }}>
+            <Grid item key={tier.title} xs={12} sm={tier.title === 'Led Strip' ? 12 : 10} md={4}>
+              <Card sx={{ bgcolor: 'primary.main' }}>
                 <CardHeader
                   title={tier.title}
                   subheader={tier.subheader}
@@ -127,33 +113,21 @@ function PricingContent() {
                   }}
                 />
                 <CardContent>
-               
                   <img src={tier.image} />
                   <ul>
                     {tier.description.map((line) => (
-                      <Typography
-                        component="li"
-                        variant="subtitle1"
-                        align="center"
-                        key={line}
-                      >
+                      <Typography component="li" variant="subtitle1" align="center" key={line}>
                         {line}
                       </Typography>
                     ))}
                   </ul>
                 </CardContent>
-              
-             
-                    <a target="_blank" href={tier.vendorURL} style={{ textDecoration: "none" }}>
-                    <Button color="success" fullWidth variant={tier.buttonVariant} >
+
+                <a target="_blank" href={tier.vendorURL} style={{ textDecoration: 'none' }}>
+                  <Button color="success" fullWidth variant={tier.buttonVariant}>
                     {tier.buttonText}
                   </Button>
-                    </a>
-                
-             
-               
-                
-             
+                </a>
               </Card>
             </Grid>
           ))}
@@ -169,8 +143,7 @@ function PricingContent() {
           py: [3, 6],
         }}
       >
-        <Grid container spacing={4} justifyContent="space-evenly">
-        </Grid>
+        <Grid container spacing={4} justifyContent="space-evenly"></Grid>
 
         <Typography
           component="h1"
@@ -178,35 +151,33 @@ function PricingContent() {
           align="center"
           color="text.primary"
           gutterBottom
-          sx={{ fontFamily: "Nunito" }}
+          sx={{ fontFamily: 'Nunito' }}
         >
-         Wire the Components: 
+          Wire the Components:
         </Typography>
-        
-       
       </Container>
       <center>
         <Box>
-        <img src={circuit_diagram} />
+          <img src={circuit_diagram} />
         </Box>
       </center>
-    
+
       <Typography
-          marginTop={3}
-          component="h1"
-          variant="h3"
-          align="center"
-          color="text.primary"
-          gutterBottom
-          sx={{ fontFamily: "Nunito" }}
-        >
-        Code The Arduino: 
-        </Typography>
-        <Grid sx={{alignItems:"center",display:'flex', flexDirection:'column'}}>
+        marginTop={3}
+        component="h1"
+        variant="h3"
+        align="center"
+        color="text.primary"
+        gutterBottom
+        sx={{ fontFamily: 'Nunito' }}
+      >
+        Code The Arduino:
+      </Typography>
+      <Grid sx={{ alignItems: 'center', display: 'flex', flexDirection: 'column' }}>
         <Box align="center">
-        <pre>
-        <code>{
-        `
+          <pre>
+            <code>
+              {`
         #include <List.hpp>
         #include <Adafruit_NeoPixel.h>
         #include <SimpleWebSerial.h>
@@ -293,16 +264,13 @@ function PricingContent() {
             strip.show();                          //  Update strip to match
         
           }
-        }`
-        }
-        </code>
-        </pre>
+        }`}
+            </code>
+          </pre>
         </Box>
-       </Grid>
+      </Grid>
     </React.Fragment>
-
   );
-
 }
 
 export default function Pricing() {

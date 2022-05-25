@@ -1,17 +1,17 @@
-import { createSlice } from "@reduxjs/toolkit"
+import { createSlice } from '@reduxjs/toolkit';
 
-const initialStateValue = undefined
+const initialStateValue = undefined;
 
 export const pathnameSlice = createSlice({
-    name: "pathname",
-    initialState: { value: initialStateValue },
-    reducers: {
-        setPathname: (state, action) => {
-            state.value = action.payload
-        }
-    }
-})
+  name: 'pathname',
+  initialState: { value: initialStateValue },
+  reducers: {
+    setPathname: (state, action) => {
+      state.value = action.payload;
+    },
+  },
+});
 
-export const { setPathname } = pathnameSlice.actions
+export const { setPathname } = pathnameSlice.actions;
 
-export default pathnameSlice.reducer
+export default pathnameSlice.reducer;
