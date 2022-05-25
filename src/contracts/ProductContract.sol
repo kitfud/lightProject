@@ -1,8 +1,8 @@
 //SPDX-License-Identifier: MIT
 pragma solidity ^0.8.13;
 
-import "./ILightGenerator.sol";
-import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import './ILightGenerator.sol';
+import '@openzeppelin/contracts/token/ERC721/IERC721.sol';
 
 //  add a lottery
 
@@ -27,7 +27,6 @@ contract ProductContract {
     // mapping(uint256 => bool) public requestFulfilled;
     // mapping(address => string[3]) public userToRequest;
 
-
     event ProductSold(
         uint256 indexed _id,
         address buyer,
@@ -35,10 +34,21 @@ contract ProductContract {
         uint256 timestamp,
         string[3] data
     );
-    event Deposit(address indexed payee, uint256 value, uint256 time, uint256 currentContractBalance);
+    event Deposit(
+        address indexed payee,
+        uint256 value,
+        uint256 time,
+        uint256 currentContractBalance
+    );
     event Withdraw(uint256 time, uint256 amount, address indexed owner);
 
-    constructor(uint256 _id, string memory _name, uint256 _price, uint256 _tokenId, address _factoryAddress) payable {
+    constructor(
+        uint256 _id,
+        string memory _name,
+        uint256 _price,
+        uint256 _tokenId,
+        address _factoryAddress
+    ) payable {
         id = _id;
         tokenId = _tokenId; // the owner remains the NFT holder
         factoryAddress = _factoryAddress;
@@ -50,7 +60,7 @@ contract ProductContract {
 
     // Remove and replace by a delegatecall ?
     modifier onlyOwner(address _entity) {
-        require(msg.sender == _entity, "Only owner");
+        require(msg.sender == _entity, 'Only owner');
         _;
     }
 
@@ -59,11 +69,11 @@ contract ProductContract {
     }
 
     function changeDuration(uint8 _numBlocks) external {
-        require(msg.sender == IERC721(factoryAddress).ownerOf(tokenId), "Only owner");
+        require(msg.sender == IERC721(factoryAddress).ownerOf(tokenId), 'Only owner');
         serviceDuration = _numBlocks;
     }
 
-    function getProductPriceInETH() public view returns(uint256){
+    function getProductPriceInETH() public view returns (uint256) {
         return ILightGenerator(linkedGenerator).getProductPriceInETH(id);
     }
 
@@ -75,9 +85,9 @@ contract ProductContract {
     // But the user can also call this function to buy the product - here the RGB values
     // selected are passed through the blockchain
     function buyProduct(string[3] memory rgbString) external payable {
-        require(block.number > blockNumLimit, "Processing... Please try again");
+        require(block.number > blockNumLimit, 'Processing... Please try again');
         uint256 priceETH = getProductPriceInETH();
-        require(msg.value >= priceETH, "Not enough ETH to buy the item");
+        require(msg.value >= priceETH, 'Not enough ETH to buy the item');
 
         blockNumLimit = block.number + serviceDuration;
         // requestQueue[requestCounter] = msg.sender;
@@ -90,10 +100,10 @@ contract ProductContract {
 
     function withdraw() external {
         address owner = IERC721(factoryAddress).ownerOf(tokenId);
-        require(msg.sender == owner || msg.sender == linkedGenerator, "not allowed");
+        require(msg.sender == owner || msg.sender == linkedGenerator, 'not allowed');
         uint256 contractBalance = address(this).balance;
-        (bool sent,) = owner.call{value:contractBalance}("");
-        require(sent, "Failed to Send Eth To Owner");
+        (bool sent, ) = owner.call{value: contractBalance}('');
+        require(sent, 'Failed to Send Eth To Owner');
         emit Withdraw(block.timestamp, contractBalance, owner);
     }
 
@@ -103,11 +113,10 @@ contract ProductContract {
     }
 
     receive() external payable {
-
         // Same as in the buyProduct function - we may need both entry points
-        require(block.number > blockNumLimit, "Processing... Please try again");
-        require(msg.value >= getProductPriceInETH(), "amount sent too low");
+        require(block.number > blockNumLimit, 'Processing... Please try again');
+        require(msg.value >= getProductPriceInETH(), 'amount sent too low');
         blockNumLimit = block.number + serviceDuration;
-        emit Deposit(msg.sender, msg.value,block.timestamp, address(this).balance);
+        emit Deposit(msg.sender, msg.value, block.timestamp, address(this).balance);
     }
 }

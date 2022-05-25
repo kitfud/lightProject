@@ -2,14 +2,13 @@
 pragma solidity ^0.8.13;
 
 // import "@openzeppelin/contracts/access/AccessControl.sol";
-import "./ILightFactory.sol";
-import "./LightFactory.sol";
-import "./ILightAgora.sol";
-import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
-import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol";
-import "@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol";
-
+import './ILightFactory.sol';
+import './LightFactory.sol';
+import './ILightAgora.sol';
+import '@openzeppelin/contracts/token/ERC20/ERC20.sol';
+import '@openzeppelin/contracts/token/ERC20/extensions/ERC20Burnable.sol';
+import '@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol';
+import '@chainlink/contracts/src/v0.8/interfaces/VRFCoordinatorV2Interface.sol';
 
 // TO DO: Add the ERC20 token mechanics here? Add roles?
 
@@ -40,6 +39,7 @@ contract LightAgora is ILightAgora, ERC20Burnable {
     VRFCoordinatorV2Interface COORDINATOR; //0x6168499c0cFfCaCD319c818142124B7A15E857ab
     LinkTokenInterface LINKTOKEN; //0x01BE23585060835E02B77ef475b0Cc51aA1e0709
     uint64 public s_subscriptionId;
+
     // bytes32 keyHash;
     // uint32 callbackGasLimit = 100000;
     // uint16 requestConfirmations = 11;
@@ -49,14 +49,14 @@ contract LightAgora is ILightAgora, ERC20Burnable {
 
     constructor(
         uint256 initialSupply,
-        address _priceFeedAddress,  // 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
+        address _priceFeedAddress, // 0x8A753747A1Fa494EC906cE90E9f37563A8AF630e
         address _vrfCoordinator,
         address _link
-    ) ERC20("LiquidLight", "LIQ") {
-// very simple behavior: mint tokens when a new generator is minted/deployed,
-//                       a fixed supply for that specific generator
-//                       when a user buys a product, the gen can send tokens
-//                       once tokens are all out, the generator gets the right to burn tokens?
+    ) ERC20('LiquidLight', 'LIQ') {
+        // very simple behavior: mint tokens when a new generator is minted/deployed,
+        //                       a fixed supply for that specific generator
+        //                       when a user buys a product, the gen can send tokens
+        //                       once tokens are all out, the generator gets the right to burn tokens?
         voters = [
             msg.sender,
             0xa97e80DF47220afaD2D017a10b023B55FDB86293,
@@ -66,7 +66,7 @@ contract LightAgora is ILightAgora, ERC20Burnable {
         ];
 
         uint256 _numVoters = voters.length;
-        for (uint i ; i<_numVoters ; i = unsafe_inc(i)) {
+        for (uint256 i; i < _numVoters; i = unsafe_inc(i)) {
             isVoter[voters[i]] = true;
             _mint(voters[i], initialSupply);
         }
@@ -88,19 +88,19 @@ contract LightAgora is ILightAgora, ERC20Burnable {
         addConsumer(factoryAddress);
     }
 
-    modifier onlyVoter {
-        require(isVoter[msg.sender] == true, "you are not a voter");
+    modifier onlyVoter() {
+        require(isVoter[msg.sender] == true, 'you are not a voter');
         _;
     }
 
     // change for an Access control mechanism?
-    modifier onlyMinter {
-        require(canMint[msg.sender] == true, "No minting rights");
+    modifier onlyMinter() {
+        require(canMint[msg.sender] == true, 'No minting rights');
         _;
     }
 
-    modifier onlyBurner {
-        require(canBurn[msg.sender] == true, "No burning rights");
+    modifier onlyBurner() {
+        require(canBurn[msg.sender] == true, 'No burning rights');
         _;
     }
 
@@ -145,33 +145,32 @@ contract LightAgora is ILightAgora, ERC20Burnable {
         LINKTOKEN.transfer(to, amount);
     }
 
-
     /* Voting functions */
     function suggestNFTPriceChange(uint256 _newPrice) public onlyVoter {
-        if (vote_state == VOTE_STATE.SETTLED){
+        if (vote_state == VOTE_STATE.SETTLED) {
             vote_state = VOTE_STATE.ONGOING;
         }
-        require(voterDidVote[msg.sender] == false, "you already voted");
+        require(voterDidVote[msg.sender] == false, 'you already voted');
         uint256 _numVoters = voters.length;
         voterDidVote[msg.sender] = true;
-        votesCount ++;
+        votesCount++;
         cumulativeCount += _newPrice;
         if (votesCount == _numVoters) {
             vote_state = VOTE_STATE.SETTLED;
-            ILightFactory(factoryAddress).setNFTPrice(cumulativeCount/votesCount);
+            ILightFactory(factoryAddress).setNFTPrice(cumulativeCount / votesCount);
             delete votesCount;
             delete cumulativeCount;
-            for (uint i ; i < _numVoters ; i = unsafe_inc(i)){
+            for (uint256 i; i < _numVoters; i = unsafe_inc(i)) {
                 delete voterDidVote[voters[i]];
             }
         }
     }
 
-    function checkIfOnGoingVote() external view returns(string memory){
-        if (vote_state == VOTE_STATE.ONGOING){
-            return "On-going vote.";
+    function checkIfOnGoingVote() external view returns (string memory) {
+        if (vote_state == VOTE_STATE.ONGOING) {
+            return 'On-going vote.';
         } else {
-            return "All votes settled.";
+            return 'All votes settled.';
         }
     }
 
@@ -186,16 +185,18 @@ contract LightAgora is ILightAgora, ERC20Burnable {
 
     // function vote()
 
-    function unsafe_inc(uint x) private pure returns (uint) {
-        unchecked { return x + 1; }
+    function unsafe_inc(uint256 x) private pure returns (uint256) {
+        unchecked {
+            return x + 1;
+        }
     }
 
     function splitBalance() internal {
         uint256 tempLen = voters.length;
-        uint256 splitAmount = address(this).balance/tempLen;
-        for (uint i ; i<tempLen ; i = unsafe_inc(i)){
-            (bool sent,) = voters[i].call{value:splitAmount}("");
-            require(sent, "Failed to send ETH to voter");
+        uint256 splitAmount = address(this).balance / tempLen;
+        for (uint256 i; i < tempLen; i = unsafe_inc(i)) {
+            (bool sent, ) = voters[i].call{value: splitAmount}('');
+            require(sent, 'Failed to send ETH to voter');
         }
     }
 
@@ -208,7 +209,7 @@ contract LightAgora is ILightAgora, ERC20Burnable {
     //     }
     // }
 
-    function getBalance() public view returns(uint256){
+    function getBalance() public view returns (uint256) {
         return address(this).balance;
     }
 

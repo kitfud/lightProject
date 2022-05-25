@@ -2,8 +2,5 @@
 pragma solidity 0.8.13;
 
 interface ILightFactory {
-
     function setNFTPrice(uint256 price) external;
-
-
 }
