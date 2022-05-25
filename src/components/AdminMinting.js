@@ -453,6 +453,7 @@ const AdminMinting = ({
   }, [wallet, loading, previousTxHash])
 
   useEffect(() => {
+    setNftMintedMsg(undefined)
     if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
