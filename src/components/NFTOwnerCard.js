@@ -72,6 +72,7 @@ const NFTOwnerCard = ({ sumProductBalances, generatorId, size, getGeneratorInfo,
                             label="NFT"
                             value={typeof generatorId !== "undefined" ? generatorId : ""}
                             onChange={getGeneratorInfo}
+                            sx={{ background: "grey" }}
                         >
                             {generatorList ? (Object.keys(generatorList).map(generatorKey => (
                                 <MenuItem
@@ -110,14 +111,14 @@ const NFTOwnerCard = ({ sumProductBalances, generatorId, size, getGeneratorInfo,
                                     InputProps={{
                                         startAdornment: <InputAdornment position="start">USD</InputAdornment>,
                                         endAdornment: <InputAdornment
-                                            position="end">
+                                            position="end" >
                                             {productList[generatorId][productKey].balance !== 0 ?
                                                 `(ETH ${productList[generatorId][productKey].balance.toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                         </InputAdornment>
 
                                     }}
                                     value={(productList[generatorId][productKey].balance * ETHUSDConversionRate).toFixed(2)}
-                                    sx={{ maxWidth: 300 }}
+                                    sx={{ maxWidth: 300, background: "grey", }}
                                 />
                                 <Checkbox
                                     color="info"
@@ -145,7 +146,7 @@ const NFTOwnerCard = ({ sumProductBalances, generatorId, size, getGeneratorInfo,
                                     </InputAdornment>
                                 }}
                                 value={sumProductBalances && generatorId ? (sumProductBalances[generatorId] * ETHUSDConversionRate).toFixed(2) : ""}
-                                sx={{ maxWidth: 300 }}
+                                sx={{ maxWidth: 300, background: "grey", }}
                             />
                             <Checkbox color="info" checked={selectedAll} onChange={handleAllCheckBoxes} />
                         </Grid>
@@ -166,7 +167,7 @@ const NFTOwnerCard = ({ sumProductBalances, generatorId, size, getGeneratorInfo,
                             onChange={handleNewName}
                             variant="filled"
                             value={typeof newNFTName !== "undefined" ? newNFTName : ""}
-                            sx={{ minWidth: 300, maxWidth: 300 }}
+                            sx={{ minWidth: 300, maxWidth: 300, background: "grey", }}
                         />
                         <Button onClick={renameNFT} variant="contained" color="secondary">{loading ? (
                             <CircularProgress color="inherit" />) : ("Rename NFT")}</Button>

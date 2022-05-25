@@ -39,6 +39,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             onChange={handleProductList}
                             value={productId ? productId : ""}
                             disabled={productList ? false : true}
+                            sx={{ background: "grey", }}
                         >
                             {productList && generatorId ? (Object.keys(productList[generatorId]).map(productKey => (
                                 <MenuItem
@@ -76,7 +77,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                                     </InputAdornment>
                             }}
                             value={prodCurrentPrice ? prodCurrentPrice : ""}
-                            sx={{ maxWidth: 300 }}
+                            sx={{ maxWidth: 300, background: "grey" }}
                         />
                     </FormControl>
                     <FormControl sx={{ padding: 1 }}>
@@ -98,7 +99,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                                 </InputAdornment>
                             }}
                             value={typeof productNewPrice !== "undefined" ? productNewPrice : ""}
-                            sx={{ maxWidth: 300 }}
+                            sx={{ maxWidth: 300, background: "grey", }}
                         />
                         <Button onClick={changeProductPrice} variant="contained" color="secondary">{loading ? (
                             <CircularProgress color="inherit" />) : ("Change price")}</Button>
@@ -115,6 +116,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                             variant="filled"
                             onChange={(e) => handleNewProductName(e.target.value)}
                             value={newProductName !== undefined ? newProductName : ""}
+                            sx={{ background: "grey", }}
                         />
                         <TextField
                             required
@@ -134,7 +136,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                                     {newProductPrice ? `(ETH ${(newProductPrice / ETHUSDConversionRate).toFixed(6)})` : `(ETH ${(0).toFixed(6)})`}
                                 </InputAdornment>
                             }}
-                            sx={{ maxWidth: 300 }}
+                            sx={{ maxWidth: 300, background: "grey", }}
                         />
                         <Button variant="contained" color="secondary" onClick={addNewProduct}>{loading ? (
                             <CircularProgress color="inherit" />) : ("Add product")}</Button>

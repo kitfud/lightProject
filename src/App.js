@@ -27,10 +27,10 @@ let themeLightMode = createTheme({
 
   palette: {
     primary: {
-      main: '#C0C0C0',
+      main: '#F3F3F3',
     },
     secondary: {
-      main: '#F3F3F3',
+      main: '#FFFFFF',
     },
     text: {
       primary: '#000000',

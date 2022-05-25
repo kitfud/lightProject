@@ -219,11 +219,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   const UserSelectNFT = () => {
     return (
       <Box sx={{  }}>
-        <Typography sx={{ m: 1, color: "white", fontFamily: "Nunito" }}>
+        <Typography sx={{ m: 1, fontFamily: "Nunito" }}>
               Select NFT
             </Typography>
         <FormControl sx={{ m: 1, minWidth: 300 }}>
-          <InputLabel id="nft-id"/>
           <Select
             disabled={generatorList ? false : true}
             sx={{ bgcolor: "white", color: "black" }}
@@ -261,11 +260,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   const UserSelectProduct = () => {
     return (
       <Box sx={{}}>
-        <Typography sx={{ m: 1, color: "white", fontFamily: "Nunito" }}>
+        <Typography sx={{ m: 1, fontFamily: "Nunito" }}>
               Select Product
             </Typography>
         <FormControl sx={{ m: 1, minWidth: 300 }}>
-          <InputLabel id="product-id"/>
           <Select
             disabled={productList ? false : true}
             sx={{ bgcolor: "white", color: "black" }}

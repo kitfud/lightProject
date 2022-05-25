@@ -38,7 +38,7 @@ const ModeSwitcher = ({setColorMode}) => {
             }
             }
         >
-        {mode === "dark" ? <LightModeIcon sx={{ color: "white"}}/> : <DarkModeIcon sx={{ color: "white"}}/>}
+        {mode === "dark" ? <LightModeIcon sx={{ color: "white"}}/> : <DarkModeIcon sx={{ color: "black"}}/>}
     
         </Button>
     );
