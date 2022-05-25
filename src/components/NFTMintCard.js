@@ -6,7 +6,7 @@ import {
 import { useSelector } from 'react-redux'
 
 const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts, nftMintedMsg,
-    setUseAutoName, handleNFTName, loading, mintNFT, wallet }) => {
+    setUseAutoName, handleNFTName, loading, mintNFT, wallet, needRefresh }) => {
 
     const showAlert_WalletNotConnected = () => {
         handleAlerts("Please, first connect your crypto wallet (click on the top right orange button)", "warning")
@@ -53,7 +53,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
                             </Button>
                         )}
                     </Box>
-                    {nftMintedMsg ? (
+                    {nftMintedMsg && needRefresh ? (
                         <Typography gutterBottom variant="p" component="div" sx={{ fontFamily: "Nunito", }}>
                             {nftMintedMsg}
                             {<a target="_blank" href="https://vrf.chain.link/rinkeby/5025">VRF Link</a>}

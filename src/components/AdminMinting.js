@@ -41,6 +41,7 @@ const AdminMinting = ({
   const wallet = useSelector((state) => state.wallet.value)
   const { previousTxHash } = useSelector(state => state.paymentData.value)
   const [nftMintedMsg, setNftMintedMsg] = useState(undefined)
+  const [needRefresh, setNeedRefresh] = useState(false)
 
 
   const [useAutoName, setUseAutoName] = useState(true)
@@ -453,7 +454,7 @@ const AdminMinting = ({
   }, [wallet, loading, previousTxHash])
 
   useEffect(() => {
-    setNftMintedMsg(undefined)
+    setNeedRefresh(false)
     if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
@@ -463,10 +464,12 @@ const AdminMinting = ({
 
       factoryContract.on("NftRequested", (requestId, requester) => {
         setNftMintedMsg("Please wait while your NFT is being minted. Follow the link to see transaction status: ")
+        setNeedRefresh(true)
       })
 
       factoryContract.on("NftMinted", (imgNumber, minter) => {
         setNftMintedMsg("NFT ready! Please, refresh the page.")
+        setNeedRefresh(true)
       })
 
       return () => {
@@ -609,6 +612,7 @@ const AdminMinting = ({
                 mintNFT={mintNFT}
                 handleAlerts={handleAlerts}
                 nftMintedMsg={nftMintedMsg}
+                needRefresh={needRefresh}
               />
 
               <Scroll to="border3" smooth={true}>
