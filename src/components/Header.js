@@ -382,7 +382,7 @@ const Header = ({
               <Button className={errorPulseClass.pulse} onClick={changeNetwork} variant="contained" color={"error"}>
                 Switch network
               </Button>) :
-              (<Button className={buttonColor === "warning" ? warningPulseClass.pulse : ""} color={buttonColor} onClick={connectWallet} variant="contained">
+              (<Button sx={{ fontFamily: "Nunito" }}className={buttonColor === "warning" ? warningPulseClass.pulse : ""} color={buttonColor} onClick={connectWallet} variant="contained">
                 {typeof userAddress !== "undefined" ? userAddress.substr(0, 6) + "..." + userAddress.substr(userAddress.length - 4, userAddress.length) : "Connect"}
               </Button>)
             ) : (

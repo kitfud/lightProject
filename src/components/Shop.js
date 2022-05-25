@@ -30,7 +30,7 @@ const tiers = [
     title: 'Arduino Uno',
     price: '24.10',
     description: [
-      'a microcontroller board'
+      'A microcontroller board'
     ],
     image: img_arduino,
     buttonText: 'Buy now',
@@ -41,7 +41,7 @@ const tiers = [
     title: 'Led Strip',
     price: '11',
     description: [
-      'LED Strip - tunable white'
+      'LED Strip - Tunable White'
     ],
     image: img_led,
     buttonText: 'Buy now',
@@ -91,6 +91,7 @@ function PricingContent() {
           align="center"
           color="text.primary"
           gutterBottom
+          sx={{ fontFamily: "Nunito" }}
         >
           Build your setup
         </Typography>
@@ -143,7 +144,7 @@ function PricingContent() {
                 </CardContent>
               
              
-                    <a target="_blank" href={tier.vendorURL}>
+                    <a target="_blank" href={tier.vendorURL} style={{ textDecoration: "none" }}>
                     <Button color="success" fullWidth variant={tier.buttonVariant} >
                     {tier.buttonText}
                   </Button>
@@ -177,6 +178,7 @@ function PricingContent() {
           align="center"
           color="text.primary"
           gutterBottom
+          sx={{ fontFamily: "Nunito" }}
         >
          Wire the Components: 
         </Typography>
@@ -196,6 +198,7 @@ function PricingContent() {
           align="center"
           color="text.primary"
           gutterBottom
+          sx={{ fontFamily: "Nunito" }}
         >
         Code The Arduino: 
         </Typography>

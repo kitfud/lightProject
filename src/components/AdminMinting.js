@@ -466,15 +466,15 @@ const AdminMinting = ({
                 alignItems: "center",
                 height: "100%",
                 width: "100%",
-                background: "purple",
                 
               }}
         >
           <div id="adminTop">
             <Box sx={{ background: "lightgrey", display: "flex", justifyContent: 'center', flexDirection: "column", alignItems: "center", height: "100vh" }}>
-              <Typography sx={{ fontSize:"60px", color: "black" }}>
+              <Typography sx={{ fontSize:"60px", color: "black", fontFamily: "Nunito" }}>
                 Admin
               </Typography>
+              
               <Card sx={{ bgcolor: "none", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
                 <CardMedia component="img"
                   alt="nft"
@@ -491,7 +491,7 @@ const AdminMinting = ({
                     <Button 
                       variant="contained"
                       color="warning"
-                      sx={{margin: "30px"}}
+                      sx={{margin: "30px", fontFamily: "Nunito"}}
                       size="large"                 
                     >
                         Mint New NFT
@@ -501,7 +501,7 @@ const AdminMinting = ({
                   <Button 
                     variant="contained"
                     color="info"
-                    sx={{margin: "30px"}}
+                    sx={{margin: "30px", fontFamily: "Nunito"}}
                     size="large"
                   >
                     Manage NFTs
@@ -539,6 +539,7 @@ const AdminMinting = ({
                   textAlign: "center",
                   background: "none",
                   marginBottom: "40px",
+                  fontFamily: "Nunito",
                 }}
               >
                 Mint New NFT
@@ -564,7 +565,7 @@ const AdminMinting = ({
                     justifyContent: "center",
                   }}
                 >
-                  "The NFT is used as a key to 'unlock' permissions so you can do stuff".
+                  The NFT is used as a key to 'unlock' permissions so you can do stuff.
                 </Typography>
               </Box>
               
@@ -609,6 +610,7 @@ const AdminMinting = ({
                   color: "Black",
                   textAlign: "center",
                   marginTop: "40px",
+                  fontFamily: "Nunito", 
                 }}
               >
                 Manage NFTs and Products
@@ -691,6 +693,7 @@ const AdminMinting = ({
                   <Typography sx={{
                                 color: "black",
                                 fontSize: "60px",
+                                fontFamily: "Nunito",
                               }}
                   >
                     Frequently Asked Questions
@@ -701,23 +704,30 @@ const AdminMinting = ({
                       background: "lightgrey",
                       display: "flex",
                       flexDirection: "column",
-                      height: "500px",
+                      height: "600px",
                       width: "750px",
 
                     }}
               >
-                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px" }}>
-                    -Make sure your wallet is connected.
+                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px" }}>
+                    1. Make sure your wallet is connected(Top right of page, orange button that says "CONNECT").
                 </Typography>
-                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
-                    -You need to mint an NFT before you can add products.
+                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                    2. If you click the connect button and nothing happens, reload the page.
                 </Typography>
-                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
-                    -Make sure you have enough ETH in your wallet.
+                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                    3. Once you've connected your wallet, copy paste the localhost link next to the button in a new tab to access the light picker page.
                 </Typography>
-                <Typography sx={{ color: "black", fontSize: "40px", marginLeft: "30px"  }}>
-                    -Make sure you're connected to Rinkeby test network.
+                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                    4. You need to have an NFT minted before you can add products.
                 </Typography>
+                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                    5. Make sure you have enough ETH in your wallet.
+                </Typography>
+                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                    6. Make sure you're connected to Rinkeby test network.
+                </Typography>
+                
               </Box>
               <Scroll to="adminTop" smooth={true}>
                   <KeyboardArrowUpIcon 

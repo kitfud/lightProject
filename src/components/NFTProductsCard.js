@@ -27,7 +27,7 @@ const NFTProductsCard = ({ size, handleProductList, productId, productList, copy
                     alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1,
                     padding: 3, minWidth: size[0], minHeight: size[1], bgcolor: "primary.main"
                 }}>
-                    <Typography gutterBottom variant="h5" component="div">
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontFamily: "Nunito", }}>
                         NFT Products
                     </Typography>
                     <FormControl sx={{ m: 1, minWidth: 300 }}>

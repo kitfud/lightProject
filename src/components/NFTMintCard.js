@@ -15,7 +15,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
         <Grid >
             <Box style={{ display: "flex", justifyContent: 'center' }}>
                 <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
-                    <Typography gutterBottom variant="h5" component="div">
+                    <Typography gutterBottom variant="h5" component="div" sx={{ fontFamily: "Nunito", }}>
                         NFT Minting
                     </Typography>
                     <Typography variant="h6" color="text.secondary">
@@ -37,7 +37,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
                     </FormControl>
                     <Box mr={2} ml={2}>
                         {wallet ? (
-                            <Button color='warning' size="large" variant='contained' onClick={mintNFT} >{loading ? (
+                            <Button sx={{ fontFamily: "Nunito", }} color='warning' size="large" variant='contained' onClick={mintNFT} >{loading ? (
                                 <CircularProgress color="inherit" />) : ("Mint NFT")} </Button>
                         ) : (
                             <Button
@@ -45,6 +45,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
                                 color='error'
                                 size="large"
                                 variant='contained'
+                                sx={{ fontFamily: "Nunito" }}
                             >
                                 Connect wallet
                             </Button>
