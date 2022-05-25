@@ -169,10 +169,7 @@ const Header = ({
 
       const new_user_address = await new_wallet.signer.getAddress();
 
-      dispatch(setWallet(new_wallet));
-      dispatch(setFactoryContract(new_contract));
-      dispatch(setUserAddress(new_user_address));
-      setButtonColor('success');
+      setRefLink('/home?ref=' + new_user_address);
 
       setRefLink(window.location.origin + '/home?ref=' + new_user_address);
     } else {
@@ -233,7 +230,7 @@ const Header = ({
       dispatch(setUserAddress(new_user_address));
       setButtonColor('success');
 
-      setRefLink(window.location.origin + '/home?ref=' + new_user_address);
+      setRefLink('/home?ref=' + new_user_address);
     }
   };
 
@@ -259,7 +256,7 @@ const Header = ({
       dispatch(setUserAddress(new_user_address));
       setButtonColor('success');
 
-      setRefLink(window.location.origin + '/home?ref=' + new_user_address);
+      setRefLink('/home?ref=' + new_user_address);
     } else if (provider) {
       const new_provider = new ethers.providers.Web3Provider(window.ethereum);
       dispatch(setProvider(new_provider));
@@ -389,18 +386,18 @@ const Header = ({
           </Box>
 
           <Box sx={{ flexGrow: 0 }}>
-            {pathname === '/admin' || pathname === '/shop' ? (
-              <Tooltip title="copy to clipboard">
-                <Chip
-                  label={refLink ? refLink : 'Referral link'}
-                  onClick={copyToClipboard}
-                  disabled={refLink ? false : true}
-                />
-              </Tooltip>
-            ) : (
-              <ins></ins>
-            )}
-
+            {(pathname === '/admin' || pathname === '/shop') && refLink ? (
+              <Link target="_blank" to={refLink} style={{ textDecoration: 'none' }}>
+                <Button
+                  className={errorPulseClass.pulse}
+                  onClick={changeNetwork}
+                  variant="contained"
+                  color={'warning'}
+                >
+                  Launch Store Front
+                </Button>
+              </Link>
+            ) : null}
             {pathname === '/admin' || pathname === '/shop' ? (
               wallet && wrongNetwork ? (
                 <Button
@@ -426,15 +423,6 @@ const Header = ({
                     : 'Connect'}
                 </Button>
               )
-            ) : provider && wrongNetwork ? (
-              <Button
-                className={errorPulseClass.pulse}
-                onClick={changeNetwork}
-                variant="contained"
-                color={'error'}
-              >
-                Switch network
-              </Button>
             ) : (
               <ins></ins>
             )}

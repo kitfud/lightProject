@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import { useDispatch, useSelector } from 'react-redux';
 import AdminMinting from './components/AdminMinting';
 import Home from './components/Home';
@@ -30,6 +31,32 @@ import { LandingPage } from './components/LandingPage';
 import { io } from 'socket.io-client';
 
 const new_socket = io('/websocket', { forceNew: true });
+=======
+
+import { useDispatch, useSelector } from 'react-redux'
+import AdminMinting from './components/AdminMinting'
+import Home from './components/Home'
+import { Routes, Route } from 'react-router-dom'
+import Shop from './components/Shop'
+import Header from './components/Header'
+import Footer from './components/Footer'
+import Transfer from './components/Transfer'
+import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress, Link } from '@mui/material'
+import CloseIcon from '@mui/icons-material/Close'
+import { useEffect, useRef, useState } from "react"
+import { getFactoryContract, getGeneratorContract, getProductContract } from "./utils"
+import { setFactoryContract } from './features/factoryContract'
+import { setGeneratorList } from "./features/generator"
+import { setProductList } from './features/product'
+import { setUserAddress } from './features/userAddress'
+import { setAlerts } from './features/alerts'
+import { setWebSocket, setStatus, setSocketConnected } from './features/webSocket'
+import { ethers } from "ethers"
+import { LandingPage } from './components/LandingPage'
+import { io } from "socket.io-client"
+
+const new_socket = io("/websocket", { forceNew: true })
+>>>>>>> origin/master
 
 let themeLightMode = createTheme({
   palette: {

@@ -30,6 +30,8 @@ const AdminMinting = ({
   const userAddress = useSelector((state) => state.userAddress.value);
   const wallet = useSelector((state) => state.wallet.value);
   const { previousTxHash } = useSelector((state) => state.paymentData.value);
+  const [nftMintedMsg, setNftMintedMsg] = useState(undefined);
+  const [needRefresh, setNeedRefresh] = useState(false);
 
   const [useAutoName, setUseAutoName] = useState(true);
   const [size, setSize] = useState([100, 100]);
@@ -453,11 +455,28 @@ const AdminMinting = ({
   }, [wallet, loading, previousTxHash]);
 
   useEffect(() => {
+    setNeedRefresh(false);
     if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList();
     }
+
     if (factoryContract) {
       getNFTPrice();
+
+      factoryContract.on('NftRequested', (requestId, requester) => {
+        setNftMintedMsg('Track your transaction status with this link and refresh when done: ');
+        setNeedRefresh(true);
+      });
+
+      factoryContract.on('NftMinted', (imgNumber, minter) => {
+        // setNftMintedMsg("NFT ready! Please, refresh the page.")
+        setNeedRefresh(false);
+      });
+
+      return () => {
+        factoryContract.off('NftRequested');
+        factoryContract.off('NftMinted');
+      };
     }
   }, [factoryContract]);
 
@@ -607,6 +626,8 @@ const AdminMinting = ({
                 loading={loading}
                 mintNFT={mintNFT}
                 handleAlerts={handleAlerts}
+                nftMintedMsg={nftMintedMsg}
+                needRefresh={needRefresh}
               />
 
               <Scroll to="border3" smooth={true}>
