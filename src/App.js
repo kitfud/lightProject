@@ -7,7 +7,7 @@ import Shop from './components/Shop'
 import Header from './components/Header'
 import Footer from './components/Footer'
 import Transfer from './components/Transfer'
-import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress } from '@mui/material'
+import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress, Link } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useRef, useState } from "react"
 import { getFactoryContract, getGeneratorContract, getProductContract } from "./utils"
@@ -85,8 +85,8 @@ function App() {
   const [colorMode, setColorMode] = useState("dark")
   const [sumProductBalances, setSumProductBalances] = useState(undefined)
 
-  const handleAlerts = (msg, severity, loading = false) => {
-    dispatch(setAlerts([true, msg, severity, loading]))
+  const handleAlerts = (msg, severity, loading = false, vrfLink = false) => {
+    dispatch(setAlerts([true, msg, severity, loading, vrfLink]))
   }
 
   const handleCloseAlerts = (event, reason) => {
@@ -324,6 +324,7 @@ function App() {
             sx={{ width: '100%' }}
           >
             {alerts[1]}
+            {alerts[4] ? <Link to="https://vrf.chain.link/rinkeby/5025" style={{ textDecoration: "none" }}>VRF Link</Link> : <ins></ins>}
             {alerts[3] ? (<CircularProgress size={20} color="inherit" />) : (<ins></ins>)}
             <IconButton
               size="small"

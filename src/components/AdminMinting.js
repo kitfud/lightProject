@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { useSelector, useDispatch } from 'react-redux'
-import { 
-        Grid,
-        Box,
-        Typography,
-        Card,
-        CardMedia,
-        Button,
+import {
+  Grid,
+  Box,
+  Typography,
+  Card,
+  CardMedia,
+  Button,
 
 } from '@mui/material'
 import { ethers } from 'ethers'
@@ -458,37 +458,50 @@ const AdminMinting = ({
     if (factoryContract) {
       getNFTPrice()
     }
-  }, [factoryContract])
 
-  
+    if (factoryContract) {
+      factoryContract.on("NftRequested", (requestId, requester) => {
+        handleAlerts("Please wait a minute... Your NFT is being minted. Once the light goes green, your NFT is ready. Please, refresh the page once you get confirmation. ", "warning", false, true)
+      })
+
+      factoryContract.on("NftMinted", (imgNumber, minter) => {
+        handleAlerts("NFT ready!", "success")
+      })
+    }
+
+    return () => {
+      factoryContract.off("NftRequested")
+      factoryContract.off("NftMinted")
+    }
+  }, [factoryContract])
 
   return (
     <>
-      <Grid 
+      <Grid
         container
         sx={{
           justifyContent: "space-around"
         }}
       >
-        
-        <Box sx={{ 
-                alignItems: "center",
-                height: "100%",
-                width: "100%",
-                
-              }}
+
+        <Box sx={{
+          alignItems: "center",
+          height: "100%",
+          width: "100%",
+
+        }}
         >
           <div id="topBorder">
-              <Box sx={{ background: "none", height: "8vh" }}/>
+            <Box sx={{ background: "none", height: "8vh" }} />
           </div>
           <div id="adminTop">
             <Box sx={{ display: "flex", justifyContent: 'center', flexDirection: "column", alignItems: "center", minHeight: "100vh" }}
               bgcolor="secondary.main"
             >
-              <Typography sx={{ fontSize:"60px", fontFamily: "Nunito" }}>
+              <Typography sx={{ fontSize: "60px", fontFamily: "Nunito" }}>
                 Admin
               </Typography>
-              
+
               <Card sx={{ bgcolor: "none", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
                 <CardMedia component="img"
                   alt="nft"
@@ -498,24 +511,24 @@ const AdminMinting = ({
                   height="350px"
                   width="350px"
                 >
-                </CardMedia>      
+                </CardMedia>
               </Card>
-              <Box sx={{ justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
+              <Box sx={{ justifyContent: "center", alignItems: "center", flexDirection: "column" }}>
                 <Scroll to="border2" smooth={true}>
-                    <Button 
-                      variant="contained"
-                      color="warning"
-                      sx={{margin: "30px", fontFamily: "Nunito"}}
-                      size="large"                 
-                    >
-                        Mint New NFT
-                    </Button>
+                  <Button
+                    variant="contained"
+                    color="warning"
+                    sx={{ margin: "30px", fontFamily: "Nunito" }}
+                    size="large"
+                  >
+                    Mint New NFT
+                  </Button>
                 </Scroll>
                 <Scroll to="border3" smooth={true}>
-                  <Button 
+                  <Button
                     variant="contained"
                     color="info"
-                    sx={{margin: "30px", fontFamily: "Nunito"}}
+                    sx={{ margin: "30px", fontFamily: "Nunito" }}
                     size="large"
                   >
                     Manage NFTs
@@ -523,28 +536,28 @@ const AdminMinting = ({
                 </Scroll>
               </Box>
               <Scroll to="border2" smooth={true}>
-                  <KeyboardArrowDownIcon 
-                    sx={{
-                        fontSize: "10rem",            
-                      }}
-                  />
+                <KeyboardArrowDownIcon
+                  sx={{
+                    fontSize: "10rem",
+                  }}
+                />
               </Scroll>
             </Box>
           </div>
-          
+
           <div id="border2">
-          <Box sx={{ background: "none", height: "8vh" }}/>
+            <Box sx={{ background: "none", height: "8vh" }} />
           </div>
 
           <div id="NFTMint">
-            <Box 
+            <Box
               sx={{
-                    id: "NFTMint",
-                    alignItems: "center",
-                    minHeight: "100vh",
-                    maxHeight: "100vh",
-                    display: "flex",
-                    flexDirection: "column",
+                id: "NFTMint",
+                alignItems: "center",
+                minHeight: "100vh",
+                maxHeight: "100vh",
+                display: "flex",
+                flexDirection: "column",
               }}
               bgcolor="primary.main"
             >
@@ -562,15 +575,15 @@ const AdminMinting = ({
               </Typography>
 
               <Box sx={{
-                    height: "300px",
-                    width: "500px",
-                    textAlign: "center",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    background: "none",
-                    marginBottom: "40px",
-                    }}
-                    
+                height: "300px",
+                width: "500px",
+                textAlign: "center",
+                alignItems: "center",
+                justifyContent: "center",
+                background: "none",
+                marginBottom: "40px",
+              }}
+
               >
                 <Typography
                   sx={{
@@ -583,44 +596,44 @@ const AdminMinting = ({
                   The NFT is used as a key to 'unlock' permissions so you can do stuff.
                 </Typography>
               </Box>
-              
-                <NFTMintCard
-                  nftPrice={nftPrice}
-                  ETHUSDConversionRate={ETHUSDConversionRate}
-                  useAutoName={useAutoName}
-                  setUseAutoName={setUseAutoName}
-                  handleNFTName={handleNFTName}
-                  wallet={wallet}
-                  loading={loading}
-                  mintNFT={mintNFT}
-                  handleAlerts={handleAlerts}
-                />
+
+              <NFTMintCard
+                nftPrice={nftPrice}
+                ETHUSDConversionRate={ETHUSDConversionRate}
+                useAutoName={useAutoName}
+                setUseAutoName={setUseAutoName}
+                handleNFTName={handleNFTName}
+                wallet={wallet}
+                loading={loading}
+                mintNFT={mintNFT}
+                handleAlerts={handleAlerts}
+              />
 
               <Scroll to="border3" smooth={true}>
-                  <KeyboardArrowDownIcon 
-                    sx={{
-                        fontSize: "10rem",            
-                      }}
-                  />
+                <KeyboardArrowDownIcon
+                  sx={{
+                    fontSize: "10rem",
+                  }}
+                />
               </Scroll>
 
             </Box>
           </div>
 
           <div id="border3">
-            <Box sx={{ background: "none", height: "8vh" }}/>
+            <Box sx={{ background: "none", height: "8vh" }} />
           </div>
 
           <div id="ManageNFTs">
-            <Box sx={{ 
-                    flexGrow: 1,
-                    justifyContent: "center",
-                    alignItems: "center",
-                    minHeight: "120vh",
-                    display: "flex",
-                    flexDirection: "column"
-                  }}
-                  bgcolor="secondary.main"
+            <Box sx={{
+              flexGrow: 1,
+              justifyContent: "center",
+              alignItems: "center",
+              minHeight: "120vh",
+              display: "flex",
+              flexDirection: "column"
+            }}
+              bgcolor="secondary.main"
             >
               <Typography
                 sx={{
@@ -628,13 +641,13 @@ const AdminMinting = ({
                   textAlign: "center",
                   marginTop: 2,
                   marginBottom: 4,
-                  fontFamily: "Nunito", 
+                  fontFamily: "Nunito",
                 }}
               >
                 Manage NFTs and Products
               </Typography>
-              <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "center", background: "none"}}>
-                <Box sx={{ marginRight: "40px"}}>
+              <Box sx={{ display: "flex", flexGrow: 1, justifyContent: "center", background: "none" }}>
+                <Box sx={{ marginRight: "40px" }}>
                   <NFTOwnerCard
                     sumProductBalances={sumProductBalances}
                     wallet={wallet}
@@ -679,85 +692,85 @@ const AdminMinting = ({
                     setNewProductName={setNewProductName}
                     setNewProducPrice={setNewProductPrice}
                     setProductNewPrice={setProductNewPrice}
-                    
+
                   />
                 </Box>
               </Box>
               <Scroll to="border4" smooth={true}>
-                  <KeyboardArrowDownIcon 
-                    sx={{
-                        fontSize: "10rem",           
-                      }}
-                  />
+                <KeyboardArrowDownIcon
+                  sx={{
+                    fontSize: "10rem",
+                  }}
+                />
               </Scroll>
             </Box>
           </div>
 
           <div id="border4">
-            <Box sx={{ background: "none", height: "8vh" }}/>
+            <Box sx={{ background: "none", height: "8vh" }} />
           </div>
 
           <div id="FAQ">
             <Box sx={{
-                    minHeight: "120vh",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    display: "flex",
-                    flexDirection: "column",
-                  }}
-                  bgcolor="primary.main"
+              minHeight: "120vh",
+              justifyContent: "center",
+              alignItems: "center",
+              display: "flex",
+              flexDirection: "column",
+            }}
+              bgcolor="primary.main"
             >
               <Box sx={{
-                      textAlign: "center",
-                      marginBottom: 2,
-                    }}
+                textAlign: "center",
+                marginBottom: 2,
+              }}
               >
-                  <Typography sx={{
-                                fontSize: "60px",
-                                fontFamily: "Nunito",
-                              }}
-                  >
-                    Frequently Asked Questions
-                  </Typography>
+                <Typography sx={{
+                  fontSize: "60px",
+                  fontFamily: "Nunito",
+                }}
+                >
+                  Frequently Asked Questions
+                </Typography>
               </Box>
 
               <Box sx={{
-                      display: "flex",
-                      flexDirection: "column",
-                      height: "600px",
-                      width: "750px",
-                    }}
+                display: "flex",
+                flexDirection: "column",
+                height: "600px",
+                width: "750px",
+              }}
               >
                 <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 3, }}>
-                    1. Make sure your wallet is connected(Top right of page, orange button that says "CONNECT").
+                  1. Make sure your wallet is connected(Top right of page, orange button that says "CONNECT").
                 </Typography>
-                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2,  }}>
-                    2. If you click the connect button and nothing happens, reload the page.
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2, }}>
+                  2. If you click the connect button and nothing happens, reload the page.
                 </Typography>
-                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2,  }}>
-                    3. Once you've connected your wallet, copy paste the localhost link next to the button in a new tab to access the light picker page.
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2, }}>
+                  3. Once you've connected your wallet, copy paste the localhost link next to the button in a new tab to access the light picker page.
                 </Typography>
-                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2,  }}>
-                    4. You need to have an NFT minted before you can add products.
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2, }}>
+                  4. You need to have an NFT minted before you can add products.
                 </Typography>
-                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2,  }}>
-                    5. Make sure you have enough ETH in your wallet.
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2, }}>
+                  5. Make sure you have enough ETH in your wallet.
                 </Typography>
-                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2, marginBottom: 3  }}>
-                    6. Make sure you're connected to Rinkeby test network.
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2, marginBottom: 3 }}>
+                  6. Make sure you're connected to Rinkeby test network.
                 </Typography>
-                
+
               </Box>
               <Scroll to="topBorder" smooth={true}>
-                  <KeyboardArrowUpIcon 
-                    sx={{
-                        fontSize: "10rem",           
-                      }}
-                  />
+                <KeyboardArrowUpIcon
+                  sx={{
+                    fontSize: "10rem",
+                  }}
+                />
               </Scroll>
             </Box>
           </div>
-        
+
         </Box>
 
       </Grid>
