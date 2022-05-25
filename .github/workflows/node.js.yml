@@ -31,5 +31,7 @@ jobs:
       if: always()
     - run: npm format:check
       if: always()
+      continue-on-error: true
     - run: npm run lint
       if: always()
+      continue-on-error: true
