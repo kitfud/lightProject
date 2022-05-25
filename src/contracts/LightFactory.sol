@@ -16,12 +16,12 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
 
     address public immutable agoraAddress;
 
-    // enum LightIMG {
-    //     BASIC,
-    //     SAND,
-    //     CAKE,
-    //     NIGHT
-    // }
+    enum LightIMG {
+        BASIC,
+        SAND,
+        CAKE,
+        NIGHT
+    }
 
     /* NFT variables */
     string[4] public s_CLTokenUris;
@@ -45,6 +45,13 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
     uint32 private constant numWords = 1;
     // VRF requests mapping
     mapping(uint256 => address) public s_requestIdToSender;
+
+
+    event NftRequested(uint256 indexed requestId, address requester);
+    event NftMinted(LightIMG type, address minter);
+
+    emit NftRequested(requestId, msg.sender);
+    emit NftMinted(uint256, dogOwner);
 
     constructor(
         address _agora,
@@ -99,7 +106,7 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
             callbackGasLimit,
             numWords
         );
-
+        emit NftRequested(requestId, msg.sender);
         s_requestIdToSender[requestId] = msg.sender;
         s_requestToGenName[requestId] = _name;
 
@@ -136,6 +143,7 @@ contract LightFactory is ILightFactory, ERC721URIStorage, VRFConsumerBaseV2 {
         // );
         // ILightAgora(agoraAddress).mintTokens(address(generator));
         // tokenIDToGenerator[tokenCount] = generator;
+        emit NftMinted(imgIndex, tokenOwner);
 
     }
 
