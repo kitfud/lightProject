@@ -455,23 +455,22 @@ const AdminMinting = ({
     if (wallet && factoryContract && !wrongNetwork) {
       updateGeneratorList()
     }
-    if (factoryContract) {
-      getNFTPrice()
-    }
 
     if (factoryContract) {
+      getNFTPrice()
+
       factoryContract.on("NftRequested", (requestId, requester) => {
         handleAlerts("Please wait while your NFT is being minted. Follow the link to see transaction status: ", "warning", false, true)
       })
 
       factoryContract.on("NftMinted", (imgNumber, minter) => {
-        handleAlerts("NFT ready!", "success")
+        handleAlerts("NFT ready! Please, refresh the page.", "success")
       })
-    }
 
-    return () => {
-      factoryContract.off("NftRequested")
-      factoryContract.off("NftMinted")
+      return () => {
+        factoryContract.off("NftRequested")
+        factoryContract.off("NftMinted")
+      }
     }
   }, [factoryContract])
 
