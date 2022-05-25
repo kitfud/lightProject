@@ -54,7 +54,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
                         )}
                     </Box>
                     {nftMintedMsg && needRefresh ? (
-                        <Typography gutterBottom variant="p" component="div" sx={{ fontFamily: "Nunito", }}>
+                        <Typography gutterBottom variant="p" component="div" sx={{ fontFamily: "Nunito", marginTop: 1 }}>
                             {nftMintedMsg}
                             {<a target="_blank" href="https://vrf.chain.link/rinkeby/5025">VRF Link</a>}
                         </Typography>) : (<ins></ins>)}

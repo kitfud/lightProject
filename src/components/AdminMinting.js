@@ -463,12 +463,13 @@ const AdminMinting = ({
       getNFTPrice()
 
       factoryContract.on("NftRequested", (requestId, requester) => {
-        setNftMintedMsg("Please wait while your NFT is being minted. Follow the link to see transaction status: ")
+        setNftMintedMsg("Track your transaction status with this link and refresh when done: ")
         setNeedRefresh(true)
       })
 
       factoryContract.on("NftMinted", (imgNumber, minter) => {
-        setNftMintedMsg("NFT ready! Please, refresh the page.")
+        // setNftMintedMsg("NFT ready! Please, refresh the page.")
+        setNeedRefresh(false)
       })
 
       return () => {

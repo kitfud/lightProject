@@ -370,8 +370,8 @@ const Header = ({
 
           <Box sx={{ flexGrow: 0 }}>
             {(pathname === "/admin" || pathname === "/shop") && refLink ? (
-              <Link to={refLink}>
-                <Button className={errorPulseClass.pulse} onClick={changeNetwork} variant="contained" color={"error"}>
+              <Link target="_blank" to={refLink} style={{ textDecoration: "none" }} >
+                <Button className={errorPulseClass.pulse} onClick={changeNetwork} variant="contained" color={"warning"}>
                   Launch Store Front
                 </Button>
               </Link>) : null}
