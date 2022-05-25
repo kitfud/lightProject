@@ -324,7 +324,7 @@ function App() {
             sx={{ width: '100%' }}
           >
             {alerts[1]}
-            {alerts[4] ? <Link to="https://vrf.chain.link/rinkeby/5025" style={{ textDecoration: "none" }}>VRF Link</Link> : <ins></ins>}
+            {alerts[4] ? <a href="https://vrf.chain.link/rinkeby/5025">VRF Link</a> : <ins></ins>}
             {alerts[3] ? (<CircularProgress size={20} color="inherit" />) : (<ins></ins>)}
             <IconButton
               size="small"
