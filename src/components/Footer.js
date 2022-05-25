@@ -9,7 +9,7 @@ import {
 
   const Footer = () => {
   return (
-    <AppBar position="static" color="primary" >
+    <AppBar position="static" color="secondary" >
     <Container maxWidth="md">
 
       <Toolbar sx={{justifyContent:'center'}}>

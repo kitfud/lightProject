@@ -30,6 +30,7 @@ const AdminMinting = ({
   sumProductBalances,
   handleAlerts,
   copyToClipboard,
+  colorMode,
 }) => {
 
   // Dispatch
@@ -477,9 +478,14 @@ const AdminMinting = ({
                 
               }}
         >
+          <div id="topBorder">
+              <Box sx={{ background: "none", height: "8vh" }}/>
+          </div>
           <div id="adminTop">
-            <Box sx={{ background: "lightgrey", display: "flex", justifyContent: 'center', flexDirection: "column", alignItems: "center", height: "100vh" }}>
-              <Typography sx={{ fontSize:"60px", color: "black", fontFamily: "Nunito" }}>
+            <Box sx={{ display: "flex", justifyContent: 'center', flexDirection: "column", alignItems: "center", minHeight: "100vh" }}
+              bgcolor="secondary.main"
+            >
+              <Typography sx={{ fontSize:"60px", fontFamily: "Nunito" }}>
                 Admin
               </Typography>
               
@@ -495,7 +501,7 @@ const AdminMinting = ({
                 </CardMedia>      
               </Card>
               <Box sx={{ justifyContent: "center", alignItems: "center", flexDirection: "column"}}>
-                <Scroll to="NFTMint" smooth={true}>
+                <Scroll to="border2" smooth={true}>
                     <Button 
                       variant="contained"
                       color="warning"
@@ -505,7 +511,7 @@ const AdminMinting = ({
                         Mint New NFT
                     </Button>
                 </Scroll>
-                <Scroll to="ManageNFTs" smooth={true}>
+                <Scroll to="border3" smooth={true}>
                   <Button 
                     variant="contained"
                     color="info"
@@ -516,10 +522,9 @@ const AdminMinting = ({
                   </Button>
                 </Scroll>
               </Box>
-              <Scroll to="NFTMint" smooth={true}>
+              <Scroll to="border2" smooth={true}>
                   <KeyboardArrowDownIcon 
                     sx={{
-                        color: "black",
                         fontSize: "10rem",            
                       }}
                   />
@@ -527,26 +532,29 @@ const AdminMinting = ({
             </Box>
           </div>
           
+          <div id="border2">
+          <Box sx={{ background: "none", height: "8vh" }}/>
+          </div>
+
           <div id="NFTMint">
             <Box 
               sx={{
                     id: "NFTMint",
                     alignItems: "center",
-                    height: "100vh",
+                    minHeight: "100vh",
+                    maxHeight: "100vh",
                     display: "flex",
                     flexDirection: "column",
-                    background: "grey",
-
-                    
               }}
+              bgcolor="primary.main"
             >
               <Typography
                 sx={{
                   fontSize: "60px",
-                  color: "black",
                   textAlign: "center",
                   background: "none",
                   marginBottom: "40px",
+                  marginTop: 4,
                   fontFamily: "Nunito",
                 }}
               >
@@ -567,7 +575,6 @@ const AdminMinting = ({
                 <Typography
                   sx={{
                     fontSize: "30px",
-                    color: "black",
                     textAlign: "center",
                     alignItems: "center",
                     justifyContent: "center",
@@ -589,10 +596,9 @@ const AdminMinting = ({
                   handleAlerts={handleAlerts}
                 />
 
-              <Scroll to="ManageNFTs" smooth={true}>
+              <Scroll to="border3" smooth={true}>
                   <KeyboardArrowDownIcon 
                     sx={{
-                        color: "black",
                         fontSize: "10rem",            
                       }}
                   />
@@ -601,23 +607,27 @@ const AdminMinting = ({
             </Box>
           </div>
 
+          <div id="border3">
+            <Box sx={{ background: "none", height: "8vh" }}/>
+          </div>
+
           <div id="ManageNFTs">
             <Box sx={{ 
                     flexGrow: 1,
                     justifyContent: "center",
                     alignItems: "center",
-                    height: "100vh",
-                    background: "lightgrey",
+                    minHeight: "120vh",
                     display: "flex",
                     flexDirection: "column"
                   }}
+                  bgcolor="secondary.main"
             >
               <Typography
                 sx={{
                   fontSize: "60px",
-                  color: "Black",
                   textAlign: "center",
-                  marginTop: "40px",
+                  marginTop: 2,
+                  marginBottom: 4,
                   fontFamily: "Nunito", 
                 }}
               >
@@ -673,10 +683,9 @@ const AdminMinting = ({
                   />
                 </Box>
               </Box>
-              <Scroll to="FAQ" smooth={true}>
+              <Scroll to="border4" smooth={true}>
                   <KeyboardArrowDownIcon 
                     sx={{
-                        color: "black",
                         fontSize: "10rem",           
                       }}
                   />
@@ -684,22 +693,26 @@ const AdminMinting = ({
             </Box>
           </div>
 
+          <div id="border4">
+            <Box sx={{ background: "none", height: "8vh" }}/>
+          </div>
+
           <div id="FAQ">
             <Box sx={{
-                    height: "100vh",
-                    background: "grey",
+                    minHeight: "120vh",
                     justifyContent: "center",
                     alignItems: "center",
                     display: "flex",
                     flexDirection: "column",
                   }}
+                  bgcolor="primary.main"
             >
               <Box sx={{
                       textAlign: "center",
+                      marginBottom: 2,
                     }}
               >
                   <Typography sx={{
-                                color: "black",
                                 fontSize: "60px",
                                 fontFamily: "Nunito",
                               }}
@@ -709,38 +722,35 @@ const AdminMinting = ({
               </Box>
 
               <Box sx={{
-                      background: "lightgrey",
                       display: "flex",
                       flexDirection: "column",
                       height: "600px",
                       width: "750px",
-
                     }}
               >
-                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px" }}>
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 3, }}>
                     1. Make sure your wallet is connected(Top right of page, orange button that says "CONNECT").
                 </Typography>
-                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2,  }}>
                     2. If you click the connect button and nothing happens, reload the page.
                 </Typography>
-                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2,  }}>
                     3. Once you've connected your wallet, copy paste the localhost link next to the button in a new tab to access the light picker page.
                 </Typography>
-                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2,  }}>
                     4. You need to have an NFT minted before you can add products.
                 </Typography>
-                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2,  }}>
                     5. Make sure you have enough ETH in your wallet.
                 </Typography>
-                <Typography sx={{ color: "black", fontSize: "30px", marginLeft: "30px"  }}>
+                <Typography sx={{ fontSize: "30px", marginLeft: 3, marginTop: 2, marginBottom: 3  }}>
                     6. Make sure you're connected to Rinkeby test network.
                 </Typography>
                 
               </Box>
-              <Scroll to="adminTop" smooth={true}>
+              <Scroll to="topBorder" smooth={true}>
                   <KeyboardArrowUpIcon 
                     sx={{
-                        color: "black",
                         fontSize: "10rem",           
                       }}
                   />

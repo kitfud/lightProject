@@ -27,10 +27,13 @@ let themeLightMode = createTheme({
 
   palette: {
     primary: {
-      main: '#F3F3F3',
+      main: '#C0C0C0',
     },
     secondary: {
       main: '#FFFFFF',
+    },
+    neutral: {
+      main: '#',
     },
     text: {
       primary: '#000000',
@@ -49,6 +52,9 @@ let themeDarkMode = createTheme({
     },
     secondary: {
       main: '#212121',
+    },
+    neutral: {
+      main: '#',
     },
     text: {
       primary: '#FFFFFF',
@@ -299,6 +305,7 @@ function App() {
                 sumProductBalances={sumProductBalances}
                 handleAlerts={handleAlerts}
                 copyToClipboard={copyToClipboard}
+                colorMode={colorMode}
               />} />
 
           </Routes>

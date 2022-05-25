@@ -14,7 +14,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
     return (
         <Grid >
             <Box style={{ display: "flex", justifyContent: 'center' }}>
-                <Card sx={{ bgcolor: "primary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
+                <Card sx={{ bgcolor: "secondary.main", alignItems: "center", display: "flex", flexDirection: "column", marginTop: 1, marginBottom: 3, padding: 3 }}>
                     <Typography gutterBottom variant="h5" component="div" sx={{ fontFamily: "Nunito", }}>
                         NFT Minting
                     </Typography>
