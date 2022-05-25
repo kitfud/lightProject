@@ -33,8 +33,9 @@ let themeLightMode = createTheme({
       main: '#F3F3F3',
     },
     text: {
-      primary: '#926F34',
+      primary: '#000000',
       secondary: '#000000',
+      fontFamily: "Nunito",
     }
   }
 })
@@ -50,8 +51,9 @@ let themeDarkMode = createTheme({
       main: '#212121',
     },
     text: {
-      primary: '#FFFF00',
+      primary: '#FFFFFF',
       secondary: '#FFFFFF',
+      fontFamily: "Nunito",
     }
   }
 })

@@ -50,8 +50,16 @@ export const LandingPage = () => {
                                 >
                                 <Typography   sx={{
                                     color: "white",
-                                    fontSize: 80,                                    
-                                }}>Welcome to Candy Lamps </Typography>
+                                    fontSize: 70,
+                                    fontFamily: "Nunito",
+                                                                       
+                                }}>
+                                    Welcome to 
+                                    <Typography sx={{ fontSize: 120, fontFamily: "Coiny" }}>
+                                        Candy Lamps
+                                    </Typography>
+                                </Typography>
+                                
                                 </Grow>
                         </Box>
                    
@@ -60,7 +68,7 @@ export const LandingPage = () => {
                      <KeyboardArrowDownIcon 
                            sx={{
                                 color: "white",
-                                fontSize: "15rem",            
+                                fontSize: "12rem",            
                             }}
                         />
                      </Slide>

@@ -218,33 +218,34 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const UserSelectNFT = () => {
     return (
-      <FormControl sx={{ m: 1, minWidth: 300 }}>
-        <InputLabel id="nft-id">
-          <Typography sx={{ color: "Black" }}>
-            NFT
-          </Typography>
-        </InputLabel>
-        <Select
-          disabled={generatorList ? false : true}
-          sx={{ bgcolor: "white", color: "black" }}
-          labelId="nft-id"
-          id="nft-id"
-          label="NFT"
-          value={typeof nftSelected !== "undefined" ? nftSelected : ""}
-          onChange={getNFTInfo}
-        >
-          {generatorList ? (Object.keys(generatorList).map(generatorKey => (
-            <MenuItem
-              sx={{ color: "black" }}
-              value={generatorKey}
-              key={generatorKey}
-            >
-              {`${generatorKey} - ${generatorList[generatorKey].name}`}
-            </MenuItem>
-          ))) : (<div></div>)
-          }
-        </Select>
-      </FormControl>
+      <Box sx={{  }}>
+        <Typography sx={{ m: 1, color: "white", fontFamily: "Nunito" }}>
+              Select NFT
+            </Typography>
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+          <InputLabel id="nft-id"/>
+          <Select
+            disabled={generatorList ? false : true}
+            sx={{ bgcolor: "white", color: "black" }}
+            labelId="nft-id"
+            id="nft-id"
+            label="NFT"
+            value={typeof nftSelected !== "undefined" ? nftSelected : ""}
+            onChange={getNFTInfo}
+          >
+            {generatorList ? (Object.keys(generatorList).map(generatorKey => (
+              <MenuItem
+                sx={{ color: "black" }}
+                value={generatorKey}
+                key={generatorKey}
+              >
+                {`${generatorKey} - ${generatorList[generatorKey].name}`}
+              </MenuItem>
+            ))) : (<div></div>)
+            }
+          </Select>
+        </FormControl>
+      </Box>
     )
   }
 
@@ -259,39 +260,39 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const UserSelectProduct = () => {
     return (
-      <FormControl sx={{ m: 1, minWidth: 300 }}>
-        <InputLabel id="product-id">
-          <Typography sx={{ color: "black" }}>
-            Product
-          </Typography>
-        </InputLabel>
-        <Select
-          disabled={productList ? false : true}
-          sx={{ bgcolor: "white", color: "black" }}
-          labelId="product-id"
-          id="product-id"
-          label="PRODUCT"
-          value={typeof productSelected !== "undefined" ? productSelected : ""}
-          onChange={getProductInfo}
-        >
-          {productList && typeof nftSelected !== "undefined" ? (Object.keys(productList[nftSelected]).map(productKey => (
-            <MenuItem
-              sx={{ color: "black" }}
-              value={productKey}
-              key={productKey}
-            >
-              {productKey + " - " + productList[nftSelected][productKey].name}
-            </MenuItem>
-          ))) : (<div></div>)}
-        </Select>
-      </FormControl>
+      <Box sx={{}}>
+        <Typography sx={{ m: 1, color: "white", fontFamily: "Nunito" }}>
+              Select Product
+            </Typography>
+        <FormControl sx={{ m: 1, minWidth: 300 }}>
+          <InputLabel id="product-id"/>
+          <Select
+            disabled={productList ? false : true}
+            sx={{ bgcolor: "white", color: "black" }}
+            labelId="product-id"
+            id="product-id"
+            label="PRODUCT"
+            value={typeof productSelected !== "undefined" ? productSelected : ""}
+            onChange={getProductInfo}
+          >
+            {productList && typeof nftSelected !== "undefined" ? (Object.keys(productList[nftSelected]).map(productKey => (
+              <MenuItem
+                sx={{ color: "black" }}
+                value={productKey}
+                key={productKey}
+              >
+                {productKey + " - " + productList[nftSelected][productKey].name}
+              </MenuItem>
+            ))) : (<div></div>)}
+          </Select>
+        </FormControl>
+      </Box>
     )
   }
 
   const PickLightColorAndPay = () => {
     return (
       <Box textAlign='center'>
-        <h1>Crypto Lights</h1>
         <center>
           <LightBulb />
           {/* <HardwareConnect handleAlerts={handleAlerts} /> */}
@@ -300,14 +301,14 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         <center>
           <LightPicker />
         </center>
-        <Box>
+        <Box sx={{ fontFamily: "Nunito", fontSize: "20px" }}>
           {nftNameSelected ? ("NFT name: " + nftNameSelected) : ("NFT name: --")}
         </Box>
-        <Box>
+        <Box sx={{ fontFamily: "Nunito", fontSize: "20px" }}>
           {productSelectedName ? ("Product name: " + productSelectedName) : ("Product name: --")}
         </Box>
-        <Box>
-          {productSelectedAddress ? (<>Product address:<Tooltip title="copy to clipboard">
+        <Box sx={{ fontFamily: "Nunito", fontSize: "20px", }}>
+          {productSelectedAddress ? (<>Product address:<Tooltip sx={{ fontSize: "25px", fontFamily: "Nunito", color: "limegreen", background: "none" }} title="copy to clipboard">
             <Chip
               label={productSelectedAddress ? productSelectedAddress : "Product Address"}
               onClick={copyToClipboard}
@@ -316,7 +317,7 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
           </Tooltip> </>) : ("Product address: --")}
         </Box>
 
-        <Box>
+        <Box sx={{ fontFamily: "Nunito", fontSize: "20px", }}>
           {productSelectedPrice ? ("Product price: $" + productSelectedPrice + " (ETH " + (productSelectedPrice / ETHUSDConversionRate) + ")") :
             ("Product price: $-- (ETH --)")}
         </Box>
@@ -335,11 +336,23 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   return (
     <>
-      <center>
-        <UserSelectNFT />
-        <UserSelectProduct />
-      </center>
-      <PickLightColorAndPay />
+      <Box>
+        
+        <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+          
+          <UserSelectNFT />
+          <UserSelectProduct />
+        </Box>
+
+        <Box sx={{ marginTop: 2, display: "flex", alignItems: "center", justifyContent: "center", alignText: "center" }}>
+          <Typography sx={{ fontFamily: "Coiny", fontSize: "75px" }}>Candy Lamps</Typography>
+        </Box>
+
+        <Box sx={{ marginTop: 2, }}>
+        <PickLightColorAndPay />
+        </Box>
+      </Box>
+      
     </>
   )
 }

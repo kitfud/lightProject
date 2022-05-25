@@ -51,13 +51,14 @@ const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected, 
   return (
     <ThemeProvider theme={theme}>
       <Grid sx={{ alignItems: "center", display: "flex", flexDirection: "column", marginBottom: 2 }}>
-        <Box>
+        <Box sx={{ fontFamily: "Nunito", fontSize: "20px" }}>
           {howToQR}
           <br /><br />
           {typeof productSelected !== "undefined" && typeof HexColorTemp !== "undefined" ? (
             <Button
               variant="contained"
               size="large"
+              sx={{ fontFamily: "Nunito", }}
               color={buttonColor}
               endIcon={<QrCode2Icon />}
               onClick={handleOpen}>
@@ -69,6 +70,7 @@ const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected, 
               size="large"
               color={buttonColor}
               endIcon={<QrCode2Icon />}
+              sx={{ fontFamily: "Nunito", }}
             >
               {typeof productSelected !== "undefined" ? "Select product" : "Select color"}
             </Button>)}
@@ -88,13 +90,13 @@ const QR_Code = ({ selectProductPrice, productSelectedAddress, productSelected, 
               ><QRCode value={productSelectedAddress} /></CardMedia>
               
               <center>
-                <Typography variant="h6" component="h2">
+                <Typography variant="h6" component="h2" sx={{ fontFamily: "Nunito", fontSize: "20px" }}>
                   Address:{productSelectedAddress}
                 </Typography>
-                <Typography variant="h6" component="h2">
+                <Typography variant="h6" component="h2" sx={{ fontFamily: "Nunito", fontSize: "20px", }}>
                   Price USD:{selectProductPrice}
                 </Typography>
-                <Typography variant="h6" component="h2">
+                <Typography variant="h6" component="h2" sx={{ fontFamily: "Nunito", fontSize: "20px", }}>
                   Price ETH: {ethprice}
                 </Typography>
               </center>

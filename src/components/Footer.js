@@ -15,7 +15,7 @@ import {
       <Toolbar sx={{justifyContent:'center'}}>
      
 
-        <Typography color="inherit">
+        <Typography color="inherit" sx={{ fontFamily: "Nunito", }}>
          Chainlink Spring Hackathon 2022
         </Typography>
       </Toolbar>
