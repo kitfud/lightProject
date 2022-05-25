@@ -33,18 +33,19 @@ const NavLanding = () => {
         >
                         
             <Card sx={{background: "rgba(255,255,255,0.5)", margin: "30px", flexGrow: "1", maxWidth: "500px",}}>
+                
                 <CardMedia 
                     component="img"
                     height="300px"
                     image={gearsPic}
-                    alt="Administrator wearing hardhat"
+                    alt="Pic of gears"
                     
                 />
                 <CardContent sx={{ height: "75px" }}>
-                    <Typography gutterBottom={true} variant="h5" component="div">
+                    <Typography gutterBottom={true} variant="h5" component="div" sx={{ fontSize: "35px", fontFamily: "Nunito" }}>
                         Admin Page
                     </Typography>
-                    <Typography variant="body3" color="white">
+                    <Typography variant="body3" color="white" sx={{ fontSize: "20px", fontFamily: "Nunito" }}>
                         Set up and manage your lighting systems.
                     </Typography>
                 </CardContent>
@@ -61,7 +62,7 @@ const NavLanding = () => {
                         color='success'
                     >
                         <Typography 
-                            sx={{ fontSize: "32px" }}>ADMIN</Typography>
+                            sx={{ fontSize: "32px", fontFamily: "Nunito" }}>ADMIN</Typography>
                     </Button>
                 </Link>
                 </CardActions>
@@ -75,11 +76,11 @@ const NavLanding = () => {
                    alt="Shopping cart" 
                 />
                 <CardContent sx={{ height: "75px" }}>
-                    <Typography gutterBottom={true} variant="h5" component="div">
+                    <Typography gutterBottom={true} variant="h5" component="div" sx={{ fontSize: "35px", fontFamily: "Nunito" }}>
                         Shopping Page
                     </Typography>
-                    <Typography variant="body3" color="white">
-                        Shop for lights, hardware, and lighting accessories to make your very own lighting system.
+                    <Typography variant="body3" color="white" sx={{ fontSize: "20px", fontFamily: "Nunito" }}>
+                        Shop to make your very own lighting system.
                     </Typography>
                 </CardContent>
                 <CardActions
@@ -99,7 +100,7 @@ const NavLanding = () => {
                             variant="contained"
                             color="warning"
                         >
-                            <Typography sx={{ fontSize: "32px" }}>SHOP</Typography>
+                            <Typography sx={{ fontSize: "32px", fontFamily: "Nunito" }}>SHOP</Typography>
                         </Button>
                     </Link>
                 </CardActions>

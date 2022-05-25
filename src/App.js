@@ -30,11 +30,15 @@ let themeLightMode = createTheme({
       main: '#C0C0C0',
     },
     secondary: {
-      main: '#F3F3F3',
+      main: '#FFFFFF',
+    },
+    neutral: {
+      main: '#',
     },
     text: {
-      primary: '#926F34',
+      primary: '#000000',
       secondary: '#000000',
+      fontFamily: "Nunito",
     }
   }
 })
@@ -49,9 +53,13 @@ let themeDarkMode = createTheme({
     secondary: {
       main: '#212121',
     },
+    neutral: {
+      main: '#',
+    },
     text: {
-      primary: '#FFFF00',
+      primary: '#FFFFFF',
       secondary: '#FFFFFF',
+      fontFamily: "Nunito",
     }
   }
 })
@@ -297,6 +305,7 @@ function App() {
                 sumProductBalances={sumProductBalances}
                 handleAlerts={handleAlerts}
                 copyToClipboard={copyToClipboard}
+                colorMode={colorMode}
               />} />
 
           </Routes>
