@@ -28,7 +28,7 @@ const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts
                             label="NFT Name"
                             variant="outlined"
                             disabled={useAutoName ? true : false}
-                            sx={{ background: "white", }}
+                            sx={{ background: "primary.main", }}
                         />
                         <FormControlLabel
                             control={<Checkbox
