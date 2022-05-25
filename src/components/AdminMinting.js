@@ -461,7 +461,7 @@ const AdminMinting = ({
 
     if (factoryContract) {
       factoryContract.on("NftRequested", (requestId, requester) => {
-        handleAlerts("Please wait a minute... Your NFT is being minted. Once the light goes green, your NFT is ready. Please, refresh the page once you get confirmation. ", "warning", false, true)
+        handleAlerts("Please wait while your NFT is being minted. Follow the link to see transaction status: ", "warning", false, true)
       })
 
       factoryContract.on("NftMinted", (imgNumber, minter) => {
