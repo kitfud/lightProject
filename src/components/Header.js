@@ -161,7 +161,7 @@ const Header = ({
       dispatch(setUserAddress(new_user_address))
       setButtonColor("success")
 
-      setRefLink(window.location.origin + "/home?ref=" + new_user_address)
+      setRefLink("/home?ref=" + new_user_address)
 
     } else {
       dispatch(setUserAddress(undefined))
