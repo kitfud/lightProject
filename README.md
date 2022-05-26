@@ -65,7 +65,7 @@ A working dApp is running on: https://candy-lamps.herokuapp.com/
 The backend 
 
 ## Languages, Libraries, Frameworks, and Tools
-<div style="background-color:aliceblue;margin:25px;">
+<div style="background-color: rgb(50, 50, 50);">
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="40" height="40"/>
