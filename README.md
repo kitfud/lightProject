@@ -15,7 +15,7 @@ Now it is all set to run the dApp! Type the following command:
 
 Then, open the browser and go to:
 
-````localhost:5000/```
+```localhost:5000/```
 
 
 ## Add CodeOwners
