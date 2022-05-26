@@ -11,7 +11,7 @@ Be sure to have all required python libraries installed. Run the command:
 
 Now it is all set to run the app! Type the following command:
 
-```python app.py```
+```python app.py``` / ```python3 app.py```
 
 
 
