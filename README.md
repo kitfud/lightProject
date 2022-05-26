@@ -72,7 +72,7 @@ The app consists of 4 panels (see diagram):
 
 <div style="background-color: gray;">
   <img src="public/app_diagram.png" width="100" height="100"/>
-
+</div>
 - The landing page that guides the user to choose between two options:
 
 - The shop panel, where one can find links to buy the necessary hardware to set up a light system and the c++ code to run the light change at the hardware level.
