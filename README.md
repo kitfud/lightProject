@@ -15,7 +15,7 @@ Now it is all set to run the dApp! Type the following command:
 
 Then, open the browser and go to:
 
-```localhost:5000/```
+```http://localhost:5000/```
 
 ## Running the dApp remotely
 To deploy on Heroku, an user account need to be created. Go to the [Heroku](https://www.heroku.com/) webpage and create an user. After that, create an app project on Heroku.
@@ -24,7 +24,7 @@ Download and install the Heroku CLI by typing on the prompt (more info [here](ht
 
 ```npm install -g heroku```
 
-Download the file of this repository, go to the project root folder and type the following command on the prompt in order to login to Heroku:
+Download the files of this repository, go to the project root folder and type the following command on the prompt in order to login to Heroku:
 
 ```heroku login```
 
