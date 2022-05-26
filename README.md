@@ -13,6 +13,9 @@ Now it is all set to run the dApp! Type the following command:
 
 ```python app.py``` / ```python3 app.py```
 
+Then, open the browser and go to:
+
+````localhost:5000/```
 
 
 ## Add CodeOwners
