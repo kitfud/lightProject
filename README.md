@@ -21,7 +21,7 @@ Be sure to have all required python libraries installed. Run the command:
 
 ```pip install -r requirements.txt```
 
-You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or creat a .env file with a variable named SECRET_KEY with a secret assigned to it. 
+You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it. 
 
 Now it is all set to run the dApp! Type the following command:
 
@@ -46,7 +46,7 @@ Then, connect your Heroku project with your local project:
 
 ```heroku git:clone -a project-name```
 
-You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or creat a .env file with a variable named SECRET_KEY with a secret assigned to it. 
+You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it. 
 
 Finally, add the local files, commit and deploy to Heroku:
 
