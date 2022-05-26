@@ -67,27 +67,22 @@ A working dApp is running on: https://candy-lamps.herokuapp.com/
 
 The app consists of 4 panels (see diagram):
 
- App diagram  
-![alt text](public/app_diagram.png)
-
-<div style="background-color: gray;">
-  <img src="public/app_diagram.png" width="100" height="100"/>
-</div>
 - The landing page that guides the user to choose between two options:
 
-- The shop panel, where one can find links to buy the necessary hardware to set up a light system and the c++ code to run the light change at the hardware level.
+- The shop panel, where one can find links to buy the necessary hardware to set up a light system and the C++ code to run the light change at the hardware level.
 
 - The admin panel where one(business owner or anyone) can buy an NFT linked to a light generator.
  This panel lists all the NFTs owned by the connected wallet and allows the NFT owner to create products, change the price of a product or withdraw the accumulated funds from one or a selection of products. On the top right of this panel there is a custom link related to the account connected that leads to the 4th panel.
 
 - The 4th panel is designed for the user interaction with the products. At the top, the user can select an NFT in a drop down menu and then select a product attached to that NFT. Then pick a color and send the right amount of ETH to the address at the bottom of the page - copying the address is tedious, we made it easy with a QR code that pops up and can be scanned with a phone.
 
+<p style="text-align: center;">App diagram</p>
+
+![alt text](public/app_diagram.png)
+
 ## Contracts architecture
 
 The backend Web3 architecture consists of 4 contracts, an Agora(council place) contract, a factory contract, a generator contract and a product contract (see diagram):
-
-| Contracts diagram  |
-|![alt text](public/contracts_diagram.png)  |
 
 - The first contract is an Agora, or council place for us, the app builders, to deploy the factory contract or vote on changes such as changing the price of the NFTs the Factory mints via a rudimentary(for now) voting system. It is also ERC20 and mints tokens for a future ecosystem and a VRFv2 subscription manager. This contracts splits evenly all incoming eth payments between the developers.
 
@@ -97,6 +92,10 @@ The backend Web3 architecture consists of 4 contracts, an Agora(council place) c
 
 - The product contracts are payable, the choice to have one contract per product was made for versatility and ease for the user to simply send payment to the contract via a QR code, bypassing the requirement to connect their wallet to the page in the case of a function call (both options are available for later app versions).
 
+
+<p style="text-align: center;">Contracts diagram</p>
+
+![alt text](public/contracts_diagram.png)
 
 
 ## Languages, Libraries, Frameworks, and Tools
