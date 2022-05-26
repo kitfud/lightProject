@@ -12,7 +12,6 @@ Setup process for owners: Owners get their own special Admin page for setup, man
 
 Interaction process for users: There are just 2 steps required of users to interact with the lights. Users need to select a color, and then send payment to the address. Simple and easy to use.
 
-
 ## Running the dApp locally
 After downloading the files of this repository, open the prompt on the project root directory and type the following command:
 
@@ -56,5 +55,9 @@ git push heroku master
 Open the app on Heroku and have fun!
 
 A working dApp is running on: https://candy-lamps.herokuapp.com/
+
+## Contracts architecture
+
+The backend 
 
 ## Add CodeOwners
