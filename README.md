@@ -1,4 +1,17 @@
-# Candy Lamps
+# Candy Lamps: An Adaptable Blockchain IoT Interface
+
+Candy Lamps is a solution that provides users with a real world, IoT to blockchain interaction, in a simple, easy to use, and fun experience. Pick a color, and send payment. It’s that easy to use!
+
+## Introduction and context
+
+Our hackathon team wanted to create an interactive, real world use case for blockchain, smart contracts and NFTs. Price feeds and DeFi protocols are cool, but we wanted to create a fun, unique product that users can understand and experience in the real world.
+
+This is where Candy Lamps comes in. Candy Lamps is software powered by blockchain smart contracts that allows people to pay to change the colors of a lighting system. Candy Lamps utilizes the benefits of Web3 technology- allowing lighting systems to be set up locally in a bar, or set up to be accessed from anyone, anywhere in the world. The approach we took was similar to that of an old school diner jukebox. The diner owns the jukebox, and customers can pay a quarter(or a custom amount) to play the song of their choice. Similar to a diner jukebox, owners of a lighting system can allow customers to pay to change the color of the lights.
+
+Setup process for owners: Owners get their own special Admin page for setup, management, and accounting. This page is hidden from non-Admin users. Owners pay to mint an NFT. This NFT is used as a key, similar to a license. Owners can add products (lightstrip 1, lightstrip 2, lightbulb 1, lightbulb 2, patio lights 1, etc) to be associated with that NFT. Each product has an address and when payment is sent to the product address, it triggers that specific lighting product to change color. Funds that have been collected from payment addresses can be withdrawn to the owner’s desired wallet.
+
+Interaction process for users: There are just 2 steps required of users to interact with the lights. Users need to select a color, and then send payment to the address. Simple and easy to use.
+
 
 ## Running the dApp
 After downloading the files of this repository, open the prompt on the project root directory and type the following command:
