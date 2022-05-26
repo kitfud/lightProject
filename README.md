@@ -24,7 +24,7 @@ Be sure to have all required python libraries installed. Run the command:
 
 ```pip install -r requirements.txt```
 
-You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it. 
+You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it.
 
 Now it is all set to run the dApp! Type the following command:
 
@@ -49,7 +49,7 @@ Then, connect your Heroku project with your local project:
 
 ```heroku git:clone -a project-name```
 
-You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it. 
+You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it.
 
 Finally, add the local files, commit and deploy to Heroku:
 
@@ -68,7 +68,6 @@ A working dApp is running on: https://candy-lamps.herokuapp.com/
 The app consists of 4 panels (see diagram):
 
 | App diagram  |
-|                                     |
 |![alt text](public/app_diagram.png)  |
 
 - The landing page that guides the user to choose between two options:
@@ -85,7 +84,6 @@ The app consists of 4 panels (see diagram):
 The backend Web3 architecture consists of 4 contracts, an Agora(council place) contract, a factory contract, a generator contract and a product contract (see diagram):
 
 | Contracts diagram  |
-|                                     |
 |![alt text](public/contracts_diagram.png)  |
 
 - The first contract is an Agora, or council place for us, the app builders, to deploy the factory contract or vote on changes such as changing the price of the NFTs the Factory mints via a rudimentary(for now) voting system. It is also ERC20 and mints tokens for a future ecosystem and a VRFv2 subscription manager. This contracts splits evenly all incoming eth payments between the developers.
