@@ -2,6 +2,7 @@
 
 ## Running the dApp
 After downloading the files of this repository, open the prompt on the project root directory and type the following command:
+
 ```npm run build```
 
 Be sure to have all required python libraries installed. Run the command:
