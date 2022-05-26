@@ -64,7 +64,7 @@ A working dApp is running on: https://candy-lamps.herokuapp.com/
 
 The backend 
 
-## Languages, Libraries, and Frameworks
+## Languages, Libraries, Frameworks, and Tools
 <div>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="40" height="40"/>
@@ -79,6 +79,9 @@ The backend
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original-wordmark.svg" width="40" height="40"/>
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original-wordmark.svg" width="40" height="40"/>
+</div>
+<div>
+  <a href="https://pypi.org/project/eth-brownie/" target="_blank">brownie</a>
 </div>
 
 ## Add CodeOwners
