@@ -81,6 +81,7 @@ The backend
   <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original-wordmark.svg" width="40" height="40"/>
 </div>
 <div>
+  ![brownie](https://pypi.org/project/eth-brownie/)
   <a href="https://pypi.org/project/eth-brownie/" target="_blank">brownie</a>
 </div>
 
