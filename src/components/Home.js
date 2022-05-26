@@ -4,7 +4,6 @@ import {
   Box,
   Typography,
   FormControl,
-  InputLabel,
   Select,
   MenuItem,
   Tooltip,
@@ -19,7 +18,6 @@ import { setRefAddress } from '../features/refAddress';
 import { setCurrentTxHash } from "../features/paymentData"
 import { setSendDataProcess, sendData } from '../features/connection';
 import { setPathname } from "../features/pathname"
-import HardwareConnect from './HardwareConnect';
 import { setStatus } from '../features/webSocket';
 import { setRGBColorString, setHexColor, setHexBulbColor } from '../features/color'
 
@@ -73,16 +71,15 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     }
   }
 
-  const handleResetNFT = (event) => {
-    event.preventDefault()
-    setNFTSelected(undefined)
-    setNFTNameSelected(undefined)
-    setGeneratorContract(undefined)
-    setProductSelected(undefined)
-    setProductSelectedAddress(undefined)
-    setProductSelectedName(undefined)
-
-  }
+  // const handleResetNFT = (event) => {
+  //   event.preventDefault()
+  //   setNFTSelected(undefined)
+  //   setNFTNameSelected(undefined)
+  //   setGeneratorContract(undefined)
+  //   setProductSelected(undefined)
+  //   setProductSelectedAddress(undefined)
+  //   setProductSelectedName(undefined)
+  // }
 
   const getNFTInfo = (event) => {
     const new_nft_selected = parseInt(event.target.value)
@@ -133,7 +130,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   useEffect(() => {
     if (RGBColorString && currentTxHash) {
-      // if (RGBColorString) {
       sendDataFunc()
       dispatch(setCurrentTxHash(undefined))
       dispatch(setRGBColorString(undefined))
@@ -218,10 +214,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
 
   const UserSelectNFT = () => {
     return (
-      <Box sx={{  }}>
+      <Box sx={{}}>
         <Typography sx={{ m: 1, fontFamily: "Nunito" }}>
-              Select NFT
-            </Typography>
+          Select NFT
+        </Typography>
         <FormControl sx={{ m: 1, minWidth: 300 }}>
           <Select
             disabled={generatorList ? false : true}
@@ -249,7 +245,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   }
 
   const copyToClipboard = async (evt) => {
-    // const text = evt.target.value
     if ('clipboard' in navigator) {
       return await navigator.clipboard.writeText(evt.target.innerText);
     } else {
@@ -261,8 +256,8 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
     return (
       <Box sx={{}}>
         <Typography sx={{ m: 1, fontFamily: "Nunito" }}>
-              Select Product
-            </Typography>
+          Select Product
+        </Typography>
         <FormControl sx={{ m: 1, minWidth: 300 }}>
           <Select
             disabled={productList ? false : true}
@@ -293,7 +288,6 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
       <Box textAlign='center'>
         <center>
           <LightBulb />
-          {/* <HardwareConnect handleAlerts={handleAlerts} /> */}
         </center>
 
         <center>
@@ -335,9 +329,9 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
   return (
     <>
       <Box>
-        
+
         <Box sx={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-          
+
           <UserSelectNFT />
           <UserSelectProduct />
         </Box>
@@ -347,10 +341,10 @@ const Home = ({ handleAlerts, updateGeneratorList, updateProductList }) => {
         </Box>
 
         <Box sx={{ marginTop: 2, }}>
-        <PickLightColorAndPay />
+          <PickLightColorAndPay />
         </Box>
       </Box>
-      
+
     </>
   )
 }

@@ -3,7 +3,6 @@ import {
     Card, Button, Typography, Box, Grid, CircularProgress,
     FormControl, TextField, Checkbox, FormControlLabel
 } from '@mui/material'
-import { useSelector } from 'react-redux'
 
 const NFTMintCard = ({ nftPrice, ETHUSDConversionRate, useAutoName, handleAlerts, nftMintedMsg,
     setUseAutoName, handleNFTName, loading, mintNFT, wallet, needRefresh }) => {

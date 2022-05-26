@@ -1,12 +1,8 @@
-import React, { useRef, useEffect, useState } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { setRGBColorString, setHexBulbColor } from "../features/color"
+import React, { useRef, useEffect } from 'react'
+import { useSelector } from 'react-redux'
 
 const LightBulb = () => {
-
-  const dispatch = useDispatch()
-  const { currentTxHash } = useSelector((state) => state.paymentData.value)
-  const { HexColor, HexBulbColor } = useSelector(state => state.color.value)
+  const { HexBulbColor } = useSelector(state => state.color.value)
 
   const canvasRef = useRef(null)
 
@@ -74,21 +70,12 @@ const LightBulb = () => {
     canvas.height = 60
     draw(context)
   }
-  
-  // useEffect(() => {
-  //   if (currentTxHash && HexColor) {
-  //     // if (HexColor) {
-  //     dispatch(setHexBulbColor(HexColor))
-  //     dispatch(setRGBColorString(HexColor))
-  //   }
-  // }, [currentTxHash, HexColor])
 
   useEffect(() => {
     generateGraphic()
   }, [HexBulbColor])
 
   return (
-
     <canvas ref={canvasRef} />
   )
 }

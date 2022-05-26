@@ -30,7 +30,6 @@ const AdminMinting = ({
   sumProductBalances,
   handleAlerts,
   copyToClipboard,
-  colorMode,
 }) => {
 
   // Dispatch

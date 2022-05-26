@@ -62,21 +62,21 @@ const HardwareConnect = ({ handleAlerts }) => {
     handleAlerts("Port disconnected", "info")
   }
 
-  const readDataFunc = async () => {
-    const reader = port.readable.getReader();
+  // const readDataFunc = async () => {
+  //   const reader = port.readable.getReader();
 
-    // Listen to data coming from the serial device.
-    while (true) {
-      const { value, done } = await reader.read();
-      if (done) {
-        // Allow the serial port to be closed later.
-        reader.releaseLock();
-        break;
-      }
-      // value is a Uint8Array.
-      console.log(value);
-    }
-  }
+  //   // Listen to data coming from the serial device.
+  //   while (true) {
+  //     const { value, done } = await reader.read();
+  //     if (done) {
+  //       // Allow the serial port to be closed later.
+  //       reader.releaseLock();
+  //       break;
+  //     }
+  //     // value is a Uint8Array.
+  //     console.log(value);
+  //   }
+  // }
 
   const handleUserRequestSocketEvent = async (data) => {
     if (portRef.current && !currentTxHash) {

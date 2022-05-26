@@ -1,27 +1,12 @@
 import * as React from 'react';
-import AppBar from '@mui/material/AppBar';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import CardHeader from '@mui/material/CardHeader';
-import CssBaseline from '@mui/material/CssBaseline';
-import Grid from '@mui/material/Grid';
-import StarIcon from '@mui/icons-material/StarBorder';
-import Toolbar from '@mui/material/Toolbar';
-import Typography from '@mui/material/Typography';
-import Link from '@mui/material/Link';
-import GlobalStyles from '@mui/material/GlobalStyles';
-import Container from '@mui/material/Container';
-
+import { Box, Button, Card, CardContent, CssBaseline, Grid, Typography, GlobalStyles, Container, CardHeader } from '@mui/material'
 import img_arduino from '../img/arduino_uno_200.jpg';
 import img_wires from '../img/JumperWires.jpg';
 import img_led from '../img/led_strip200.jpg';
 import circuit_diagram from '../img/CryptoLightsCircuit.png'
 
 import { setPathname } from '../features/pathname';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 
 
@@ -62,17 +47,7 @@ const tiers = [
 ];
 
 function PricingContent() {
-
   const dispatch = useDispatch()
-  const [num, setNum] = useState(0);
-
-  const changeNum = () => {
-    let number = num;
-    number++;
-    setNum(number);
-    console.log(num)
-    console.log('Soon this will get you to the store...')
-  };
 
   useEffect(() => {
     dispatch(setPathname(window.location.pathname))
@@ -127,7 +102,7 @@ function PricingContent() {
                   }}
                 />
                 <CardContent>
-               
+
                   <img src={tier.image} />
                   <ul>
                     {tier.description.map((line) => (
@@ -142,18 +117,11 @@ function PricingContent() {
                     ))}
                   </ul>
                 </CardContent>
-              
-             
-                    <a target="_blank" href={tier.vendorURL} style={{ textDecoration: "none" }}>
-                    <Button color="success" fullWidth variant={tier.buttonVariant} >
+                <a target="_blank" href={tier.vendorURL} style={{ textDecoration: "none" }}>
+                  <Button color="success" fullWidth variant={tier.buttonVariant} >
                     {tier.buttonText}
                   </Button>
-                    </a>
-                
-             
-               
-                
-             
+                </a>
               </Card>
             </Grid>
           ))}
@@ -167,11 +135,9 @@ function PricingContent() {
           borderTop: (theme) => `1px solid ${theme.palette.divider}`,
           mt: 8,
           py: [3, 6],
-        }}
-      >
+        }}      >
         <Grid container spacing={4} justifyContent="space-evenly">
         </Grid>
-
         <Typography
           component="h1"
           variant="h3"
@@ -180,33 +146,29 @@ function PricingContent() {
           gutterBottom
           sx={{ fontFamily: "Nunito" }}
         >
-         Wire the Components: 
+          Wire the Components:
         </Typography>
-        
-       
       </Container>
       <center>
         <Box>
-        <img src={circuit_diagram} />
+          <img src={circuit_diagram} />
         </Box>
       </center>
-    
       <Typography
-          marginTop={3}
-          component="h1"
-          variant="h3"
-          align="center"
-          color="text.primary"
-          gutterBottom
-          sx={{ fontFamily: "Nunito" }}
-        >
-        Code The Arduino: 
-        </Typography>
-        <Grid sx={{alignItems:"center",display:'flex', flexDirection:'column'}}>
+        marginTop={3}
+        component="h1"
+        variant="h3"
+        align="center"
+        color="text.primary"
+        gutterBottom
+        sx={{ fontFamily: "Nunito" }}
+      >
+        Code The Arduino:
+      </Typography>
+      <Grid sx={{ alignItems: "center", display: 'flex', flexDirection: 'column' }}>
         <Box align="center">
-        <pre>
-        <code>{
-        `
+          <pre>
+            <code>{`
         #include <List.hpp>
         #include <Adafruit_NeoPixel.h>
         #include <SimpleWebSerial.h>
@@ -294,15 +256,13 @@ function PricingContent() {
         
           }
         }`
-        }
-        </code>
-        </pre>
+            }
+            </code>
+          </pre>
         </Box>
-       </Grid>
+      </Grid>
     </React.Fragment>
-
-  );
-
+  )
 }
 
 export default function Pricing() {

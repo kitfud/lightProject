@@ -6,7 +6,6 @@ import { Routes, Route } from 'react-router-dom'
 import Shop from './components/Shop'
 import Header from './components/Header'
 import Footer from './components/Footer'
-import Transfer from './components/Transfer'
 import { createTheme, ThemeProvider, Card, Snackbar, Slide, Alert, IconButton, CircularProgress, Link } from '@mui/material'
 import CloseIcon from '@mui/icons-material/Close'
 import { useEffect, useRef, useState } from "react"
@@ -98,7 +97,6 @@ function App() {
   };
 
   const copyToClipboard = async (evt) => {
-    // const text = evt.target.value
     if ('clipboard' in navigator) {
       return await navigator.clipboard.writeText(evt.target.innerText);
     } else {
@@ -284,9 +282,6 @@ function App() {
 
         <Card sx={{ bgcolor: "secondary.main" }}>
           <Routes>
-            <Route path="/transfer" element={
-              <Transfer />
-            } />
             <Route path='/' element={
               <LandingPage />} />
             <Route path='/home' element={

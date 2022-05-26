@@ -1,27 +1,26 @@
 import React from 'react'
 import {
-    AppBar,
-    Toolbar,
-    Typography,
-    Container,
-    IconButton,
-  } from '@mui/material'
+  AppBar,
+  Toolbar,
+  Typography,
+  Container,
+} from '@mui/material'
 
-  const Footer = () => {
+const Footer = () => {
   return (
     <AppBar position="static" color="secondary" >
-    <Container maxWidth="md">
+      <Container maxWidth="md">
 
-      <Toolbar sx={{justifyContent:'center'}}>
-     
+        <Toolbar sx={{ justifyContent: 'center' }}>
 
-        <Typography color="inherit" sx={{ fontFamily: "Nunito", }}>
-         Chainlink Spring Hackathon 2022
-        </Typography>
-      </Toolbar>
 
-    </Container>
-  </AppBar>
+          <Typography color="inherit" sx={{ fontFamily: "Nunito", }}>
+            Chainlink Spring Hackathon 2022
+          </Typography>
+        </Toolbar>
+
+      </Container>
+    </AppBar>
   )
 }
 

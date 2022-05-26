@@ -1,9 +1,12 @@
 from flask import Flask, request, send_from_directory
 from flask_socketio import SocketIO, emit
+from dotenv import load_dotenv
+from os import environ as env
 
+load_dotenv()
 app = Flask(__name__, static_url_path="", static_folder="./build")
-app.config["SECRET_KEY"] = "secret!"
-socketio = SocketIO(app, async_mode='gevent')
+app.config["SECRET_KEY"] = env["SECRET_KEY"]
+socketio = SocketIO(app)  # , async_mode='gevent')
 
 owners = {}
 user_sid = {}
@@ -45,7 +48,6 @@ def handle_request_status(json_data):
 
 @socketio.on("transaction hash", namespace="/websocket")
 def handle_owner_connection(address):
-    # emit("transaction hash", tx_hash[address]["current"], room=request.sid)
     return tx_hash[address]["current"]
 
 
@@ -60,4 +62,4 @@ def catch_all(path):
 
 
 if __name__ == "__main__":
-    socketio.run(app, host="0.0.0.0", port=5000)  # , debug=True)
+    socketio.run(app, host="0.0.0.0", port=5000)
