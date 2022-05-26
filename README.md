@@ -67,8 +67,11 @@ A working dApp is running on: https://candy-lamps.herokuapp.com/
 
 The app consists of 4 panels (see diagram):
 
-| App diagram  |
-|![alt text](public/app_diagram.png)  |
+ App diagram  
+![alt text](public/app_diagram.png)
+
+<div style="background-color: gray;">
+  <img src="public/app_diagram.png" width="100" height="100"/>
 
 - The landing page that guides the user to choose between two options:
 
