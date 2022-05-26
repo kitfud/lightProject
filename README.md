@@ -24,6 +24,8 @@ Be sure to have all required python libraries installed. Run the command:
 
 ```pip install -r requirements.txt```
 
+You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it. 
+
 Now it is all set to run the dApp! Type the following command:
 
 ```python app.py``` / ```python3 app.py```
@@ -46,6 +48,8 @@ Download the files of this repository, go to the project root folder and type th
 Then, connect your Heroku project with your local project:
 
 ```heroku git:clone -a project-name```
+
+You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it. 
 
 Finally, add the local files, commit and deploy to Heroku:
 
@@ -92,6 +96,33 @@ The backend Web3 architecture consists of 4 contracts, an Agora(council place) c
 
 - The product contracts are payable, the choice to have one contract per product was made for versatility and ease for the user to simply send payment to the contract via a QR code, bypassing the requirement to connect their wallet to the page in the case of a function call (both options are available for later app versions).
 
+
+
+## Languages, Libraries, Frameworks, and Tools
+<div style="background-color: gray;">
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/solidity/solidity-original.svg" width="40" height="40"/>  
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" width="40" height="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" width="40" height="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" width="40" height="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/redux/redux-original.svg" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/socketio/socketio-original.svg" width="40" height="40" />
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/flask/flask-original.svg" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nodejs/nodejs-original-wordmark.svg" width="40" height="40"/>
+  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/arduino/arduino-original-wordmark.svg" width="40" height="40"/>
+</div>
+
+
+- [brownie](https://pypi.org/project/eth-brownie/)
+- [chainlink-price-feeds](https://docs.chain.link/docs/using-chainlink-reference-contracts/)
+- [chainlink-vrfv2](https://docs.chain.link/docs/chainlink-vrf/)
+- [ethers.js](https://docs.ethers.io/v5/)
+- [ipfs](https://ipfs.io/)
+- [metamask](https://metamask.io/)
+- [pinata](https://www.pinata.cloud/)
 
 
 ## Add CodeOwners
