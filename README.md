@@ -13,7 +13,7 @@ Setup process for owners: Owners get their own special Admin page for setup, man
 
 Interaction process for users: There are just 2 steps required of users to interact with the lights. Users need to select a color, and then send payment to the address. Simple and easy to use.
 
-You can see a high level walkthrough of this application in this [video](https://www.youtube.com/watch?v=lql5T5WAWBU):
+You can see a high level walkthrough of this application in this [video](https://www.youtube.com/watch?v=lql5T5WAWBU).
 
 ## Running the dApp locally
 After downloading the files of this repository, open the prompt on the project root directory and type the following command:
@@ -49,7 +49,9 @@ Then, connect your Heroku project with your local project:
 
 ```heroku git:clone -a project-name```
 
-You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it.
+You also have to provide a secret key to the socketio application. Put the secret key at line 8 on the app.py file or create a .env file with a variable named SECRET_KEY with a secret assigned to it. Furthermore, at line 9 on the app.py file, put the commented input parameter in the socketio initialization object, as follows:
+
+```socketio = SocketIO(app, async_mode='gevent')```
 
 Finally, add the local files, commit and deploy to Heroku:
 
