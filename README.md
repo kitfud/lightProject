@@ -5,7 +5,7 @@ Candy Lamps is a solution that provides users with a real world, IoT to blockcha
 ## Introduction and context
 
 Our hackathon team wanted to create an interactive, real world use case for blockchain, smart contracts and NFTs. Price feeds and DeFi protocols are cool, but we wanted to create a fun, unique product that users can understand and experience in the real world.
-Our bare concept is to offer a possibility for vendors to acquire a selling platform with customizable products and sell them easily to customers via the scan of a QR code (payable in ether). We wanted to showcase our platform concept with a fun proof of concept.
+Our bare concept is to offer a possibility for vendors to acquire a selling platform with customizable products and sell them easily to customers via the scan of a QR code (payable in ether). And to illustrate this idea we built a playful and visual proof of concept.
 
 This is where Candy Lamps comes in. Candy Lamps is software powered by blockchain smart contracts that allows people to pay to change the colors of a lighting system. Candy Lamps can be set up locally in a bar and connected to the lighting systems, or set up to be accessed from anyone, anywhere in the world. The approach we took was similar to that of an old school diner jukebox. The diner owns the jukebox, and customers can pay a quarter(or a custom amount) to play the song of their choice. Similar to a diner jukebox, owners of a lighting system can allow customers to pay to change the color of the lights.
 
@@ -35,7 +35,7 @@ Then, open the browser and go to:
 ```http://localhost:5000/```
 
 ## Running the dApp remotely
-To deploy on Heroku, an user account need to be created. Go to the [Heroku](https://www.heroku.com/) webpage and create an user. After that, create an app project on Heroku.
+To deploy on Heroku, a user account need to be created. Go to the [Heroku](https://www.heroku.com/) webpage and create a user. After that, create an app project on Heroku.
 
 Download and install the Heroku CLI by typing on the prompt (more info [here](https://devcenter.heroku.com/articles/heroku-cli)):
 
@@ -88,7 +88,7 @@ The backend Web3 architecture consists of 4 contracts, an Agora(council place) c
 
 - The first contract is an Agora, or council place for us, the app builders, to deploy the factory contract or vote on changes such as changing the price of the NFTs the Factory mints via a rudimentary(for now) voting system. It is also ERC20 and mints tokens for a future ecosystem and a VRFv2 subscription manager. This contracts splits evenly all incoming eth payments between the developers.
 
-- The Factory contract is deployed in the constructor of the Agora contract. This contract is ERC7721. It contains a function mintGenerator that both deploys a Generator contract and attaches a freshly minted NFT to it. This NFT conceptually ressembles a key to the generator.
+- The Factory contract is deployed in the constructor of the Agora contract. This contract is ERC721. It contains a function mintGenerator that both deploys a Generator contract and attaches a freshly minted NFT to it. This NFT conceptually ressembles a key to the generator, a nice conceptual idea by Kit Fuderich that simplifies transfering ownership over the generator contract and its functionalities.
 
 - The Generator contracts functions are mostly restricted to the NFT owner. This contract gives the possibility to its owner to deploy product contracts with a name and price tag. From this generator, its owner can withdraw in bulk the funds from all the products.
 
