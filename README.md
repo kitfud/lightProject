@@ -125,6 +125,3 @@ The backend Web3 architecture consists of 4 contracts, an Agora(council place) c
 - [ipfs](https://ipfs.io/)
 - [metamask](https://metamask.io/)
 - [pinata](https://www.pinata.cloud/)
-
-
-## Add CodeOwners
